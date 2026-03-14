@@ -11,7 +11,18 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  if (typeof html2pdf === 'undefined') {
+    document.write('<script src="https://unpkg.com/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"><\/script>');
+  }
+</script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+  // Fallback if unpkg fails
+  if (typeof supabase === 'undefined') {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
+  }
+</script>
 <link href="https://fonts.googleapis.com/css?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1053,10 +1064,14 @@ async function syncFromSupabase() {
 
     // 2. Uji Koneksi Dasar (Fetch Langsung)
     try {
-      const ping = await fetch(`${SUPABASE_URL}/rest/v1/?apikey=${SUPABASE_KEY}`, { method: 'GET' });
-      if (!ping.ok) throw new Error(`Koneksi Dasar Gagal (${ping.status}). Cek API Key.`);
+      const pingUrl = `${SUPABASE_URL}/rest/v1/?apikey=${SUPABASE_KEY}`;
+      const ping = await fetch(pingUrl, { method: 'GET', mode: 'cors' });
+      if (!ping.ok && ping.status !== 200) throw new Error(`Server Supabase merespon dengan status ${ping.status}.`);
     } catch (e) {
-      throw new Error("Koneksi Supabase Diblokir (AdBlock/Firewall)");
+      if (e.message.includes('Failed to fetch')) {
+        throw new Error("Gagal terhubung ke Supabase. Cek koneksi internet, matikan VPN/AdBlock, atau pastikan domain Vercel sudah di-izinkan di Dashboard Supabase (Authentication -> URL Configuration).");
+      }
+      throw e;
     }
 
     // 3. Ambil Data
