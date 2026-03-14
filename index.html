@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#06b6d4">
+<link rel="manifest" href="./manifest.json">
 <title>Si Tukang Laporan Harian Technical</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -343,7 +345,8 @@ header {
 .report-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
 .report-table th, .report-table td { border: 1px solid #000; padding: 6px; text-align: left; vertical-align: top; }
 .report-table th { background-color: #ddd; text-align: center; }
-.pdf-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.report-table tr { page-break-inside: avoid; page-break-after: auto; }
+.pdf-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; page-break-inside: avoid; }
 .pdf-photo-box {
   width: 100%; height: 80px; background: #eee; display: flex; align-items: center; justify-content: center;
   border: 1px solid #ccc; font-size: 0.7rem; color: #777; text-align: center; padding: 5px; overflow: hidden;
@@ -455,6 +458,11 @@ header {
           <i class="fa-solid fa-images"></i> Galeri Foto
         </a>
       </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="showAISummary()">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> AI Summary
+        </a>
+      </li>
       <li class="sidebar-item" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
         <a class="sidebar-link" onclick="logout()" style="color: #ef4444;">
           <i class="fa-solid fa-power-off"></i> Keluar System
@@ -475,15 +483,20 @@ header {
     </div>
     <div style="text-align: right;">
       <div style="font-weight: 700; color: white; font-family: 'Rajdhani'; font-size: 1.1rem;" id="header-user">User</div>
-      <div style="font-size: 0.7rem; color: var(--primary);">ONLINE</div>
+      <div id="db-status" style="font-size: 0.7rem; color: #94a3b8;"><i class="fa-solid fa-circle-dot"></i> OFFLINE</div>
     </div>
   </header>
   
   <main style="padding: 20px;">
     <div id="page-dashboard" class="animate-fade page">
       <div class="metal-card" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(16, 185, 129, 0.05)); border-color: rgba(6, 182, 212, 0.3);">
-        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px; color: var(--primary);">
-          <i class="fa-solid fa-bolt"></i> <strong>SYSTEM STATUS</strong>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div style="display: flex; gap: 10px; align-items: center; color: var(--primary);">
+            <i class="fa-solid fa-bolt"></i> <strong>SYSTEM STATUS</strong>
+          </div>
+          <button onclick="syncFromSupabase()" class="btn btn-sm" style="background: rgba(255,255,255,0.05); padding: 4px 10px; font-size: 0.75rem;">
+            <i class="fa-solid fa-rotate"></i> Sync Online
+          </button>
         </div>
         <p id="ai-text" style="margin: 0; font-size: 0.9rem; color: #e2e8f0;">Database aktif. Menunggu input laporan lapangan...</p>
       </div>
@@ -660,6 +673,15 @@ header {
           <div class="form-group">
             <label class="form-label">Catatan Lapangan</label>
             <textarea id="f-s1-notes" class="form-control" rows="2" placeholder="Contoh: Tukang merasa kerja lebih cepat..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tanda Tangan Mandor (Bukti Demo)</label>
+            <div style="background: white; border-radius: var(--radius-md); padding: 5px;">
+              <canvas id="signature-pad" style="width: 100%; height: 150px; border: 1px dashed #ccc; touch-action: none; background: white;"></canvas>
+            </div>
+            <div style="margin-top: 5px; display: flex; gap: 10px;">
+              <button type="button" class="btn btn-sm" style="background: #64748b;" onclick="clearSignature()"><i class="fa-solid fa-eraser"></i> Hapus</button>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Foto Kegiatan (Max 3)</label>
@@ -881,6 +903,18 @@ header {
   </nav>
 </div>
 
+<div id="ai-modal" class="hidden">
+  <div class="modal-content" style="max-width: 600px;">
+    <h3 style="color:var(--primary); margin-top:0;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Summary Lapangan</h3>
+    <div id="ai-content" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; font-size: 0.9rem; line-height: 1.6; max-height: 400px; overflow-y: auto; color: #e2e8f0; border-left: 4px solid var(--primary);">
+      Menyiapkan rangkuman cerdas...
+    </div>
+    <div style="margin-top: 20px; text-align: right;">
+      <button class="btn btn-sm" style="background: #ef4444;" onclick="document.getElementById('ai-modal').classList.add('hidden')">Tutup</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"><i class="fa-solid fa-circle-check" style="color: var(--accent);"></i> <span id="toast-msg">Success</span></div>
 
 <div id="preview-modal">
@@ -970,6 +1004,13 @@ function renderUserSelect() {
 
 // --- INIT ---
 window.addEventListener('DOMContentLoaded', async () => {
+  // Register Service Worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(() => console.log('Service Worker Registered'))
+      .catch(err => console.error('Service Worker Failed', err));
+  }
+  
   // Populate user list immediately
   renderUserSelect();
   document.getElementById('f-date').valueAsDate = new Date();
@@ -980,20 +1021,46 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function syncFromSupabase() {
+  const statusEl = document.getElementById('db-status');
   if (!supabaseClient) {
     const stored = localStorage.getItem('ts_metal_db');
     if (stored) db = JSON.parse(stored);
+    if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-dot"></i> LOCAL ONLY';
     return;
   }
+  
+  if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> SYNCING...';
+  
   try {
     const { data, error } = await supabaseClient.from('reports').select('*').order('date', { ascending: false });
     if (error) throw error;
+    
     if (data) {
-      db.reports = data;
+      // Merge logic: Supabase is the source of truth, but keep local only if not in Supabase
+      const localReports = db.reports || [];
+      const remoteReports = data;
+      
+      // Combine and remove duplicates by ID
+      const combined = [...remoteReports];
+      localReports.forEach(lr => {
+        if (!combined.find(cr => cr.id === lr.id)) {
+          combined.push(lr);
+          // Try to push this local-only report to Supabase
+          saveToSupabase(lr);
+        }
+      });
+      
+      db.reports = combined.sort((a, b) => new Date(b.date) - new Date(a.date));
       localStorage.setItem('ts_metal_db', JSON.stringify(db));
+      if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--accent)"></i> ONLINE';
+      if (typeof loadDashboard === 'function') loadDashboard();
     }
   } catch (err) {
     console.error('Supabase Sync Error:', err.message);
+    if (statusEl) {
+      statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444"></i> SYNC ERROR';
+      statusEl.title = "Pastikan SQL sudah dijalankan di Supabase dan aplikasi dijalankan via Server (bukan klik file langsung)";
+    }
     const stored = localStorage.getItem('ts_metal_db');
     if (stored) db = JSON.parse(stored);
   }
@@ -1003,11 +1070,14 @@ async function saveToSupabase(reportData) {
   if (!supabaseClient) return false;
   try {
     const { error } = await supabaseClient.from('reports').upsert(reportData);
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase Upsert Error:', error);
+      throw error;
+    }
     return true;
   } catch (err) {
     console.error('Supabase Save Error:', err.message);
-    showToast("Gagal simpan online, tersimpan lokal.");
+    showToast("Gagal simpan online. Data tetap tersimpan di HP.");
     return false;
   }
 }
@@ -1020,6 +1090,90 @@ function getTechName(tech) {
   if (!tech) return '-';
   const found = usersDb.find(u => u.val === tech || u.label === tech);
   return found ? found.label : tech;
+}
+
+// --- SIGNATURE PAD ---
+let isDrawing = false;
+const canvas = document.getElementById('signature-pad');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+  canvas.width = canvas.offsetWidth * ratio;
+  canvas.height = canvas.offsetHeight * ratio;
+  ctx.scale(ratio, ratio);
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+}
+window.addEventListener('resize', resizeCanvas);
+
+function startDrawing(e) {
+  isDrawing = true;
+  draw(e);
+}
+function stopDrawing() {
+  isDrawing = false;
+  ctx.beginPath();
+}
+function draw(e) {
+  if (!isDrawing) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX || e.touches[0].clientX) - rect.left;
+  const y = (e.clientY || e.touches[0].clientY) - rect.top;
+  ctx.lineTo(x, y);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+}
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); });
+canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
+canvas.addEventListener('touchend', stopDrawing);
+
+function clearSignature() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// --- WA INTEGRATION ---
+function sendWA(id) {
+  const r = db.reports.find(item => item.id === id);
+  if (!r) return;
+  const text = `*LAPORAN TECHNICAL SUPPORT*\n\n` +
+               `Proyek: ${r.s1Project || r.h1Name}\n` +
+               `Alamat: ${r.s1Addr || '-'}\n` +
+               `Mandor: ${r.s1Mandor || '-'}\n` +
+               `Hasil: ${r.s1Result || r.h1Result}\n` +
+               `Technical: ${getTechName(r.tech)}\n` +
+               `Tanggal: ${r.date}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+}
+
+// --- AI SUMMARY ---
+function showAISummary() {
+  const modal = document.getElementById('ai-modal');
+  const content = document.getElementById('ai-content');
+  modal.classList.remove('hidden');
+  content.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menganalisis data laporan...';
+
+  setTimeout(() => {
+    const total = db.reports.length;
+    const projects = db.reports.filter(r => r.s1Project).length;
+    const issues = db.reports.filter(r => r.s1Notes && r.s1Notes.length > 20).length;
+    
+    content.innerHTML = `
+      <strong>Analisis Cerdas Si Tukang:</strong><br><br>
+      • Total aktivitas tercatat: ${total} laporan.<br>
+      • Fokus utama pada ${projects} proyek demo aktif.<br>
+      • Ditemukan ${issues} catatan teknis penting dari lapangan.<br><br>
+      <strong>Rekomendasi Strategis:</strong><br>
+      1. Tingkatkan penetrasi pada area dengan tingkat hunting rendah.<br>
+      2. Follow up segera pada hasil demo yang bertanda 'Tukang Tertarik'.<br>
+      3. Dokumentasikan masalah teknis berulang untuk materi training internal.
+    `;
+  }, 1500);
 }
 
 // --- MENU RAHASIA (KLIK HELM 5 KALI) ---
@@ -1211,6 +1365,7 @@ function switchTab(tab) {
     navs[1].classList.add('active');
     sidebarLinks[1].classList.add('active');
     if(!isEditing) resetForm();
+    setTimeout(resizeCanvas, 100); // Ensure signature pad is sized correctly
   } else if (tab === 'gallery') {
     gallery.classList.remove('hidden');
     navs[2].classList.add('active');
@@ -1295,7 +1450,10 @@ function loadDashboard() {
         <div style="font-weight:600; font-size:0.9rem; color:white;">${r.s1Project || r.h1Name || r.h2Name || 'Tanpa Nama'} <span style="font-size:0.7rem; opacity:0.7; font-weight:400; margin-left:5px;">(${type})</span> ${hasGps}</div>
         <div style="font-size:0.75rem; color:var(--text-muted);">${r.date} • ${r.area} • <span style="color:var(--primary); font-weight:600;">${techName}</span></div>
       </div>
-      <button class="btn-edit" onclick="editReport(${r.id})"><i class="fa-solid fa-pen-to-square"></i></button>
+      <div style="display:flex; gap:5px;">
+        <button class="btn-edit" onclick="sendWA(${r.id})" style="background:#25d366; color:white; border:none; padding:5px 8px; border-radius:4px;"><i class="fa-brands fa-whatsapp"></i></button>
+        <button class="btn-edit" onclick="editReport(${r.id})"><i class="fa-solid fa-pen-to-square"></i></button>
+      </div>
     </div>`;
   });
   if (map) updateMapMarkers();
@@ -1433,6 +1591,10 @@ document.getElementById('ts-form').addEventListener('submit', async (e) => {
       photos.push(compressed);
     }
   }
+
+  // Get Signature
+  const signatureData = canvas.toDataURL('image/png');
+  const isCanvasEmpty = ctx.getImageData(0,0,canvas.width,canvas.height).data.every(p => p === 0);
   
   const reportData = {
     id: isEditing ? editId : Date.now(),
@@ -1450,6 +1612,7 @@ document.getElementById('ts-form').addEventListener('submit', async (e) => {
     s1Result: document.getElementById('f-s1-result').value,
     s1Notes: document.getElementById('f-s1-notes').value,
     photos: photos.length > 0 ? photos : (isEditing ? (db.reports.find(r => r.id === editId)?.photos || []) : []),
+    signature: !isCanvasEmpty ? signatureData : (isEditing ? (db.reports.find(r => r.id === editId)?.signature || null) : null),
     h1Name: document.getElementById('f-h1-name').value,
     h1Type: document.getElementById('f-h1-type').value,
     h1Mat: document.getElementById('f-h1-mat').value,
@@ -1511,6 +1674,9 @@ document.getElementById('ts-form').addEventListener('submit', async (e) => {
   saveDB();
   btn.innerHTML = oldText;
   switchTab('dashboard');
+  
+  // Refresh data from Supabase to ensure all clients are synced
+  setTimeout(syncFromSupabase, 1000);
 });
 
 // --- EDIT FUNCTION ---
@@ -1598,6 +1764,7 @@ function resetForm() {
   document.getElementById('f-date').valueAsDate = new Date();
   document.getElementById('f-name').value = currentUser;
   document.getElementById('worker-container').innerHTML = '';
+  clearSignature();
   addWorkerRow();
 }
 
@@ -1691,6 +1858,11 @@ function generateReportView() {
       });
       photoGalleryHTML += '</div>';
     }
+
+    let signatureHTML = '';
+    if(r.signature) {
+      signatureHTML = `<div style="margin-top:5px; text-align:right;"><img src="${r.signature}" style="height:40px; border-bottom:1px solid #eee;"><br><span style="font-size:8px;">Ttd Mandor</span></div>`;
+    }
     
   tableRows += `
     <tr>
@@ -1701,7 +1873,7 @@ function generateReportView() {
       <td>${mName}</td>
       <td style="text-align:center;">${jmlTukang}</td>
       <td>${result}</td>
-      <td>${getTechName(r.tech)}</td>
+      <td>${getTechName(r.tech)}${signatureHTML}</td>
     </tr>
     ${r.s1Project && r.photos && r.photos.length > 0 ? `<tr><td colspan="8" style="padding:0;">${photoGalleryHTML}</td></tr>` : ''}
     `;
@@ -1743,14 +1915,29 @@ function generateReportView() {
 
 function downloadPDF() {
   const element = document.getElementById('report-paper');
+  showToast("Sedang menyiapkan PDF... Harap tunggu.");
+  
   const opt = {
-    margin: 5, 
+    margin: [10, 5, 10, 5], // Top, Left, Bottom, Right
     filename: `Laporan_TS_${new Date().toISOString().slice(0,10)}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { 
+      scale: 2, 
+      useCORS: true,
+      logging: false,
+      letterRendering: true,
+      windowWidth: element.scrollWidth
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
-  html2pdf().set(opt).from(element).save();
+  
+  html2pdf().set(opt).from(element).save().then(() => {
+    showToast("PDF Selesai Dibuat!");
+  }).catch(err => {
+    console.error("PDF Error:", err);
+    showToast("Gagal membuat PDF. Coba kurangi rentang tanggal.");
+  });
 }
 
 // --- UTILS ---
