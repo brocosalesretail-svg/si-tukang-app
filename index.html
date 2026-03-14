@@ -956,8 +956,8 @@ header {
 
 <script>
 // --- SUPABASE CONFIG ---
-const SUPABASE_URL = 'https://ywxtnnxjuvxznfyiivqi.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3h0bm54anV2eHpuZnlpdnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzAwMzAsImV4cCI6MjA4OTAwNjAzMH0.I1IRWSys7SHxkgJryi3pEH8O4_xE-LTOFR3TrqrnKEE';
+const SUPABASE_URL = 'https://ywxtnnxjuvxznfyiivqi.supabase.co'.trim();
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3h0bm54anV2eHpuZnlpdnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzAwMzAsImV4cCI6MjA4OTAwNjAzMH0.I1IRWSys7SHxkgJryi3pEH8O4_xE-LTOFR3TrqrnKEE'.trim();
 
 let supabaseClient = null;
 
@@ -965,13 +965,15 @@ function initSupabase() {
   if (supabaseClient) return true;
   try {
     if (typeof supabase !== 'undefined') {
+      // Re-check URL valid format
+      if (!SUPABASE_URL.startsWith('https://')) {
+        console.error("URL Supabase tidak valid");
+        return false;
+      }
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      console.log("Supabase Client Initialized");
       return true;
-    } else {
-      console.error("Supabase library not loaded yet");
-      return false;
     }
+    return false;
   } catch (e) {
     console.error("Gagal inisialisasi Supabase:", e);
     return false;
@@ -1037,22 +1039,32 @@ async function syncFromSupabase() {
   const statusEl = document.getElementById('db-status');
   
   if (!initSupabase()) {
-    const stored = localStorage.getItem('ts_metal_db');
-    if (stored) db = JSON.parse(stored);
-    if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-dot"></i> OFFLINE (Lib Error)';
+    if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-dot"></i> OFFLINE (Gagal Load Supabase)';
     return;
   }
   
   if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> SYNCING...';
   
   try {
-    // Check if running on file:// protocol
+    // 1. Cek Protokol
     if (window.location.protocol === 'file:') {
       throw new Error("Supabase diblokir pada protocol 'file://'. Silakan upload ke Vercel/GitHub.");
     }
 
+    // 2. Uji Koneksi Dasar (Fetch Langsung)
+    try {
+      const ping = await fetch(`${SUPABASE_URL}/rest/v1/?apikey=${SUPABASE_KEY}`, { method: 'GET' });
+      if (!ping.ok) throw new Error(`Koneksi Dasar Gagal (${ping.status}). Cek API Key.`);
+    } catch (e) {
+      throw new Error("Koneksi Supabase Diblokir (AdBlock/Firewall)");
+    }
+
+    // 3. Ambil Data
     const { data, error } = await supabaseClient.from('reports').select('*').order('date', { ascending: false });
-    if (error) throw error;
+    if (error) {
+      if (error.code === 'PGRST116') throw new Error("Tabel 'reports' belum dibuat di Supabase (SQL Editor)");
+      throw error;
+    }
     
     if (data) {
       const localReports = db.reports || [];
@@ -1062,25 +1074,32 @@ async function syncFromSupabase() {
         if (!combined.find(cr => cr.id === lr.id)) combined.push(lr);
       });
       
-      db.reports = combined.sort((a, b) => b.id - a.id); // Sort by newest ID
+      db.reports = combined.sort((a, b) => b.id - a.id);
       localStorage.setItem('ts_metal_db', JSON.stringify(db));
       
-      // Try to push local reports that are NOT in Supabase yet
       for (const lr of localReports) {
-        if (!remoteReports.find(rr => rr.id === lr.id)) {
-          await saveToSupabase(lr);
-        }
+        if (!remoteReports.find(rr => rr.id === lr.id)) await saveToSupabase(lr);
       }
       
-      if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--accent)"></i> ONLINE';
+      if (statusEl) {
+        statusEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--accent)"></i> ONLINE';
+        statusEl.onclick = null;
+      }
       if (typeof loadDashboard === 'function') loadDashboard();
     }
   } catch (err) {
     console.error('Supabase Sync Error:', err);
     if (statusEl) {
       statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444"></i> SYNC ERROR';
-      statusEl.onclick = () => alert("DEBUG ERROR:\n" + JSON.stringify(err, null, 2) + "\n\nPesan: " + err.message);
       statusEl.style.cursor = "pointer";
+      statusEl.onclick = () => {
+        alert("INFO PERBAIKAN:\n" + 
+              "------------------\n" + 
+              "Pesan: " + (err.message || "Unknown") + "\n" +
+              "Kode: " + (err.code || "N/A") + "\n\n" +
+              "Klik OK untuk mencoba sinkron ulang.");
+        syncFromSupabase();
+      };
     }
     const stored = localStorage.getItem('ts_metal_db');
     if (stored) db = JSON.parse(stored);
