@@ -960,12 +960,22 @@ const SUPABASE_URL = 'https://ywxtnnxjuvxznfyiivqi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3h0bm54anV2eHpuZnlpdnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzAwMzAsImV4cCI6MjA4OTAwNjAzMH0.I1IRWSys7SHxkgJryi3pEH8O4_xE-LTOFR3TrqrnKEE';
 
 let supabaseClient = null;
-try {
-  if (typeof supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function initSupabase() {
+  if (supabaseClient) return true;
+  try {
+    if (typeof supabase !== 'undefined') {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      console.log("Supabase Client Initialized");
+      return true;
+    } else {
+      console.error("Supabase library not loaded yet");
+      return false;
+    }
+  } catch (e) {
+    console.error("Gagal inisialisasi Supabase:", e);
+    return false;
   }
-} catch (e) {
-  console.error("Gagal inisialisasi Supabase:", e);
 }
 
 // --- ANTI COPY SCRIPT ---
@@ -1016,50 +1026,61 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('f-date').valueAsDate = new Date();
   addWorkerRow();
   
+  // Ensure Supabase is initialized before sync
+  initSupabase();
+  
   // Try to load from Supabase first, fallback to localStorage
   await syncFromSupabase();
 });
 
 async function syncFromSupabase() {
   const statusEl = document.getElementById('db-status');
-  if (!supabaseClient) {
+  
+  if (!initSupabase()) {
     const stored = localStorage.getItem('ts_metal_db');
     if (stored) db = JSON.parse(stored);
-    if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-dot"></i> LOCAL ONLY';
+    if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-dot"></i> OFFLINE (Lib Error)';
     return;
   }
   
   if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> SYNCING...';
   
   try {
+    // Check if running on file:// protocol
+    if (window.location.protocol === 'file:') {
+      throw new Error("Supabase diblokir pada protocol 'file://'. Silakan upload ke Vercel/GitHub.");
+    }
+
     const { data, error } = await supabaseClient.from('reports').select('*').order('date', { ascending: false });
     if (error) throw error;
     
     if (data) {
-      // Merge logic: Supabase is the source of truth, but keep local only if not in Supabase
       const localReports = db.reports || [];
       const remoteReports = data;
-      
-      // Combine and remove duplicates by ID
       const combined = [...remoteReports];
       localReports.forEach(lr => {
-        if (!combined.find(cr => cr.id === lr.id)) {
-          combined.push(lr);
-          // Try to push this local-only report to Supabase
-          saveToSupabase(lr);
-        }
+        if (!combined.find(cr => cr.id === lr.id)) combined.push(lr);
       });
       
-      db.reports = combined.sort((a, b) => new Date(b.date) - new Date(a.date));
+      db.reports = combined.sort((a, b) => b.id - a.id); // Sort by newest ID
       localStorage.setItem('ts_metal_db', JSON.stringify(db));
+      
+      // Try to push local reports that are NOT in Supabase yet
+      for (const lr of localReports) {
+        if (!remoteReports.find(rr => rr.id === lr.id)) {
+          await saveToSupabase(lr);
+        }
+      }
+      
       if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--accent)"></i> ONLINE';
       if (typeof loadDashboard === 'function') loadDashboard();
     }
   } catch (err) {
-    console.error('Supabase Sync Error:', err.message);
+    console.error('Supabase Sync Error:', err);
     if (statusEl) {
       statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444"></i> SYNC ERROR';
-      statusEl.title = "Pastikan SQL sudah dijalankan di Supabase dan aplikasi dijalankan via Server (bukan klik file langsung)";
+      statusEl.onclick = () => alert("DEBUG ERROR:\n" + JSON.stringify(err, null, 2) + "\n\nPesan: " + err.message);
+      statusEl.style.cursor = "pointer";
     }
     const stored = localStorage.getItem('ts_metal_db');
     if (stored) db = JSON.parse(stored);
@@ -1067,7 +1088,7 @@ async function syncFromSupabase() {
 }
 
 async function saveToSupabase(reportData) {
-  if (!supabaseClient) return false;
+  if (!initSupabase()) return false;
   try {
     const { error } = await supabaseClient.from('reports').upsert(reportData);
     if (error) {
