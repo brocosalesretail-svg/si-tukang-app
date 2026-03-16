@@ -1814,17 +1814,92 @@ function generateReportView() {
 }
 
 function downloadPDF() {
-  const element = document.getElementById('print-area');
-  if(!element || element.innerHTML.trim() === "") {
+  const content = document.getElementById('print-area').innerHTML;
+  if(!content || content.trim() === "") {
     showToast("Gagal mengambil konten laporan. Silakan klik preview dahulu.");
     return;
   }
   
-  showToast("Membuka Dialog Cetak Laporan...");
+  showToast("Menyiapkan dokumen PDF...");
   
+  // 1. Buat iframe tersembunyi untuk mengisolasi proses print dari UI aplikasi
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+  document.body.appendChild(iframe);
+  
+  const doc = iframe.contentWindow.document;
+  
+  // 2. Tulis struktur HTML murni dan CSS khusus kertas ke dalam iframe
+  doc.open();
+  doc.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Laporan_Technical_Support_Broco</title>
+      <style>
+        @page { size: A4 portrait; margin: 15mm; }
+        body { 
+          font-family: Arial, Helvetica, sans-serif; 
+          color: black; 
+          background: white; 
+          margin: 0; 
+          padding: 0; 
+        }
+        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
+        .header p { margin: 3px; font-size: 14px; }
+        
+        .section { margin-bottom: 20px; page-break-inside: avoid; }
+        .section-title { font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; font-size: 14px; text-transform: uppercase; }
+        
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .info-table td { padding: 6px; font-size: 12px; vertical-align: top; }
+        
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .data-table th, .data-table td { 
+          border: 1px solid #999; 
+          padding: 8px; 
+          text-align: left; 
+          font-size: 11px; 
+          page-break-inside: avoid !important; /* Mencegah sel terbelah */
+        }
+        .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        tr { page-break-inside: avoid !important; page-break-after: auto !important; }
+        thead { display: table-header-group !important; }
+        
+        /* Ubah display flex/grid menjadi flex standard agar foto aman saat ganti halaman */
+        .photo-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; page-break-inside: avoid; }
+        .photo-grid img { width: 45%; max-height: 200px; object-fit: contain; border: 1px solid #ccc; background: #fff; }
+        
+        .signature { display: flex; justify-content: space-between; margin-top: 50px; text-align: center; page-break-inside: avoid; }
+        .signature div { width: 200px; }
+        .signature p { margin-bottom: 60px; font-size: 13px; font-weight: bold; }
+        
+        .footer { text-align: center; font-size: 10px; margin-top: 40px; color: #666; border-top: 1px solid #eee; padding-top: 10px; }
+      </style>
+    </head>
+    <body>
+      ${content}
+    </body>
+    </html>
+  `);
+  doc.close();
+  
+  // 3. Beri jeda 1 detik agar browser selesai me-render tabel dan meload gambar base64
   setTimeout(() => {
-    window.print();
-  }, 500);
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+    
+    // 4. Bersihkan iframe dari memori setelah jendela print muncul
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 2000);
+  }, 1000);
 }
 
 // --- UTILS ---
