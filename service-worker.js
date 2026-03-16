@@ -19,6 +19,10 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Jangan cache permintaan ke Supabase agar tidak bentrok dengan jaringan
+  if (event.request.url.includes('supabase.co')) {
+    return; // Biarkan browser menangani permintaan ini secara normal
+  }
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);

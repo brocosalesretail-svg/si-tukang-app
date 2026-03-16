@@ -1065,26 +1065,19 @@ async function syncFromSupabase() {
       throw new Error("Supabase diblokir pada protocol 'file://'. Silakan upload ke Vercel/GitHub.");
     }
 
-    // 2. Ambil Data Langsung (Uji Koneksi via SDK)
-    const { data, error } = await supabaseClient.from('reports').select('id').limit(1);
+    // 2. Ambil Data Langsung (Hanya gunakan SDK resmi)
+    const { data, error } = await supabaseClient.from('reports').select('*').order('date', { ascending: false });
     
     if (error) {
       if (error.message === 'Failed to fetch') {
-        throw new Error("Koneksi ditolak browser (CORS/Network Error). Pastikan domain Vercel sudah didaftarkan di Supabase -> Authentication -> URL Configuration.");
-      }
-      if (error.code === 'PGRST116' || error.message.includes('not found')) {
-        throw new Error("Tabel 'reports' belum dibuat di SQL Editor Supabase.");
+        throw new Error("Koneksi diblokir (Network Error). Coba gunakan Hotspot HP atau cek apakah domain Vercel sudah di-izinkan di Dashboard Supabase (Authentication -> URL Configuration).");
       }
       throw error;
     }
     
-    // 3. Jika koneksi OK, ambil data lengkap
-    const { data: fullData, error: fetchError } = await supabaseClient.from('reports').select('*').order('date', { ascending: false });
-    if (fetchError) throw fetchError;
-
-    if (fullData) {
+    if (data) {
       const localReports = db.reports || [];
-      const remoteReports = fullData;
+      const remoteReports = data;
       const combined = [...remoteReports];
       localReports.forEach(lr => {
         if (!combined.find(cr => cr.id === lr.id)) combined.push(lr);
@@ -1093,6 +1086,7 @@ async function syncFromSupabase() {
       db.reports = combined.sort((a, b) => b.id - a.id);
       localStorage.setItem('ts_metal_db', JSON.stringify(db));
       
+      // Push local only reports
       for (const lr of localReports) {
         if (!remoteReports.find(rr => rr.id === lr.id)) await saveToSupabase(lr);
       }
@@ -1109,11 +1103,9 @@ async function syncFromSupabase() {
       statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444"></i> SYNC ERROR';
       statusEl.style.cursor = "pointer";
       statusEl.onclick = () => {
-        alert("DIAGNOSA KONEKSI:\n" + 
-              "------------------\n" + 
-              "Pesan: " + (err.message || "Unknown Error") + "\n" +
-              "Kode: " + (err.code || "N/A") + "\n" +
-              "Hint: " + (err.hint || "Cek Dashboard Supabase") + "\n\n" +
+        alert("DIAGNOSA:\n" + 
+              "----------\n" + 
+              "Pesan: " + (err.message || "Unknown Error") + "\n\n" +
               "Klik OK untuk mencoba lagi.");
         syncFromSupabase();
       };
