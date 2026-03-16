@@ -11,18 +11,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
-  if (typeof html2pdf === 'undefined') {
-    document.write('<script src="https://unpkg.com/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"><\/script>');
-  }
-</script>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script>
-  // Fallback if unpkg fails
-  if (typeof supabase === 'undefined') {
-    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
-  }
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -357,13 +346,13 @@ header {
 .report-table th, .report-table td { border: 1px solid #000; padding: 6px; text-align: left; vertical-align: top; }
 .report-table th { background-color: #ddd; text-align: center; }
 .report-table tr { page-break-inside: avoid; page-break-after: auto; }
-.pdf-photos { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; page-break-inside: avoid; }
+.pdf-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; page-break-inside: avoid; }
 .pdf-photo-box {
-  width: 80mm; height: 60mm; background: #eee; display: flex; align-items: center; justify-content: center;
-  border: 1px solid #ccc; font-size: 0.7rem; color: #777; text-align: center; padding: 0; overflow: hidden;
+  width: 100%; height: 80px; background: #eee; display: flex; align-items: center; justify-content: center;
+  border: 1px solid #ccc; font-size: 0.7rem; color: #777; text-align: center; padding: 5px; overflow: hidden;
 }
 .pdf-photo-box img {
-  width: 100%; height: 100%; object-fit: fill; background: white;
+  width: 100%; height: 100%; object-fit: cover;
 }
 .worker-row { display: grid; grid-template-columns: 2fr 2fr 40px; gap: 8px; margin-bottom: 8px; animation: fadeIn 0.3s; }
 .btn-remove { background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
@@ -773,11 +762,10 @@ header {
           <div class="form-group">
             <label class="form-label">Foto Kegiatan (Max 3)</label>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-              <input type="file" accept="image/*" class="form-control photo-input" style="font-size: 0.75rem; padding: 8px;">
-              <input type="file" accept="image/*" class="form-control photo-input" style="font-size: 0.75rem; padding: 8px;">
-              <input type="file" accept="image/*" class="form-control photo-input" style="font-size: 0.75rem; padding: 8px;">
+              <input type="file" accept="image/*" capture="environment" class="form-control photo-input" style="font-size: 0.75rem; padding: 8px;">
+              <input type="file" accept="image/*" capture="environment" class="form-control photo-input" style="font-size: 0.75rem; padding: 8px;">
+              <input type="file" accept="image/*" capture="environment" class="form-control photo-input" style="font-size: 0.75rem; padding: 8px;">
             </div>
-            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">* Bisa ambil dari Kamera atau Galeri</p>
           </div>
         </div>
         
@@ -1044,7 +1032,7 @@ header {
 
 <script>
 // --- SUPABASE CONFIG ---
-const SUPABASE_URL = 'https://ywcxtnnxjuvxznfyivqi.supabase.co'.trim();
+const SUPABASE_URL = 'https://ywxtnnxjuvxznfyiivqi.supabase.co'.trim();
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3h0bm54anV2eHpuZnlpdnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzAwMzAsImV4cCI6MjA4OTAwNjAzMH0.I1IRWSys7SHxkgJryi3pEH8O4_xE-LTOFR3TrqrnKEE'.trim();
 
 let supabaseClient = null;
@@ -1069,8 +1057,6 @@ function initSupabase() {
 }
 
 // --- ANTI COPY SCRIPT ---
-// Dinonaktifkan sementara untuk debugging
-/*
 document.addEventListener('contextmenu', event => event.preventDefault());
 document.addEventListener('keydown', function(e) {
   if (e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'p' || e.key === 'c' || e.key === 'x')) {
@@ -1080,7 +1066,6 @@ document.addEventListener('keydown', function(e) {
     e.preventDefault();
   }
 });
-*/
 
 // --- STATE ---
 let db = { reports: [] };
@@ -1130,7 +1115,7 @@ async function syncFromSupabase() {
   const statusEl = document.getElementById('db-status');
   
   if (!initSupabase()) {
-    if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-dot"></i> OFFLINE (Lib Error)';
+    if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-dot"></i> OFFLINE (Gagal Load Supabase)';
     return;
   }
   
@@ -1142,13 +1127,18 @@ async function syncFromSupabase() {
       throw new Error("Supabase diblokir pada protocol 'file://'. Silakan upload ke Vercel/GitHub.");
     }
 
-    // 2. Ambil Data Langsung (Hanya gunakan SDK resmi)
+    // 2. Uji Koneksi Dasar (Fetch Langsung)
+    try {
+      const ping = await fetch(`${SUPABASE_URL}/rest/v1/?apikey=${SUPABASE_KEY}`, { method: 'GET' });
+      if (!ping.ok) throw new Error(`Koneksi Dasar Gagal (${ping.status}). Cek API Key.`);
+    } catch (e) {
+      throw new Error("Koneksi Supabase Diblokir (AdBlock/Firewall)");
+    }
+
+    // 3. Ambil Data
     const { data, error } = await supabaseClient.from('reports').select('*').order('date', { ascending: false });
-    
     if (error) {
-      if (error.message === 'Failed to fetch') {
-        throw new Error("Koneksi diblokir (Network Error). Coba gunakan Hotspot HP atau cek apakah domain Vercel sudah di-izinkan di Dashboard Supabase (Authentication -> URL Configuration).");
-      }
+      if (error.code === 'PGRST116') throw new Error("Tabel 'reports' belum dibuat di Supabase (SQL Editor)");
       throw error;
     }
     
@@ -1163,7 +1153,6 @@ async function syncFromSupabase() {
       db.reports = combined.sort((a, b) => b.id - a.id);
       localStorage.setItem('ts_metal_db', JSON.stringify(db));
       
-      // Push local only reports
       for (const lr of localReports) {
         if (!remoteReports.find(rr => rr.id === lr.id)) await saveToSupabase(lr);
       }
@@ -1180,10 +1169,11 @@ async function syncFromSupabase() {
       statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444"></i> SYNC ERROR';
       statusEl.style.cursor = "pointer";
       statusEl.onclick = () => {
-        alert("DIAGNOSA:\n" + 
-              "----------\n" + 
-              "Pesan: " + (err.message || "Unknown Error") + "\n\n" +
-              "Klik OK untuk mencoba lagi.");
+        alert("INFO PERBAIKAN:\n" + 
+              "------------------\n" + 
+              "Pesan: " + (err.message || "Unknown") + "\n" +
+              "Kode: " + (err.code || "N/A") + "\n\n" +
+              "Klik OK untuk mencoba sinkron ulang.");
         syncFromSupabase();
       };
     }
@@ -1978,9 +1968,9 @@ function generateReportView() {
     
     let photoGalleryHTML = '';
     if(r.photos && r.photos.length > 0) {
-      photoGalleryHTML = '<div class="pdf-photos" style="display: flex; gap: 10px; margin: 10px 0;">';
+      photoGalleryHTML = '<div class="pdf-photos">';
       r.photos.forEach(ph => {
-        photoGalleryHTML += `<div class="pdf-photo-box" style="width: 85mm; height: 60mm; border: 1px solid #ccc; overflow: hidden;"><img src="${ph}" style="width: 100%; height: 100%; object-fit: fill;"></div>`;
+        photoGalleryHTML += `<div class="pdf-photo-box"><img src="${ph}"></div>`;
       });
       photoGalleryHTML += '</div>';
     }
@@ -2001,7 +1991,7 @@ function generateReportView() {
       <td>${result}</td>
       <td>${getTechName(r.tech)}${signatureHTML}</td>
     </tr>
-    ${r.s1Project && r.photos && r.photos.length > 0 ? `<tr><td colspan="8" style="padding:10px; border: 1px solid #000;">${photoGalleryHTML}</td></tr>` : ''}
+    ${r.s1Project && r.photos && r.photos.length > 0 ? `<tr><td colspan="8" style="padding:0;">${photoGalleryHTML}</td></tr>` : ''}
     `;
   });
   
@@ -2045,29 +2035,25 @@ function generateReportView() {
 
     <div style="margin-top: 40px; display: flex; justify-content: space-between; page-break-inside: avoid;">
       <div style="text-align: center; width: 200px;">
-        <p style="margin-bottom: 60px; font-size: 12px;">Dibuat Oleh,</p>
-        <p style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 12px;">( Technical Support )</p>
+        <p style="margin-bottom: 60px; font-size: 12px; color: black;">Dibuat Oleh,</p>
+        <p style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 12px; color: black;">( Technical Support )</p>
       </div>
       <div style="text-align: center; width: 200px;">
-        <p style="margin-bottom: 60px; font-size: 12px;">Diketahui Oleh,</p>
-        <p style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 12px;">( Mandor / Supervisor )</p>
+        <p style="margin-bottom: 60px; font-size: 12px; color: black;">Diketahui Oleh,</p>
+        <p style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 12px; color: black;">( Mandor / Supervisor )</p>
       </div>
     </div>
   </div>
   `;
   
   document.getElementById('report-paper').innerHTML = reportHTML;
-  
-  // Beri waktu sedikit untuk browser merender gambar/tanda tangan sebelum memunculkan modal
-  setTimeout(() => {
-    document.getElementById('modal-step-1').classList.add('hidden');
-    document.getElementById('report-paper').classList.remove('hidden');
-    document.getElementById('modal-step-2').classList.remove('hidden');
-  }, 500);
+  document.getElementById('modal-step-1').classList.add('hidden');
+  document.getElementById('report-paper').classList.remove('hidden');
+  document.getElementById('modal-step-2').classList.remove('hidden');
 }
 
 function downloadPDF() {
-  const element = document.getElementById('laporan'); 
+  const element = document.getElementById('laporan');
   if(!element) {
     showToast("Gagal mengambil konten laporan.");
     return;
