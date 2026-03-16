@@ -1930,7 +1930,7 @@ function generateReportView() {
   });
   
   const reportHTML = `
-  <div style="width: 280mm; min-height: 190mm; padding: 10mm; background: white; color: black; font-family: 'Inter', sans-serif;">
+  <div id="pdf-content" style="width: 280mm; min-height: 190mm; padding: 10mm; background: white; color: black; font-family: 'Inter', sans-serif; box-sizing: border-box;">
     <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
       <h2 style="margin: 0; font-size: 24px; font-family: 'Rajdhani'; font-weight: 700; text-transform: uppercase;">LAPORAN KEGIATAN TECHNICAL SUPPORT</h2>
       <p style="margin: 5px 0 0 0; font-size: 16px;">Periode: ${rangeStr}</p>
@@ -1980,17 +1980,18 @@ function generateReportView() {
 }
 
 function downloadPDF() {
-  const element = document.getElementById('report-paper');
-  showToast("Menyiapkan PDF Landscape (A4)...");
-
-  const controls = document.querySelector('.modal-controls');
-  if(controls) controls.style.display = 'none';
+  const element = document.getElementById('pdf-content'); // Ambil konten spesifik
+  if(!element) {
+    showToast("Gagal mengambil konten laporan.");
+    return;
+  }
   
-  // Pastikan posisi scroll element ada di paling atas sebelum capture
-  element.scrollTop = 0;
+  const controls = document.querySelector('.modal-controls');
+  showToast("Menghasilkan PDF WYSIWYG...");
+  if(controls) controls.style.display = 'none';
 
   const opt = {
-    margin: [5, 5, 5, 5], 
+    margin: 0, 
     filename: `Laporan_TS_SiTukang_${new Date().toISOString().slice(0,10)}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { 
@@ -1998,11 +1999,9 @@ function downloadPDF() {
       useCORS: true,
       logging: false,
       letterRendering: true,
-      scrollY: -window.scrollY, // Kompensasi scroll halaman
+      scrollY: 0,
       y: 0,
-      scrollX: 0,
-      x: 0,
-      windowWidth: 1200
+      windowWidth: 1400 
     },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape', compress: true },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
@@ -2013,7 +2012,7 @@ function downloadPDF() {
     if(controls) controls.style.display = 'block';
   }).catch(err => {
     console.error("PDF Error:", err);
-    showToast("Gagal. Coba Refresh Halaman.");
+    showToast("Gagal Cetak.");
     if(controls) controls.style.display = 'block';
   });
 }
