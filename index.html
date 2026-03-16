@@ -345,7 +345,7 @@ header {
 .btn-remove { background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
 .btn-edit { background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 1.2rem; padding: 5px; }
 
-/* --- ADMIN MODAL (NEW) --- */
+/* --- ADMIN MODAL --- */
 #admin-modal {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.95); z-index: 9999;
@@ -362,43 +362,24 @@ header {
   border-radius: var(--radius-md); margin-bottom: 8px;
 }
 
-/* --- PROFESSIONAL PRINT & PDF (BROCO STANDARD) --- */
-/* INI ADALAH BAGIAN YANG DIPERBAIKI. SAYA MENGEMBALIKAN SEMUA STYLING ASLI ANDA */
-/* DAN HANYA MENAMBAHKAN PERBAIKAN POSISI (top:0, left:0, position:absolute) */
-
+/* --- PROFESSIONAL PRINT & PDF (DESKTOP FIX) --- */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 10mm; /* Biarkan sistem yang mengatur margin kertas */
+    margin: 15mm;
   }
-
-* {
-        /* Memaksa laptop menampilkan warna dan gambar meski user lupa centang background graphics */
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-    }
-    
-    /* Tambahan agar font di laptop tidak terlihat 'gemuk' atau pecah */
-    body {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-}
-  
   
   html, body {
     height: auto !important;
-    min-height: auto !important; /* Reset min-height 100vh dari body */
+    min-height: auto !important;
     overflow: visible !important;
     background: white !important;
     color: black !important;
     margin: 0 !important;
     padding: 0 !important;
-    display: block !important; /* Penting: mematikan flexbox body saat nge-print */
+    display: block !important;
   }
   
-  /* Sembunyikan semua UI aplikasi, hanya tampilkan kertas print */
   body > *:not(#print-area) {
     display: none !important;
   }
@@ -410,17 +391,13 @@ header {
     background: white !important;
     padding: 0 !important;
     box-sizing: border-box !important;
-    
-    /* Ganti absolute menjadi relative agar halaman bisa bersambung */
     position: relative !important;
     left: auto !important;
     top: auto !important;
-    
     margin: 0 !important;
     font-family: Arial, Helvetica, sans-serif !important;
   }
 
-  /* --- STYLE HEADER & TABEL --- */
   .header {
     text-align: center;
     border-bottom: 2px solid #333;
@@ -430,7 +407,7 @@ header {
   .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
   .header p { margin: 3px; font-size: 14px; }
 
-  .section { margin-bottom: 20px; }
+  .section { margin-bottom: 20px; page-break-inside: avoid; }
   .section-title {
     font-weight: bold;
     margin-bottom: 8px;
@@ -452,24 +429,25 @@ header {
   }
   .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-  /* --- MENCEGAH ELEMEN TERPOTONG DI TENGAH HALAMAN --- */
+  /* Mencegah elemen terpotong di tengah halaman */
   tr, .photo-grid, .signature { 
     page-break-inside: avoid !important; 
   }
   thead { display: table-header-group !important; }
 
   .photo-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
     gap: 15px;
     margin-top: 10px;
   }
   .photo-grid img {
-    width: 100%;
-    height: 150px;
+    width: 45%; /* Menggunakan persentase aman */
+    max-height: 200px;
     object-fit: contain;
     border: 1px solid #ccc;
     background: #fff;
+    display: block;
   }
 
   .signature {
@@ -492,7 +470,6 @@ header {
 
   .no-print { display: none !important; }
 }
-
 
 #print-area {
   display: none;
@@ -1615,7 +1592,7 @@ function showAISummary() {
   `;
 }
 
-// --- PDF REPORT ---
+// --- PDF REPORT (FIXED VERSION) ---
 function openPreviewModal() {
   document.getElementById('preview-modal').style.display = 'block';
   document.getElementById('modal-step-1').classList.remove('hidden');
@@ -1856,14 +1833,18 @@ function downloadPDF() {
     <html>
     <head>
       <title>Laporan_Technical_Support_Broco</title>
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
       <style>
         @page { size: A4 portrait; margin: 15mm; }
-        body { 
+        * { box-sizing: border-box; }
+        html, body { 
           font-family: Arial, Helvetica, sans-serif; 
           color: black; 
           background: white; 
           margin: 0; 
           padding: 0; 
+          height: auto;
+          overflow: visible;
         }
         .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
         .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
@@ -1881,15 +1862,28 @@ function downloadPDF() {
           padding: 8px; 
           text-align: left; 
           font-size: 11px; 
-          page-break-inside: avoid !important; /* Mencegah sel terbelah */
         }
         .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        
+        /* FIX: Perkuat aturan page-break agar tabel tidak terpotong aneh */
         tr { page-break-inside: avoid !important; page-break-after: auto !important; }
         thead { display: table-header-group !important; }
         
-        /* Ubah display flex/grid menjadi flex standard agar foto aman saat ganti halaman */
-        .photo-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; page-break-inside: avoid; }
-        .photo-grid img { width: 45%; max-height: 200px; object-fit: contain; border: 1px solid #ccc; background: #fff; }
+        /* FIX: Gunakan Flex Wrap agar foto lebih aman saat potong halaman daripada Grid */
+        .photo-grid { 
+          display: flex; 
+          flex-wrap: wrap; 
+          gap: 15px; 
+          margin-top: 10px; 
+          page-break-inside: avoid; 
+        }
+        .photo-grid img { 
+          width: 45%; /* Lebar aman untuk 2 kolom */
+          max-height: 200px; 
+          object-fit: contain; 
+          border: 1px solid #ccc; 
+          background: #fff; 
+        }
         
         .signature { display: flex; justify-content: space-between; margin-top: 50px; text-align: center; page-break-inside: avoid; }
         .signature div { width: 200px; }
@@ -1900,21 +1894,23 @@ function downloadPDF() {
     </head>
     <body>
       ${content}
+      <!-- FIX: Script ini memastikan print hanya di-trigger setelah semua konten (termasuk gambar) selesai dimuat oleh browser -->
+      <script>
+        window.onload = function() {
+          window.print();
+        };
+      <\/script>
     </body>
     </html>
   `);
   doc.close();
   
-  // 3. Beri jeda 1 detik agar browser selesai me-render tabel dan meload gambar base64
+  // 3. Cleanup iframe otomatis setelah print dialog muncul (delay sedikit untuk memastikan print ter-trigger)
   setTimeout(() => {
-    iframe.contentWindow.focus();
-    iframe.contentWindow.print();
-    
-    // 4. Bersihkan iframe dari memori setelah jendela print muncul
-    setTimeout(() => {
+    try {
       document.body.removeChild(iframe);
-    }, 2000);
-  }, 1000);
+    } catch(e) {}
+  }, 2000);
 }
 
 // --- UTILS ---
