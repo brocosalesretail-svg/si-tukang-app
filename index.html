@@ -381,11 +381,11 @@ header {
   border-radius: var(--radius-md); margin-bottom: 8px;
 }
 
-/* --- PRINT & PDF OPTIMIZATION (PROFESSIONAL VECTOR PDF) --- */
+/* --- PROFESSIONAL PRINT & PDF (BROCO STANDARD) --- */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 10mm;
+    margin: 0; /* Let #print-area handle padding */
   }
   
   html, body {
@@ -395,10 +395,9 @@ header {
     color: black !important;
     margin: 0 !important;
     padding: 0 !important;
-    width: 210mm !important; /* Fixed A4 Width */
+    width: 210mm !important;
   }
   
-  /* Sembunyikan semua kecuali print-area */
   body > *:not(#print-area) {
     display: none !important;
   }
@@ -406,55 +405,92 @@ header {
   #print-area {
     display: block !important;
     visibility: visible !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
     background: white !important;
+    padding: 20mm !important;
+    box-sizing: border-box !important;
     position: relative !important;
     left: 0 !important;
     top: 0 !important;
+    margin: 0 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
   }
 
-  table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    color: black !important;
-    border: 1px solid black !important;
-    table-layout: auto !important;
+  .header {
+    text-align: center;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
   }
-  
-  th, td {
-    border: 1px solid black !important;
-    padding: 5px !important;
-    color: black !important;
-    font-size: 10px !important;
-  }
-  
-  tr {
-    page-break-inside: avoid !important;
-    page-break-after: auto !important;
-  }
-  
-  thead {
-    display: table-header-group !important;
+  .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
+  .header p { margin: 3px; font-size: 14px; }
+
+  .section { margin-bottom: 20px; }
+  .section-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+    text-transform: uppercase;
+    font-size: 14px;
   }
 
-  img {
-    max-width: 100% !important;
-    height: auto !important;
+  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+  .info-table td { padding: 6px; font-size: 12px; vertical-align: top; }
+
+  .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .data-table th, .data-table td {
+    border: 1px solid #999;
+    padding: 8px;
+    text-align: left;
+    font-size: 11px;
+  }
+  .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  .photo-grid img {
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    border: 1px solid #ccc;
+    background: #fff;
   }
 
-  .no-print {
-    display: none !important;
+  .signature {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+    text-align: center;
+    page-break-inside: avoid;
   }
+  .signature div { width: 200px; }
+  .signature p { margin-bottom: 60px; font-size: 13px; font-weight: bold; }
+
+  .footer {
+    text-align: center;
+    font-size: 10px;
+    margin-top: 40px;
+    color: #666;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+  }
+
+  tr { page-break-inside: avoid !important; }
+  thead { display: table-header-group !important; }
+  .no-print { display: none !important; }
 }
 
 #print-area {
-  display: none; 
-  font-family: 'Arial', sans-serif;
+  display: none;
+  font-family: Arial, Helvetica, sans-serif;
   color: black;
   background: white;
-  width: 100%;
 }
 </style>
 </head>
@@ -1957,118 +1993,156 @@ function generateReportView() {
   
   if (filteredData.length === 0) { showToast("Tidak ada data pada periode ini."); return; }
   
-  let totalDemoed = 0, totalMandor = 0, totalTukang = 0;
-  
-  filteredData.forEach(r => {
-    if (r.s1Project) {
-      totalDemoed++;
-      if (r.s1Mandor) totalMandor++;
-      if (r.dataWorkers && r.dataWorkers.length > 0) {
-        totalTukang += r.dataWorkers.length;
-      } else if (r.s1TukangEst) {
-        totalTukang += parseInt(r.s1TukangEst);
-      } else if (r.s1TukangCount) {
-        totalTukang += parseInt(r.s1TukangCount);
-      }
-    }
-  });
-  
-  const options = { day: 'numeric', month: 'long', year: 'numeric' };
-  const rangeStr = `${startDate.toLocaleDateString('id-ID', options)} - ${endDate.toLocaleDateString('id-ID', options)}`;
+  let totalDemoed = 0, totalMandorCount = 0, totalTukang = 0;
+  let allPhotos = [];
+  let allNotes = [];
+  let allSignatures = [];
+  let technicalName = techFilter !== 'all' ? getTechName(techFilter) : "Multi Technical";
   
   let tableRows = '';
   filteredData.forEach((r, i) => {
-    let pName = r.s1Project || r.h1Name || r.h2Name || '-';
-    let addr = r.s1Addr || '-';
-    let mName = r.s1Mandor || r.h1Mandor || r.h2Mandor || '-';
-    let jmlTukang = '-';
-    if(r.s1Project) {
-      if(r.dataWorkers && r.dataWorkers.length > 0) jmlTukang = r.dataWorkers.length + " (Orang)";
-      else if(r.s1TukangEst) jmlTukang = r.s1TukangEst;
-    }
-    let result = r.s1Result || r.h1Result || '-';
+    totalDemoed++;
+    if (r.s1Mandor) totalMandorCount++;
     
-    let photoGalleryHTML = '';
-    if(r.photos && r.photos.length > 0) {
-      photoGalleryHTML = '<div class="pdf-photos" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 10px 0;">';
-      r.photos.forEach(ph => {
-        photoGalleryHTML += `<div class="pdf-photo-box" style="width: 90mm; height: 70mm; border: 1px solid #000; overflow: hidden; background: white;"><img src="${ph}" style="width: 100%; height: 100%; object-fit: contain;"></div>`;
-      });
-      photoGalleryHTML += '</div>';
+    // Hitung Tukang
+    if (r.dataWorkers && r.dataWorkers.length > 0) {
+      totalTukang += r.dataWorkers.length;
+    } else if (r.s1TukangEst) {
+      totalTukang += parseInt(r.s1TukangEst);
     }
 
-    let signatureHTML = '';
-    if(r.signature) {
-      signatureHTML = `<div style="margin-top:5px; text-align:right;"><img src="${r.signature}" style="height:40px; border-bottom: 1px solid black;"><br><span style="font-size:8px; color: black; font-weight: bold;">Ttd Mandor</span></div>`;
-    }
+    // Koleksi Foto & Catatan
+    if (r.photos) allPhotos.push(...r.photos);
+    if (r.s1Notes) allNotes.push(`${r.s1Project}: ${r.s1Notes}`);
+    if (r.signature) allSignatures.push({ project: r.s1Project, img: r.signature });
+
+    let pName = r.s1Project || r.h1Name || r.h2Name || '-';
+    let result = r.s1Result || r.h1Result || '-';
+    let tech = getTechName(r.tech);
     
-  tableRows += `
-    <tr style="page-break-inside: avoid;">
-      <td style="border: 1px solid #000; padding: 6px; text-align:center;">${i + 1}</td>
-      <td style="border: 1px solid #000; padding: 6px;">${r.date}</td>
-      <td style="border: 1px solid #000; padding: 6px;"><strong>${pName}</strong><br><small>${addr}</small></td>
-      <td style="border: 1px solid #000; padding: 6px;">${mName}</td>
-      <td style="border: 1px solid #000; padding: 6px; text-align:center;">${jmlTukang}</td>
-      <td style="border: 1px solid #000; padding: 6px;">${result}</td>
-      <td style="border: 1px solid #000; padding: 6px;"><strong>${getTechName(r.tech)}</strong>${signatureHTML}</td>
-    </tr>
-    ${r.s1Project && r.photos && r.photos.length > 0 ? `<tr><td colspan="7" style="border: 1px solid #000; padding:10px;">${photoGalleryHTML}</td></tr>` : ''}
+    tableRows += `
+      <tr>
+        <td style="text-align:center;">${i + 1}</td>
+        <td><strong>${pName}</strong><br><small>${r.date} | ${tech}</small></td>
+        <td>${result}</td>
+      </tr>
     `;
   });
+
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  const rangeStr = startStr === endStr ? 
+    new Date(startStr).toLocaleDateString('id-ID', options) : 
+    `${new Date(startStr).toLocaleDateString('id-ID', options)} - ${new Date(endStr).toLocaleDateString('id-ID', options)}`;
+
+  // Header Info (Jika filter 1 proyek, tampilkan detail mandor)
+  let projectInfo = projectFilter !== 'all' ? projectFilter : "Multi Proyek / Lokasi";
+  let mandorInfo = filteredData.length === 1 ? (filteredData[0].s1Mandor || "-") : "Terlampir di Tabel";
   
+  // Photo Grid HTML
+  let photoGridHTML = '';
+  if (allPhotos.length > 0) {
+    photoGridHTML = '<div class="photo-grid">';
+    allPhotos.slice(0, 6).forEach(ph => { // Max 6 photos for professional look
+      photoGridHTML += `<img src="${ph}">`;
+    });
+    photoGridHTML += '</div>';
+  } else {
+    photoGridHTML = '<p style="font-size:11px; color:#999; font-style:italic;">Tidak ada dokumentasi foto.</p>';
+  }
+
+  // Signature Section
+  let signatureImgs = '';
+  if (allSignatures.length > 0) {
+    signatureImgs = `<div style="margin-bottom:10px;">`;
+    allSignatures.slice(0, 2).forEach(sig => {
+      signatureImgs += `<img src="${sig.img}" style="height:50px; display:block; margin: 0 auto;">`;
+    });
+    signatureImgs += `</div>`;
+  }
+
   const reportHTML = `
-  <div style="background: white; color: black; font-family: Arial, sans-serif; padding: 20px; width: 210mm; min-height: 297mm; box-sizing: border-box; margin: 0 auto; border: 1px solid #eee;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px double #000; padding-bottom: 15px; margin-bottom: 25px;">
-      <div style="width: 150px; font-weight: 900; font-size: 24px; color: #000;">SI TUKANG</div>
-      <div style="text-align: right;">
-        <h2 style="margin: 0; font-size: 20px; font-weight: bold; text-transform: uppercase; color: black;">LAPORAN KEGIATAN HARIAN</h2>
-        <p style="margin: 5px 0 0 0; font-size: 13px; color: black; font-weight: bold;">Periode: ${rangeStr}</p>
-        <p style="margin: 2px 0 0 0; font-size: 11px; color: #555;">Dibuat secara otomatis oleh System Si Tukang</p>
-      </div>
+  <div id="laporan">
+    <!-- HEADER -->
+    <div class="header">
+      <div style="font-weight:900; font-size:24px; color:#000; margin-bottom:5px;">BROCO</div>
+      <h1>LAPORAN TECHNICAL SUPPORT</h1>
+      <p><b>PT. BROCO AERATED CONCRETE INDUSTRIES</b></p>
+      <p>Divisi Technical Support</p>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
-      <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 15px; text-align: center;">
-        <span style="display: block; font-size: 10px; text-transform: uppercase; color: #666; font-weight: bold;">Project Demo</span>
-        <strong style="display: block; font-size: 24px; color: black; margin-top: 5px;">${totalDemoed}</strong>
-      </div>
-      <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 15px; text-align: center;">
-        <span style="display: block; font-size: 10px; text-transform: uppercase; color: #666; font-weight: bold;">Total Mandor</span>
-        <strong style="display: block; font-size: 24px; color: black; margin-top: 5px;">${totalMandor}</strong>
-      </div>
-      <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 15px; text-align: center;">
-        <span style="display: block; font-size: 10px; text-transform: uppercase; color: #666; font-weight: bold;">Total Tukang</span>
-        <strong style="display: block; font-size: 24px; color: black; margin-top: 5px;">${totalTukang}</strong>
-      </div>
-    </div>
-
-    <table style="width: 100%; border-collapse: collapse; font-size: 11px; color: black; border: 2px solid #000;">
-      <thead>
-        <tr style="background: #e9ecef;">
-          <th style="border: 1px solid #000; padding: 10px; width: 30px;">NO</th>
-          <th style="border: 1px solid #000; padding: 10px; width: 75px;">TANGGAL</th>
-          <th style="border: 1px solid #000; padding: 10px;">DETAIL PROYEK & ALAMAT</th>
-          <th style="border: 1px solid #000; padding: 10px; width: 100px;">MANDOR</th>
-          <th style="border: 1px solid #000; padding: 10px; width: 50px; text-align: center;">JML</th>
-          <th style="border: 1px solid #000; padding: 10px; width: 100px;">HASIL DEMO</th>
-          <th style="border: 1px solid #000; padding: 10px; width: 110px;">TECHNICAL</th>
+    <!-- INFORMASI -->
+    <div class="section">
+      <div class="section-title">Informasi Proyek</div>
+      <table class="info-table">
+        <tr>
+          <td width="160">Tanggal Laporan</td>
+          <td>: ${rangeStr}</td>
         </tr>
-      </thead>
-      <tbody>${tableRows}</tbody>
-    </table>
+        <tr>
+          <td>Nama Technical</td>
+          <td>: ${technicalName}</td>
+        </tr>
+        <tr>
+          <td>Lokasi Proyek</td>
+          <td>: ${projectInfo}</td>
+        </tr>
+        <tr>
+          <td>Mandor Lapangan</td>
+          <td>: ${mandorInfo}</td>
+        </tr>
+        <tr>
+          <td>Ringkasan Demo</td>
+          <td>: ${totalDemoed} Project | ${totalTukang} Tukang Terlibat</td>
+        </tr>
+      </table>
+    </div>
 
-    <div style="margin-top: 60px; display: flex; justify-content: space-around; page-break-inside: avoid;">
-      <div style="text-align: center; width: 250px;">
-        <p style="margin-bottom: 90px; font-size: 13px; color: black; font-weight: bold;">Dibuat Oleh,</p>
-        <p style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 13px; color: black;">( Technical Support )</p>
+    <!-- AKTIVITAS -->
+    <div class="section">
+      <div class="section-title">Daftar Aktivitas & Hasil Demo</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th width="40">No</th>
+            <th>Proyek & Tanggal</th>
+            <th>Hasil Kunjungan / Demo</th>
+          </tr>
+        </thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>
+
+    <!-- FOTO -->
+    <div class="section">
+      <div class="section-title">Dokumentasi Kegiatan Lapangan</div>
+      ${photoGridHTML}
+    </div>
+
+    <!-- CATATAN -->
+    <div class="section">
+      <div class="section-title">Catatan Technical</div>
+      <p style="font-size:12px; line-height:1.5;">
+        ${allNotes.length > 0 ? allNotes.join('<br>') : "Seluruh kegiatan berjalan sesuai rencana. Produk Broco Aerated Concrete diaplikasikan dengan metode yang benar oleh tim technical di lapangan."}
+      </p>
+    </div>
+
+    <!-- TANDA TANGAN -->
+    <div class="signature">
+      <div>
+        <p>Technical Support</p>
+        <div style="height:60px;"></div>
+        ( <strong>${technicalName}</strong> )
       </div>
-      <div style="text-align: center; width: 250px;">
-        <p style="margin-bottom: 90px; font-size: 13px; color: black; font-weight: bold;">Diketahui Oleh,</p>
-        <p style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 13px; color: black;">( Mandor / Supervisor )</p>
+      <div>
+        <p>Mandor / Penanggung Jawab</p>
+        <div style="height:60px;">${signatureImgs}</div>
+        ( _____________________ )
       </div>
     </div>
-    <div style="margin-top: 40px; font-size: 9px; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 10px;">
-      Dicetak pada: ${new Date().toLocaleString('id-ID')} | ID Dokumen: ${Math.random().toString(36).substr(2, 9).toUpperCase()}
+
+    <div class="footer">
+      PT. BROCO AERATED CONCRETE INDUSTRIES<br>
+      <small>Dokumen Digital Sah - Dicetak pada ${new Date().toLocaleString('id-ID')}</small>
     </div>
   </div>
   `;
@@ -2076,7 +2150,6 @@ function generateReportView() {
   document.getElementById('report-paper').innerHTML = reportHTML;
   document.getElementById('print-area').innerHTML = reportHTML;
   
-  // Beri waktu sedikit untuk browser merender gambar/tanda tangan sebelum memunculkan modal
   setTimeout(() => {
     document.getElementById('modal-step-1').classList.add('hidden');
     document.getElementById('report-paper').classList.remove('hidden');
