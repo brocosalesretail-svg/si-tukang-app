@@ -372,6 +372,20 @@ header {
     margin: 10mm; /* Biarkan sistem yang mengatur margin kertas */
   }
   
+         /* Memaksa laptop menampilkan warna dan gambar meski user lupa centang background graphics */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+  
+    
+    /* Tambahan agar font di laptop tidak terlihat 'gemuk' atau pecah */
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+  
+  
   html, body {
     height: auto !important;
     min-height: auto !important; /* Reset min-height 100vh dari body */
