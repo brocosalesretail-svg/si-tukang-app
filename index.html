@@ -362,7 +362,7 @@ header {
   border-radius: var(--radius-md); margin-bottom: 8px;
 }
 
-/* --- PROFESSIONAL PRINT & PDF (DESKTOP FIX) --- */
+/* --- PROFESSIONAL PRINT & PDF (ULTIMATE FIX) --- */
 @media print {
   @page {
     size: A4 portrait;
@@ -413,6 +413,7 @@ header {
     margin-bottom: 8px;
     border-bottom: 1px solid #ccc;
     padding-bottom: 4px;
+    text-size: 14px; /* Typo fixed from font-size */
     text-transform: uppercase;
     font-size: 14px;
   }
@@ -442,7 +443,7 @@ header {
     margin-top: 10px;
   }
   .photo-grid img {
-    width: 45%; /* Menggunakan persentase aman */
+    width: 45%; 
     max-height: 200px;
     object-fit: contain;
     border: 1px solid #ccc;
@@ -573,7 +574,7 @@ header {
       </li>
     </ul>
     <div style="margin-top: auto; font-size: 0.7rem; color: var(--text-muted); text-align: center;">
-      Credit by: Rudi Philipus<br>build 2026 — v6.0
+      Credit by: Rudi Philipus<br>build 2026 — v7.0 (Fixed Desktop)
     </div>
   </aside>
 
@@ -1592,7 +1593,7 @@ function showAISummary() {
   `;
 }
 
-// --- PDF REPORT (FIXED VERSION) ---
+// --- PDF REPORT (ULTIMATE FIX VERSION) ---
 function openPreviewModal() {
   document.getElementById('preview-modal').style.display = 'block';
   document.getElementById('modal-step-1').classList.remove('hidden');
@@ -1814,7 +1815,6 @@ function downloadPDF() {
   
   showToast("Menyiapkan dokumen PDF...");
   
-  // 1. Buat iframe tersembunyi untuk mengisolasi proses print dari UI aplikasi
   const iframe = document.createElement('iframe');
   iframe.style.position = 'fixed';
   iframe.style.right = '0';
@@ -1826,7 +1826,7 @@ function downloadPDF() {
   
   const doc = iframe.contentWindow.document;
   
-  // 2. Tulis struktur HTML murni dan CSS khusus kertas ke dalam iframe
+  // ULTIMATE FIX CSS
   doc.open();
   doc.write(`
     <!DOCTYPE html>
@@ -1835,17 +1835,34 @@ function downloadPDF() {
       <title>Laporan_Technical_Support_Broco</title>
       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
       <style>
-        @page { size: A4 portrait; margin: 15mm; }
+        /* KITA MATIKAN MARGIN KARENA KITA AKAN MENGATURNYA SECARA MANUAL DI WRAPPER */
+        @page { 
+          size: A4 portrait; 
+          margin: 0mm; 
+        }
+        
         * { box-sizing: border-box; }
+        
         html, body { 
-          font-family: Arial, Helvetica, sans-serif; 
-          color: black; 
-          background: white; 
+          width: 100%;
+          height: 100%;
           margin: 0; 
           padding: 0; 
-          height: auto;
-          overflow: visible;
+          background: white; 
+          color: black;
+          font-family: Arial, Helvetica, sans-serif;
         }
+
+        /* WRAPPER UTAMA YANG MENENTUKAN BATAS KERTAS */
+        .print-container {
+          width: 100%;
+          max-width: 210mm; /* Batas lebar A4 fisik */
+          margin: 0 auto; /* Tengah */
+          padding: 15mm; /* Margin aman (top, right, bottom, left) */
+          background: white;
+          min-height: 297mm;
+        }
+
         .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
         .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
         .header p { margin: 3px; font-size: 14px; }
@@ -1856,20 +1873,27 @@ function downloadPDF() {
         .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
         .info-table td { padding: 6px; font-size: 12px; vertical-align: top; }
         
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        /* FIX TABEL PENTING: PAKSA TABEL MUAT DI DALAM LEBAR KERTAS */
+        .data-table { 
+          width: 100%; 
+          border-collapse: collapse; 
+          margin-top: 10px; 
+          table-layout: fixed; /* KEY FIX: Ini memaksa kolom mengecil jika teks panjang */
+          word-wrap: break-word; /* Memaksa teks turun baris (word wrap) */
+        }
+        
         .data-table th, .data-table td { 
           border: 1px solid #999; 
           padding: 8px; 
           text-align: left; 
-          font-size: 11px; 
+          font-size: 11px;
         }
         .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         
-        /* FIX: Perkuat aturan page-break agar tabel tidak terpotong aneh */
+        /* Fix Potongan Halaman */
         tr { page-break-inside: avoid !important; page-break-after: auto !important; }
         thead { display: table-header-group !important; }
         
-        /* FIX: Gunakan Flex Wrap agar foto lebih aman saat potong halaman daripada Grid */
         .photo-grid { 
           display: flex; 
           flex-wrap: wrap; 
@@ -1878,7 +1902,7 @@ function downloadPDF() {
           page-break-inside: avoid; 
         }
         .photo-grid img { 
-          width: 45%; /* Lebar aman untuk 2 kolom */
+          width: 45%; 
           max-height: 200px; 
           object-fit: contain; 
           border: 1px solid #ccc; 
@@ -1893,8 +1917,9 @@ function downloadPDF() {
       </style>
     </head>
     <body>
-      ${content}
-      <!-- FIX: Script ini memastikan print hanya di-trigger setelah semua konten (termasuk gambar) selesai dimuat oleh browser -->
+      <div class="print-container">
+        ${content}
+      </div>
       <script>
         window.onload = function() {
           window.print();
@@ -1905,7 +1930,6 @@ function downloadPDF() {
   `);
   doc.close();
   
-  // 3. Cleanup iframe otomatis setelah print dialog muncul (delay sedikit untuk memastikan print ter-trigger)
   setTimeout(() => {
     try {
       document.body.removeChild(iframe);
