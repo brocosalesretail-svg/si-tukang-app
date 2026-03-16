@@ -378,87 +378,84 @@ header {
 /* --- PROFESSIONAL PRINT & PDF (BROCO STANDARD) --- */
 
 @media print {
-    /* Seting Dasar Kertas */
+    /* Konfigurasi Kertas A4 */
     @page {
         size: A4 portrait;
         margin: 15mm;
     }
 
-    body {
+    /* Reset Tampilan agar tidak terpotong */
+    html, body {
+        height: auto !important;
+        overflow: visible !important;
         background: white !important;
         color: black !important;
         margin: 0 !important;
         padding: 0 !important;
-        /* Menghilangkan scrollbar dan paksaan height agar tidak terpotong */
-        height: auto !important;
-        overflow: visible !important;
     }
 
-    /* Memastikan container utama bisa memanjang ke bawah (multiple pages) */
+    /* Memaksa kontainer menggunakan lebar penuh kertas */
     .container, #print-area {
         width: 100% !important;
         max-width: none !important;
+        position: relative !important;
+        display: block !important;
         margin: 0 !important;
         padding: 0 !important;
         box-shadow: none !important;
-        display: block !important;
-        position: relative !important;
-        left: 0 !important;
-        top: 0 !important;
     }
 
-    /* Tombol download jangan ikut tercetak */
-    .no-print, .btn, .nav-menu {
+    /* Sembunyikan tombol UI saat cetak */
+    .no-print, .btn, .nav-menu, button {
         display: none !important;
     }
 
-    /* --- PERBAIKAN TABEL AGAR TIDAK TERPOTONG --- */
+    /* Pengaturan Tabel agar tidak terbelah di tengah baris */
     table {
         width: 100% !important;
         border-collapse: collapse !important;
-        page-break-inside: auto !important; /* Biarkan tabel pindah halaman */
-    }
-
-    tr {
-        page-break-inside: avoid !important; /* Jangan potong di tengah baris */
-        page-break-after: auto !important;
+        page-break-inside: auto !important;
     }
 
     thead {
-        display: table-header-group !important; /* Judul kolom muncul di tiap halaman baru */
+        display: table-header-group !important; /* Judul tabel muncul di tiap halaman */
+    }
+
+    tr {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
     }
 
     td, th {
+        font-size: 11px !important;
         word-wrap: break-word !important;
-        font-size: 11px !important; /* Ukuran font standar laporan */
+        padding: 6px !important;
     }
 
-    /* --- PERBAIKAN FOTO/GAMBAR --- */
-    .photo-grid, .evidence-section {
-        display: block !important; /* Hindari flex/grid yang rumit saat print */
+    /* Pengaturan Foto agar rapi */
+    .photo-grid {
+        display: block !important;
     }
 
     .photo-container {
-        page-break-inside: avoid !important; /* Jangan potong foto di tengah */
-        margin-bottom: 10px;
+        page-break-inside: avoid !important; /* Foto tidak akan terpotong jadi dua */
+        margin-bottom: 15px;
         text-align: center;
     }
 
     img {
         max-width: 100% !important;
         height: auto !important;
-        display: block;
-        margin: 5px auto;
+        max-height: 250px;
+        object-fit: contain;
     }
 
-    /* Garis tanda tangan harus tetap di satu halaman (jangan ttd di halaman baru sendiri) */
+    /* Bagian Tanda Tangan */
     .signature-section {
         page-break-inside: avoid !important;
         margin-top: 30px;
     }
 }
-
-
   
   
   #print-area {
