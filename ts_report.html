@@ -455,6 +455,21 @@ header {
         page-break-inside: avoid !important;
         margin-top: 30px;
     }
+
+            /* Memaksa laptop menampilkan warna dan gambar meski user lupa centang background graphics */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        
+    /* Tambahan agar font di laptop tidak terlihat 'gemuk' atau pecah */
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+
+
 }
   
   
