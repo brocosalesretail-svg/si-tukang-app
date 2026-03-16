@@ -1981,33 +1981,39 @@ function generateReportView() {
 
 function downloadPDF() {
   const element = document.getElementById('report-paper');
-  showToast("Sedang menyiapkan PDF Landscape... Harap tunggu.");
+  showToast("Menyiapkan PDF Landscape (A4)...");
 
   const controls = document.querySelector('.modal-controls');
   if(controls) controls.style.display = 'none';
   
+  // Pastikan posisi scroll element ada di paling atas sebelum capture
+  element.scrollTop = 0;
+
   const opt = {
-    margin: [10, 10, 10, 10], 
-    filename: `Laporan_TS_Landscape_${new Date().toISOString().slice(0,10)}.pdf`,
+    margin: [5, 5, 5, 5], 
+    filename: `Laporan_TS_SiTukang_${new Date().toISOString().slice(0,10)}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { 
       scale: 2, 
       useCORS: true,
       logging: false,
       letterRendering: true,
-      scrollY: 0,
-      windowWidth: 1200 // Paksa lebar canvas lebih luas untuk landscape
+      scrollY: -window.scrollY, // Kompensasi scroll halaman
+      y: 0,
+      scrollX: 0,
+      x: 0,
+      windowWidth: 1200
     },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape', compress: true },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
   
   html2pdf().set(opt).from(element).save().then(() => {
-    showToast("PDF Landscape Selesai!");
+    showToast("Berhasil diunduh!");
     if(controls) controls.style.display = 'block';
   }).catch(err => {
     console.error("PDF Error:", err);
-    showToast("Gagal membuat PDF.");
+    showToast("Gagal. Coba Refresh Halaman.");
     if(controls) controls.style.display = 'block';
   });
 }
