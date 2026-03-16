@@ -371,12 +371,13 @@ header {
     size: A4 portrait;
     margin: 10mm; /* Biarkan sistem yang mengatur margin kertas */
   }
-  
-         /* Memaksa laptop menampilkan warna dan gambar meski user lupa centang background graphics */
+
+* {
+        /* Memaksa laptop menampilkan warna dan gambar meski user lupa centang background graphics */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
-  
+    }
     
     /* Tambahan agar font di laptop tidak terlihat 'gemuk' atau pecah */
     body {
