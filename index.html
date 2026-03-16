@@ -10,12 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
-  if (typeof html2pdf === 'undefined') {
-    document.write('<script src="https://unpkg.com/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"><\/script>');
-  }
-</script>
+<!-- PDF Export library removed in favor of native window.print() for professional vector PDF results -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
   // Fallback if unpkg fails
@@ -386,54 +381,80 @@ header {
   border-radius: var(--radius-md); margin-bottom: 8px;
 }
 
-/* --- PRINT & PDF OPTIMIZATION (WYSIWYG) --- */
+/* --- PRINT & PDF OPTIMIZATION (PROFESSIONAL VECTOR PDF) --- */
 @media print {
-  body * {
-    visibility: hidden !important;
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
   }
   
-  #print-area, #print-area * {
-    visibility: visible !important;
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 210mm !important; /* Fixed A4 Width */
+  }
+  
+  /* Sembunyikan semua kecuali print-area */
+  body > *:not(#print-area) {
+    display: none !important;
   }
   
   #print-area {
-    position: absolute !important;
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    position: relative !important;
     left: 0 !important;
     top: 0 !important;
-    width: 210mm !important;
-    margin: 0 !important;
-    padding: 15mm !important;
-    background: white !important;
-    -webkit-print-color-adjust: exact;
   }
 
   table {
     width: 100% !important;
     border-collapse: collapse !important;
+    color: black !important;
+    border: 1px solid black !important;
+    table-layout: auto !important;
+  }
+  
+  th, td {
+    border: 1px solid black !important;
+    padding: 5px !important;
+    color: black !important;
+    font-size: 10px !important;
   }
   
   tr {
     page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+  
+  thead {
+    display: table-header-group !important;
+  }
+
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .no-print {
+    display: none !important;
   }
 }
 
 #print-area {
-  width: 210mm;
-  min-height: 297mm;
-  padding: 15mm;
+  display: none; 
+  font-family: 'Arial', sans-serif;
+  color: black;
   background: white;
-  margin: auto;
-  box-sizing: border-box;
-  display: none; /* Sembunyikan di layar, munculkan di PDF/Print */
-}
-
-#print-area table {
   width: 100%;
-  border-collapse: collapse;
-}
-
-#print-area tr {
-  page-break-inside: avoid;
 }
 </style>
 </head>
@@ -1009,11 +1030,26 @@ header {
       </div>
     </div>
     <div id="report-paper" class="a4-paper hidden"></div>
-    <div id="modal-step-2" class="hidden" style="text-align: center; margin-top: 20px;">
-      <button class="btn btn-sm" style="background: var(--primary); margin-right: 10px;" onclick="downloadPDF()">
-        <i class="fa-solid fa-download"></i> Download PDF
-      </button>
-      <button class="btn btn-sm" style="background: #ef4444;" onclick="closePreviewModal()">Tutup</button>
+    <div id="modal-step-2" class="hidden">
+      <div class="metal-card" style="margin-bottom: 20px; border-color: var(--accent); background: rgba(16, 185, 129, 0.1);">
+        <h4 style="margin-top:0; color:var(--accent);"><i class="fa-solid fa-circle-check"></i> Preview Laporan Siap</h4>
+        <p style="font-size:0.85rem; color:var(--text-main); margin-bottom:15px;">Silakan periksa isi laporan di bawah. Jika sudah benar, klik tombol Cetak di bawah ini.</p>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn" style="flex:1; background: var(--accent);" onclick="downloadPDF()">
+            <i class="fa-solid fa-print"></i> CETAK LAPORAN (PDF)
+          </button>
+          <button class="btn" style="flex:1; background: #64748b;" onclick="resetPreview()">
+            <i class="fa-solid fa-rotate-left"></i> ULANGI FILTER
+          </button>
+        </div>
+        <p style="font-size: 0.75rem; color: #cbd5e1; margin-top: 12px; text-align: center; line-height: 1.4;">
+          <i class="fa-solid fa-circle-info"></i> <strong>PENTING:</strong> Pada dialog cetak, pilih <b>"Save as PDF"</b>.<br>Pastikan opsi <b>"Background Graphics"</b> dicentang agar warna & gambar muncul sempurna.
+        </p>
+      </div>
+      <div class="a4-paper" id="report-paper"></div>
+      <div style="margin-top: 20px; text-align: center;">
+        <button class="btn btn-sm" style="background: #ef4444;" onclick="closePreviewModal()">TUTUP PREVIEW</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1954,80 +1990,87 @@ function generateReportView() {
     
     let photoGalleryHTML = '';
     if(r.photos && r.photos.length > 0) {
-      photoGalleryHTML = '<div class="pdf-photos" style="display: flex; gap: 10px; margin: 10px 0;">';
+      photoGalleryHTML = '<div class="pdf-photos" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 10px 0;">';
       r.photos.forEach(ph => {
-        photoGalleryHTML += `<div class="pdf-photo-box" style="width: 85mm; height: 60mm; border: 1px solid #ccc; overflow: hidden;"><img src="${ph}" style="width: 100%; height: 100%; object-fit: fill;"></div>`;
+        photoGalleryHTML += `<div class="pdf-photo-box" style="width: 90mm; height: 70mm; border: 1px solid #000; overflow: hidden; background: white;"><img src="${ph}" style="width: 100%; height: 100%; object-fit: contain;"></div>`;
       });
       photoGalleryHTML += '</div>';
     }
 
     let signatureHTML = '';
     if(r.signature) {
-      signatureHTML = `<div style="margin-top:5px; text-align:right;"><img src="${r.signature}" style="height:40px; border-bottom:1px solid #eee;"><br><span style="font-size:8px;">Ttd Mandor</span></div>`;
+      signatureHTML = `<div style="margin-top:5px; text-align:right;"><img src="${r.signature}" style="height:40px; border-bottom: 1px solid black;"><br><span style="font-size:8px; color: black; font-weight: bold;">Ttd Mandor</span></div>`;
     }
     
   tableRows += `
-    <tr>
-      <td style="text-align:center;">${i + 1}</td>
-      <td>${r.date}</td>
-      <td><strong>${pName}</strong></td>
-      <td>${addr}</td>
-      <td>${mName}</td>
-      <td style="text-align:center;">${jmlTukang}</td>
-      <td>${result}</td>
-      <td>${getTechName(r.tech)}${signatureHTML}</td>
+    <tr style="page-break-inside: avoid;">
+      <td style="border: 1px solid #000; padding: 6px; text-align:center;">${i + 1}</td>
+      <td style="border: 1px solid #000; padding: 6px;">${r.date}</td>
+      <td style="border: 1px solid #000; padding: 6px;"><strong>${pName}</strong><br><small>${addr}</small></td>
+      <td style="border: 1px solid #000; padding: 6px;">${mName}</td>
+      <td style="border: 1px solid #000; padding: 6px; text-align:center;">${jmlTukang}</td>
+      <td style="border: 1px solid #000; padding: 6px;">${result}</td>
+      <td style="border: 1px solid #000; padding: 6px;"><strong>${getTechName(r.tech)}</strong>${signatureHTML}</td>
     </tr>
-    ${r.s1Project && r.photos && r.photos.length > 0 ? `<tr><td colspan="8" style="padding:10px; border: 1px solid #000;">${photoGalleryHTML}</td></tr>` : ''}
+    ${r.s1Project && r.photos && r.photos.length > 0 ? `<tr><td colspan="7" style="border: 1px solid #000; padding:10px;">${photoGalleryHTML}</td></tr>` : ''}
     `;
   });
   
   const reportHTML = `
-    <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
-      <h2 style="margin: 0; font-size: 20px; font-family: 'Rajdhani'; font-weight: 700; text-transform: uppercase;">LAPORAN KEGIATAN TECHNICAL SUPPORT</h2>
-      <p style="margin: 5px 0 0 0; font-size: 14px;">Periode: ${rangeStr}</p>
-    </div>
-
-    <div style="display: flex; gap: 15px; margin-bottom: 20px; background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
-      <div style="flex: 1; text-align: center; border-right: 1px solid #e5e7eb;">
-        <strong style="display: block; font-size: 18px;">${totalDemoed}</strong>
-        <span style="font-size: 11px; color: #6b7280;">Project Demo</span>
-      </div>
-      <div style="flex: 1; text-align: center; border-right: 1px solid #e5e7eb;">
-        <strong style="display: block; font-size: 18px;">${totalMandor}</strong>
-        <span style="font-size: 11px; color: #6b7280;">Total Mandor</span>
-      </div>
-      <div style="flex: 1; text-align: center;">
-        <strong style="display: block; font-size: 18px;">${totalTukang}</strong>
-        <span style="font-size: 11px; color: #6b7280;">Total Tukang</span>
+  <div style="background: white; color: black; font-family: Arial, sans-serif; padding: 20px; width: 210mm; min-height: 297mm; box-sizing: border-box; margin: 0 auto; border: 1px solid #eee;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px double #000; padding-bottom: 15px; margin-bottom: 25px;">
+      <div style="width: 150px; font-weight: 900; font-size: 24px; color: #000;">SI TUKANG</div>
+      <div style="text-align: right;">
+        <h2 style="margin: 0; font-size: 20px; font-weight: bold; text-transform: uppercase; color: black;">LAPORAN KEGIATAN HARIAN</h2>
+        <p style="margin: 5px 0 0 0; font-size: 13px; color: black; font-weight: bold;">Periode: ${rangeStr}</p>
+        <p style="margin: 2px 0 0 0; font-size: 11px; color: #555;">Dibuat secara otomatis oleh System Si Tukang</p>
       </div>
     </div>
 
-    <table style="width: 100%; border-collapse: collapse; font-size: 10px; table-layout: fixed;">
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+      <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 15px; text-align: center;">
+        <span style="display: block; font-size: 10px; text-transform: uppercase; color: #666; font-weight: bold;">Project Demo</span>
+        <strong style="display: block; font-size: 24px; color: black; margin-top: 5px;">${totalDemoed}</strong>
+      </div>
+      <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 15px; text-align: center;">
+        <span style="display: block; font-size: 10px; text-transform: uppercase; color: #666; font-weight: bold;">Total Mandor</span>
+        <strong style="display: block; font-size: 24px; color: black; margin-top: 5px;">${totalMandor}</strong>
+      </div>
+      <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 15px; text-align: center;">
+        <span style="display: block; font-size: 10px; text-transform: uppercase; color: #666; font-weight: bold;">Total Tukang</span>
+        <strong style="display: block; font-size: 24px; color: black; margin-top: 5px;">${totalTukang}</strong>
+      </div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 11px; color: black; border: 2px solid #000;">
       <thead>
-        <tr style="background: #f3f4f6;">
-          <th style="border: 1px solid #000; padding: 6px; width: 25px;">No</th>
-          <th style="border: 1px solid #000; padding: 6px; width: 65px;">Tanggal</th>
-          <th style="border: 1px solid #000; padding: 6px; width: 100px;">Nama Proyek</th>
-          <th style="border: 1px solid #000; padding: 6px; width: 120px;">Alamat</th>
-          <th style="border: 1px solid #000; padding: 6px; width: 80px;">Mandor</th>
-          <th style="border: 1px solid #000; padding: 6px; width: 50px; text-align: center;">Jml</th>
-          <th style="border: 1px solid #000; padding: 6px; width: 70px;">Hasil</th>
-          <th style="border: 1px solid #000; padding: 6px; width: 80px;">Technical</th>
+        <tr style="background: #e9ecef;">
+          <th style="border: 1px solid #000; padding: 10px; width: 30px;">NO</th>
+          <th style="border: 1px solid #000; padding: 10px; width: 75px;">TANGGAL</th>
+          <th style="border: 1px solid #000; padding: 10px;">DETAIL PROYEK & ALAMAT</th>
+          <th style="border: 1px solid #000; padding: 10px; width: 100px;">MANDOR</th>
+          <th style="border: 1px solid #000; padding: 10px; width: 50px; text-align: center;">JML</th>
+          <th style="border: 1px solid #000; padding: 10px; width: 100px;">HASIL DEMO</th>
+          <th style="border: 1px solid #000; padding: 10px; width: 110px;">TECHNICAL</th>
         </tr>
       </thead>
       <tbody>${tableRows}</tbody>
     </table>
 
-    <div style="margin-top: 40px; display: flex; justify-content: space-between; page-break-inside: avoid;">
-      <div style="text-align: center; width: 200px;">
-        <p style="margin-bottom: 60px; font-size: 12px;">Dibuat Oleh,</p>
-        <p style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 12px;">( Technical Support )</p>
+    <div style="margin-top: 60px; display: flex; justify-content: space-around; page-break-inside: avoid;">
+      <div style="text-align: center; width: 250px;">
+        <p style="margin-bottom: 90px; font-size: 13px; color: black; font-weight: bold;">Dibuat Oleh,</p>
+        <p style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 13px; color: black;">( Technical Support )</p>
       </div>
-      <div style="text-align: center; width: 200px;">
-        <p style="margin-bottom: 60px; font-size: 12px;">Diketahui Oleh,</p>
-        <p style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 12px;">( Mandor / Supervisor )</p>
+      <div style="text-align: center; width: 250px;">
+        <p style="margin-bottom: 90px; font-size: 13px; color: black; font-weight: bold;">Diketahui Oleh,</p>
+        <p style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 13px; color: black;">( Mandor / Supervisor )</p>
       </div>
     </div>
+    <div style="margin-top: 40px; font-size: 9px; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 10px;">
+      Dicetak pada: ${new Date().toLocaleString('id-ID')} | ID Dokumen: ${Math.random().toString(36).substr(2, 9).toUpperCase()}
+    </div>
+  </div>
   `;
   
   document.getElementById('report-paper').innerHTML = reportHTML;
@@ -2043,49 +2086,17 @@ function generateReportView() {
 
 function downloadPDF() {
   const element = document.getElementById('print-area'); 
-  if(!element) {
-    showToast("Gagal mengambil konten laporan.");
+  if(!element || element.innerHTML.trim() === "") {
+    showToast("Gagal mengambil konten laporan. Silakan klik preview dahulu.");
     return;
   }
   
-  const controls = document.querySelector('.modal-controls');
-  showToast("Menghasilkan PDF Profesional...");
-  if(controls) controls.style.display = 'none';
-
-  // --- SOLUSI UTAMA: Scroll ke atas sebelum capture ---
-  window.scrollTo(0,0);
-
-  const opt = {
-    margin: 0, 
-    filename: `Laporan_TS_SiTukang_${new Date().toISOString().slice(0,10)}.pdf`,
-    image: { type: 'jpeg', quality: 1 },
-    html2canvas: { 
-      scale: 2, 
-      useCORS: true,
-      logging: false,
-      scrollX: 0,
-      scrollY: 0,
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight
-    },
-    jsPDF: { 
-      unit: 'mm', 
-      format: 'a4', 
-      orientation: 'portrait'
-    },
-    pagebreak: { 
-      mode: ['avoid-all', 'css', 'legacy'] 
-    }
-  };
+  showToast("Membuka Dialog Cetak Laporan...");
   
-  html2pdf().set(opt).from(element).save().then(() => {
-    showToast("Berhasil diunduh!");
-    if(controls) controls.style.display = 'block';
-  }).catch(err => {
-    console.error("PDF Error:", err);
-    showToast("Gagal Cetak.");
-    if(controls) controls.style.display = 'block';
-  });
+  // Gunakan window.print() untuk hasil PDF Vector yang profesional (bukan screenshot)
+  setTimeout(() => {
+    window.print();
+  }, 500);
 }
 
 // --- UTILS ---
