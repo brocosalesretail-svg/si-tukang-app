@@ -385,6 +385,56 @@ header {
   background: rgba(255,255,255,0.05); padding: 10px;
   border-radius: var(--radius-md); margin-bottom: 8px;
 }
+
+/* --- PRINT & PDF OPTIMIZATION (WYSIWYG) --- */
+@media print {
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    min-height: auto !important;
+    display: block !important;
+    -webkit-print-color-adjust: exact;
+  }
+  #app-view, .sidebar, .bottom-nav, .modal-controls, header, #toast, #login-view {
+    display: none !important;
+  }
+  .modal-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+  #preview-modal {
+    position: static !important;
+    display: block !important;
+    background: white !important;
+    overflow: visible !important;
+  }
+  #pdf-content {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10mm !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  table {
+    page-break-inside: auto !important;
+    width: 100% !important;
+  }
+  tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+  img {
+    max-width: 100% !important;
+  }
+  * {
+    transform: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1980,19 +2030,19 @@ function generateReportView() {
 }
 
 function downloadPDF() {
-  const element = document.getElementById('pdf-content'); // Ambil konten spesifik
+  const element = document.getElementById('pdf-content'); 
   if(!element) {
     showToast("Gagal mengambil konten laporan.");
     return;
   }
   
   const controls = document.querySelector('.modal-controls');
-  showToast("Menghasilkan PDF WYSIWYG...");
+  showToast("Menghasilkan PDF Pro (A4 Landscape)...");
   if(controls) controls.style.display = 'none';
 
   const opt = {
     margin: 0, 
-    filename: `Laporan_TS_SiTukang_${new Date().toISOString().slice(0,10)}.pdf`,
+    filename: `Laporan_Technical_SiTukang_${new Date().toISOString().slice(0,10)}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { 
       scale: 2, 
@@ -2001,9 +2051,14 @@ function downloadPDF() {
       letterRendering: true,
       scrollY: 0,
       y: 0,
-      windowWidth: 1400 
+      windowWidth: 1200 
     },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape', compress: true },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'landscape', 
+      compress: true 
+    },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
   
