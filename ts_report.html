@@ -447,8 +447,16 @@ header {
   min-height: 297mm;
   padding: 15mm;
   background: white;
-  margin: 0 auto;
+  margin: auto;
+  box-sizing: border-box;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+#laporan table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#laporan tr {
+  page-break-inside: avoid;
 }
 </style>
 </head>
@@ -2063,15 +2071,20 @@ function downloadPDF() {
   showToast("Menghasilkan PDF Profesional...");
   if(controls) controls.style.display = 'none';
 
+  // --- SOLUSI UTAMA: Scroll ke atas sebelum capture ---
+  window.scrollTo(0,0);
+
   const opt = {
     margin: 0, 
     filename: `Laporan_TS_SiTukang_${new Date().toISOString().slice(0,10)}.pdf`,
     image: { type: 'jpeg', quality: 1 },
     html2canvas: { 
-      scale: 3, 
+      scale: 2, 
       useCORS: true,
       logging: false,
-      scrollY: 0
+      scrollY: 0,
+      windowWidth: document.body.scrollWidth,
+      windowHeight: document.body.scrollHeight
     },
     jsPDF: { 
       unit: 'mm', 
