@@ -10,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- PDF Export library removed in favor of native window.print() for professional vector PDF results -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -42,6 +43,7 @@ body {
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  /* --- ANTI COPY --- */
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -64,7 +66,9 @@ body {
   display: flex;
   flex-direction: column;
 }
-.sidebar.active { left: 0; }
+.sidebar.active {
+  left: 0;
+}
 .sidebar-overlay {
   position: fixed;
   top: 0;
@@ -75,7 +79,9 @@ body {
   display: none;
   z-index: 999;
 }
-.sidebar-overlay.active { display: block; }
+.sidebar-overlay.active {
+  display: block;
+}
 .sidebar-brand {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
@@ -91,7 +97,9 @@ body {
   margin: 0;
   flex-grow: 1;
 }
-.sidebar-item { margin-bottom: 10px; }
+.sidebar-item {
+  margin-bottom: 10px;
+}
 .sidebar-link {
   display: flex;
   align-items: center;
@@ -128,7 +136,10 @@ body {
   padding: 5px;
 }
 
-.chart-container { height: 300px; margin-top: 20px; }
+.chart-container {
+  height: 300px;
+  margin-top: 20px;
+}
 
 /* Page Transition */
 .page {
@@ -140,6 +151,7 @@ body {
 }
 
 .hidden { display: none !important; }
+/* Kembalikan fungsi seleksi khusus untuk input agar tetap bisa mengetik */
 input, textarea, select {
   -webkit-user-select: auto;
   -moz-user-select: auto;
@@ -287,6 +299,7 @@ header {
 }
 #toast.show { transform: translateX(-50%) translateY(0); }
 
+.hidden { display: none !important; }
 .animate-fade { animation: fadeIn 0.5s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -363,66 +376,175 @@ header {
 }
 
 /* --- PROFESSIONAL PRINT & PDF (BROCO STANDARD) --- */
-/* PERBAIKAN CSS PRINT DIMULAI DI SINI */
+
 @media print {
-  @page {
-    size: A4 portrait;
-    margin: 0; 
-  }
+    /* Seting Dasar Kertas */
+    @page {
+        size: A4 portrait;
+        margin: 15mm;
+    }
 
-  html, body {
-    display: block !important;
-    width: 100% !important;
-    height: auto !important;
-    overflow: visible !important;
-    background: white !important;
-    color: black !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    position: static !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+    body {
+        background: white !important;
+        color: black !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        /* Menghilangkan scrollbar dan paksaan height agar tidak terpotong */
+        height: auto !important;
+        overflow: visible !important;
+    }
 
-  body > *:not(#print-area) {
-    display: none !important;
-    height: 0 !important;
-  }
+    /* Memastikan container utama bisa memanjang ke bawah (multiple pages) */
+    .container, #print-area {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        display: block !important;
+        position: relative !important;
+        left: 0 !important;
+        top: 0 !important;
+    }
 
+    /* Tombol download jangan ikut tercetak */
+    .no-print, .btn, .nav-menu {
+        display: none !important;
+    }
+
+    /* --- PERBAIKAN TABEL AGAR TIDAK TERPOTONG --- */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        page-break-inside: auto !important; /* Biarkan tabel pindah halaman */
+    }
+
+    tr {
+        page-break-inside: avoid !important; /* Jangan potong di tengah baris */
+        page-break-after: auto !important;
+    }
+
+    thead {
+        display: table-header-group !important; /* Judul kolom muncul di tiap halaman baru */
+    }
+
+    td, th {
+        word-wrap: break-word !important;
+        font-size: 11px !important; /* Ukuran font standar laporan */
+    }
+
+    /* --- PERBAIKAN FOTO/GAMBAR --- */
+    .photo-grid, .evidence-section {
+        display: block !important; /* Hindari flex/grid yang rumit saat print */
+    }
+
+    .photo-container {
+        page-break-inside: avoid !important; /* Jangan potong foto di tengah */
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block;
+        margin: 5px auto;
+    }
+
+    /* Garis tanda tangan harus tetap di satu halaman (jangan ttd di halaman baru sendiri) */
+    .signature-section {
+        page-break-inside: avoid !important;
+        margin-top: 30px;
+    }
+}
+
+
+  
+  
   #print-area {
     display: block !important;
     visibility: visible !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    min-height: 100vh !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
     background: white !important;
-    padding: 15mm 15mm 15mm 15mm !important;
+    padding: 20mm !important;
     box-sizing: border-box !important;
+    position: relative !important;
+    left: 0 !important;
+    top: 0 !important;
     margin: 0 !important;
-    box-shadow: none !important;
-    font-family: 'Arial', sans-serif !important;
-    font-size: 11pt !important;
-    z-index: 9999 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
   }
 
-  .section, .data-table, .info-table, .photo-grid, tr, li {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
+  .header {
+    text-align: center;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
   }
-  
+  .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
+  .header p { margin: 3px; font-size: 14px; }
+
+  .section { margin-bottom: 20px; }
+  .section-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+    text-transform: uppercase;
+    font-size: 14px;
+  }
+
+  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+  .info-table td { padding: 6px; font-size: 12px; vertical-align: top; }
+
+  .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .data-table th, .data-table td {
+    border: 1px solid #999;
+    padding: 8px;
+    text-align: left;
+    font-size: 11px;
+  }
+  .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  .photo-grid img {
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    border: 1px solid #ccc;
+    background: #fff;
+  }
+
+  .signature {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+  .signature div { width: 200px; }
+  .signature p { margin-bottom: 60px; font-size: 13px; font-weight: bold; }
+
+  .footer {
+    text-align: center;
+    font-size: 10px;
+    margin-top: 40px;
+    color: #666;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+  }
+
+  tr { page-break-inside: avoid !important; }
   thead { display: table-header-group !important; }
-  
-  .header, .data-table th, .section-title {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  
-  .no-print, .btn, .sidebar, .bottom-nav { display: none !important; }
+  .no-print { display: none !important; }
 }
 
-/* STYLE TAMPILAN PREVIEW DI LAYAR (BUKAN PRINT) */
 #print-area {
   display: none;
   font-family: Arial, Helvetica, sans-serif;
@@ -1128,6 +1250,7 @@ function switchTab(tab) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
   
+  // Find active nav item
   const navItems = document.querySelectorAll('.bottom-nav .nav-item');
   if (tab === 'dashboard') navItems[0].classList.add('active');
   if (tab === 'form') navItems[1].classList.add('active');
@@ -1609,12 +1732,14 @@ function generateReportView() {
     totalDemoed++;
     if (r.s1Mandor) totalMandorCount++;
     
+    // Hitung Tukang
     if (r.dataWorkers && r.dataWorkers.length > 0) {
       totalTukang += r.dataWorkers.length;
     } else if (r.s1TukangEst) {
       totalTukang += parseInt(r.s1TukangEst);
     }
 
+    // Koleksi Foto & Catatan
     if (r.photos) allPhotos.push(...r.photos);
     if (r.s1Notes) allNotes.push(`${r.s1Project}: ${r.s1Notes}`);
     if (r.signature) allSignatures.push({ project: r.s1Project, img: r.signature });
@@ -1637,13 +1762,15 @@ function generateReportView() {
     new Date(startStr).toLocaleDateString('id-ID', options) : 
     `${new Date(startStr).toLocaleDateString('id-ID', options)} - ${new Date(endStr).toLocaleDateString('id-ID', options)}`;
 
+  // Header Info (Jika filter 1 proyek, tampilkan detail mandor)
   let projectInfo = projectFilter !== 'all' ? projectFilter : "Multi Proyek / Lokasi";
   let mandorInfo = filteredData.length === 1 ? (filteredData[0].s1Mandor || "-") : "Terlampir di Tabel";
   
+  // Photo Grid HTML
   let photoGridHTML = '';
   if (allPhotos.length > 0) {
     photoGridHTML = '<div class="photo-grid">';
-    allPhotos.slice(0, 6).forEach(ph => {
+    allPhotos.slice(0, 6).forEach(ph => { // Max 6 photos for professional look
       photoGridHTML += `<img src="${ph}">`;
     });
     photoGridHTML += '</div>';
@@ -1651,6 +1778,7 @@ function generateReportView() {
     photoGridHTML = '<p style="font-size:11px; color:#999; font-style:italic;">Tidak ada dokumentasi foto.</p>';
   }
 
+  // Signature Section
   let signatureImgs = '';
   if (allSignatures.length > 0) {
     signatureImgs = `<div style="margin-bottom:10px;">`;
@@ -1766,6 +1894,7 @@ function downloadPDF() {
   
   showToast("Membuka Dialog Cetak Laporan...");
   
+  // Gunakan window.print() untuk hasil PDF Vector yang profesional (bukan screenshot)
   setTimeout(() => {
     window.print();
   }, 500);
