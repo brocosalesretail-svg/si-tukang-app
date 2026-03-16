@@ -365,22 +365,25 @@ header {
 /* --- PROFESSIONAL PRINT & PDF (BROCO STANDARD) --- */
 /* INI ADALAH BAGIAN YANG DIPERBAIKI. SAYA MENGEMBALIKAN SEMUA STYLING ASLI ANDA */
 /* DAN HANYA MENAMBAHKAN PERBAIKAN POSISI (top:0, left:0, position:absolute) */
+
 @media print {
   @page {
     size: A4 portrait;
-    margin: 0; /* Let #print-area handle padding */
+    margin: 10mm; /* Biarkan sistem yang mengatur margin kertas */
   }
   
   html, body {
     height: auto !important;
+    min-height: auto !important; /* Reset min-height 100vh dari body */
     overflow: visible !important;
     background: white !important;
     color: black !important;
     margin: 0 !important;
     padding: 0 !important;
-    width: 210mm !important;
+    display: block !important; /* Penting: mematikan flexbox body saat nge-print */
   }
   
+  /* Sembunyikan semua UI aplikasi, hanya tampilkan kertas print */
   body > *:not(#print-area) {
     display: none !important;
   }
@@ -388,23 +391,21 @@ header {
   #print-area {
     display: block !important;
     visibility: visible !important;
-    width: 210mm !important;
-    min-height: 297mm !important;
+    width: 100% !important; 
     background: white !important;
-    padding: 20mm !important;
+    padding: 0 !important;
     box-sizing: border-box !important;
     
-    /* --- PERBAIKAN POSISI (AGAR TIDAK KE BAWAH) --- */
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    /* ------------------------------------------- */
+    /* Ganti absolute menjadi relative agar halaman bisa bersambung */
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
     
     margin: 0 !important;
     font-family: Arial, Helvetica, sans-serif !important;
   }
 
-  /* --- STYLE ASLI ANDA (DIPERTAHANKAN 100%) --- */
+  /* --- STYLE HEADER & TABEL --- */
   .header {
     text-align: center;
     border-bottom: 2px solid #333;
@@ -434,7 +435,13 @@ header {
     text-align: left;
     font-size: 11px;
   }
-  .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; }
+  .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* --- MENCEGAH ELEMEN TERPOTONG DI TENGAH HALAMAN --- */
+  tr, .photo-grid, .signature { 
+    page-break-inside: avoid !important; 
+  }
+  thead { display: table-header-group !important; }
 
   .photo-grid {
     display: grid;
@@ -455,7 +462,6 @@ header {
     justify-content: space-between;
     margin-top: 50px;
     text-align: center;
-    page-break-inside: avoid;
   }
   .signature div { width: 200px; }
   .signature p { margin-bottom: 60px; font-size: 13px; font-weight: bold; }
@@ -469,11 +475,9 @@ header {
     padding-top: 10px;
   }
 
-  /* --- TAMBAHAN UNTUK ANTI TERPOTONG --- */
-  tr { page-break-inside: avoid !important; }
-  thead { display: table-header-group !important; }
   .no-print { display: none !important; }
 }
+
 
 #print-area {
   display: none;
