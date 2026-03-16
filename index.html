@@ -359,11 +359,11 @@ header {
 .report-table tr { page-break-inside: avoid; page-break-after: auto; }
 .pdf-photos { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; page-break-inside: avoid; }
 .pdf-photo-box {
-  width: 60mm; height: 45mm; background: #eee; display: flex; align-items: center; justify-content: center;
-  border: 1px solid #ccc; font-size: 0.7rem; color: #777; text-align: center; padding: 2px; overflow: hidden;
+  width: 62mm; height: 45mm; background: #eee; display: flex; align-items: center; justify-content: center;
+  border: 1px solid #ccc; font-size: 0.7rem; color: #777; text-align: center; padding: 0; overflow: hidden;
 }
 .pdf-photo-box img {
-  width: 100%; height: 100%; object-fit: contain; background: white;
+  width: 100%; height: 100%; object-fit: fill; background: white;
 }
 .worker-row { display: grid; grid-template-columns: 2fr 2fr 40px; gap: 8px; margin-bottom: 8px; animation: fadeIn 0.3s; }
 .btn-remove { background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
@@ -1976,7 +1976,7 @@ function downloadPDF() {
   if(controls) controls.style.display = 'none';
   
   const opt = {
-    margin: [10, 5, 10, 5], // Top, Left, Bottom, Right
+    margin: [10, 5, 10, 5], 
     filename: `Laporan_TS_${new Date().toISOString().slice(0,10)}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { 
@@ -1984,6 +1984,7 @@ function downloadPDF() {
       useCORS: true,
       logging: false,
       letterRendering: true,
+      scrollY: 0,
       windowWidth: element.scrollWidth,
       onrendered: function(canvas) {
         if(controls) controls.style.display = 'block';
