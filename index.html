@@ -1881,97 +1881,17 @@ function generateReportView() {
 }
 
 function downloadPDF() {
-  const content = document.getElementById('print-area').innerHTML;
-  if(!content || content.trim() === "") {
+  const element = document.getElementById('print-area');
+  if(!element || element.innerHTML.trim() === "") {
     showToast("Gagal mengambil konten laporan. Silakan klik preview dahulu.");
     return;
   }
   
-  showToast("Membuka Preview Cetak...");
+  showToast("Membuka Dialog Cetak Laporan...");
   
-  // Gunakan Full HTML structure
-  const fullHTML = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Laporan_Technical_Support_Broco</title>
-      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-      <style>
-        @page { size: A4 portrait; margin: 0mm; }
-        * { box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; margin: 0; padding: 0; background: white; color: black; font-family: Arial, Helvetica, sans-serif; }
-        
-        /* Wrapper Utama */
-        .print-container {
-          width: 100%;
-          max-width: 210mm;
-          margin: 0 auto;
-          padding: 15mm;
-          background: white;
-          min-height: 297mm;
-        }
-
-        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-        .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
-        .header p { margin: 3px; font-size: 14px; }
-        
-        .section { margin-bottom: 20px; page-break-inside: avoid; }
-        .section-title { font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; font-size: 14px; text-transform: uppercase; }
-        
-        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        .info-table td { padding: 6px; font-size: 12px; vertical-align: top; }
-        
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; word-wrap: break-word; }
-        .data-table th, .data-table td { border: 1px solid #999; padding: 8px; text-align: left; font-size: 11px; }
-        .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        
-        tr { page-break-inside: avoid !important; page-break-after: auto !important; }
-        thead { display: table-header-group !important; }
-        
-        .photo-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; page-break-inside: avoid; }
-        .photo-grid img { width: 45%; max-height: 200px; object-fit: contain; border: 1px solid #ccc; background: #fff; }
-        
-        .signature { display: flex; justify-content: space-between; margin-top: 50px; text-align: center; page-break-inside: avoid; }
-        .signature div { width: 200px; }
-        .signature p { margin-bottom: 60px; font-size: 13px; font-weight: bold; }
-        
-        .footer { text-align: center; font-size: 10px; margin-top: 40px; color: #666; border-top: 1px solid #eee; padding-top: 10px; }
-      </style>
-    </head>
-    <body>
-      <div class="print-container">
-        ${content}
-      </div>
-      <script>
-        window.onload = function() {
-          window.print();
-        };
-      <\/script>
-    </body>
-    </html>
-  `;
-
-  // 1. Buat Blob
-  const blob = new Blob([fullHTML], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-
-  // 2. Buka tab baru
-  const printWindow = window.open(url, '_blank');
-
-  // 3. Handle Print
-  if (printWindow) {
-    printWindow.onload = function() {
-      printWindow.focus();
-      // Beri sedikit delay agar UI tab selesai loading sebelum dialog print muncul
-      setTimeout(() => {
-        printWindow.print();
-      }, 500);
-    };
-    // Hapus URL dari memori setelah beberapa saat
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
-  } else {
-    showToast("Pop-up diblokir oleh browser. Mohon izinkan pop-up untuk situs ini.");
-  }
+  setTimeout(() => {
+    window.print();
+  }, 500);
 }
 
 // --- UTILS ---
