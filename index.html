@@ -148,7 +148,8 @@ input, textarea, select {
 }
 
 body::before {
-  content:""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  content:""; position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
   background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none; z-index: 0;
 }
@@ -177,13 +178,16 @@ h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
 }
 .section-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
 .section-num {
-  background: rgba(6, 182, 212, 0.15); color: var(--primary); width: 28px; height: 28px;
+  background: rgba(6, 182, 212, 0.15); color: var(--primary);
+  width: 28px; height: 28px;
   border-radius: 6px; display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 0.9rem; border: 1px solid rgba(6, 182, 212, 0.3);
+  font-weight: 700; font-size: 0.9rem;
+  border: 1px solid rgba(6, 182, 212, 0.3);
 }
 .form-group { margin-bottom: 16px; }
 .form-label {
-  display: block; margin-bottom: 6px; font-size: 0.8rem; color: var(--text-muted); 
+  display: block; margin-bottom: 6px; font-size: 0.8rem;
+  color: var(--text-muted); 
   font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;
 }
 .form-control {
@@ -192,7 +196,8 @@ h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
   color: white; font-family: inherit; font-size: 0.95rem; transition: all 0.3s;
 }
 .form-control:focus {
-  outline: none; border-color: var(--primary); box-shadow: var(--shadow-neon); 
+  outline: none;
+  border-color: var(--primary); box-shadow: var(--shadow-neon); 
   background: rgba(0, 0, 0, 0.5);
 }
 select.form-control option { background: #1a1c23; color: white; }
@@ -202,7 +207,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
 .check-item input { position: absolute; opacity: 0; cursor: pointer; }
 .check-mark {
   padding: 8px 16px; background: rgba(255, 255, 255,0.05); border: 1px solid var(--border-metal);
-  border-radius: 20px; font-size: 0.85rem; color: var(--text-muted);
+  border-radius: 20px;
+  font-size: 0.85rem; color: var(--text-muted);
   transition: all 0.2s; display: flex; align-items: center; gap: 6px; cursor: pointer;
 }
 .check-item input:checked+.check-mark {
@@ -229,7 +235,8 @@ header {
   justify-content: space-between; align-items: center;
   border-bottom: 1px solid var(--border-metal);
 }
-.brand { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.5rem; color: white; text-shadow: 0 0 10px var(--primary); }
+.brand { font-family: 'Rajdhani', sans-serif;
+  font-weight: 700; font-size: 1.5rem; color: white; text-shadow: 0 0 10px var(--primary); }
 .brand span { color: var(--primary); }
 
 .bottom-nav {
@@ -243,7 +250,8 @@ header {
 .nav-item {
   color: var(--text-muted); font-size: 0.7rem; text-align: center;
   cursor: pointer; flex: 1; transition: color 0.3s;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
 }
 .nav-item i { display: block; font-size: 1.2rem; margin-bottom: 2px; }
 .nav-item.active { color: var(--primary); }
@@ -279,11 +287,14 @@ header {
 @keyframes pulse { 0% { transform: scale(1); opacity: 0.1; } 100% { transform: scale(1.2); opacity: 0.2; } }
 
 #toast {
-  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+  position: fixed; top: 20px; left: 50%;
+  transform: translateX(-50%) translateY(-100px);
   background: rgba(15, 23, 42, 0.95); border: 1px solid var(--primary); color: white;
-  padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 0.9rem;
+  padding: 12px 24px; border-radius: 50px;
+  font-weight: 600; font-size: 0.9rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 3000; transition: transform 0.4s;
-  display: flex; align-items: center; gap: 10px; backdrop-filter: blur(10px);
+  display: flex; align-items: center; gap: 10px;
+  backdrop-filter: blur(10px);
 }
 #toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -293,7 +304,8 @@ header {
 /* --- ADMIN PANEL STYLES --- */
 .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
 .admin-stat-box {
-  background: rgba(255,255,255,0.03); border: 1px solid var(--border-metal); padding: 20px; border-radius: var(--radius-md); text-align: center;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border-metal); padding: 20px; border-radius: var(--radius-md);
+  text-align: center;
 }
 .admin-table-container { overflow-x: auto; }
 .admin-table {
@@ -306,19 +318,23 @@ header {
 
 /* --- GALLERY STYLES --- */
 .gallery-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px;
 }
 .gallery-item {
   background: rgba(255,255,255,0.05); border: 1px solid var(--border-metal); border-radius: var(--radius-md);
-  overflow: hidden; transition: transform 0.2s; position: relative;
+  overflow: hidden;
+  transition: transform 0.2s; position: relative;
 }
 .gallery-item:hover { transform: translateY(-5px); border-color: var(--primary); }
 .gallery-img-placeholder {
-  height: 120px; background: #1a1c23; display: flex; align-items: center; justify-content: center;
+  height: 120px; background: #1a1c23; display: flex;
+  align-items: center; justify-content: center;
   color: var(--text-muted); flex-direction: column; gap: 5px;
 }
 .gallery-info { padding: 10px; }
-.gallery-title { font-weight: 600; font-size: 0.9rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gallery-title { font-weight: 600; font-size: 0.9rem;
+  color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gallery-meta { font-size: 0.7rem; color: var(--text-muted); }
 
 /* --- PREVIEW MODAL --- */
@@ -333,59 +349,87 @@ header {
   margin-bottom: 20px; border: 1px solid var(--border-metal);
 }
 .a4-paper {
-  background: white; color: black; width: 100%; max-width: 210mm; min-height: 297mm; padding: 10mm; margin: 0 auto;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5); font-family: 'Arial', sans-serif;
+  background: white;
+  color: black; width: 100%; max-width: 210mm; min-height: 297mm; padding: 10mm; margin: 0 auto;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  font-family: 'Arial', sans-serif;
 }
 .report-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
 .report-summary {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); gap: 10px;
   background: #f2f2f2; padding: 15px; border-radius: 5px; margin-bottom: 20px;
 }
-.summary-item strong { display: block; font-size: 1.5rem; color: #000; }
+.summary-item strong { display: block; font-size: 1.5rem;
+  color: #000; }
 .summary-item span { font-size: 0.8rem; color: #555; }
-.report-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
+.report-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px;
+}
 .report-table th, .report-table td { border: 1px solid #000; padding: 6px; text-align: left; vertical-align: top; }
-.report-table th { background-color: #ddd; text-align: center; }
+.report-table th { background-color: #ddd;
+  text-align: center; }
 .report-table tr { page-break-inside: avoid; page-break-after: auto; }
-.pdf-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; page-break-inside: avoid; }
+.pdf-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;
+  page-break-inside: avoid; }
 .pdf-photo-box {
   width: 100%; height: 80px; background: #eee; display: flex; align-items: center; justify-content: center;
   border: 1px solid #ccc; font-size: 0.7rem; color: #777; text-align: center; padding: 5px; overflow: hidden;
 }
 .pdf-photo-box img {
-  width: 100%; height: 100%; object-fit: cover;
+  width: 100%;
+  height: 100%; object-fit: cover;
 }
-.worker-row { display: grid; grid-template-columns: 2fr 2fr 40px; gap: 8px; margin-bottom: 8px; animation: fadeIn 0.3s; }
+.worker-row { display: grid; grid-template-columns: 2fr 2fr 40px; gap: 8px; margin-bottom: 8px; animation: fadeIn 0.3s;
+}
 .btn-remove { background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-.btn-edit { background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 1.2rem; padding: 5px; }
+.btn-edit { background: transparent; border: none;
+  color: var(--primary); cursor: pointer; font-size: 1.2rem; padding: 5px; }
 
 /* --- PRINT STYLES --- */
 @media print {
   @page { size: A4 portrait; margin: 15mm; }
-  html, body { height: auto !important; min-height: auto !important; overflow: visible !important; background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; display: block !important; }
+  html, body { height: auto !important; min-height: auto !important; overflow: visible !important; background: white !important;
+  color: black !important; margin: 0 !important; padding: 0 !important; display: block !important;
+  }
   body > *:not(#print-area) { display: none !important; }
-  #print-area { display: block !important; visibility: visible !important; width: 100% !important; background: white !important; padding: 0 !important; box-sizing: border-box !important; position: relative !important; left: auto !important; top: auto !important; margin: 0 !important; font-family: Arial, Helvetica, sans-serif !important; }
-  .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-  .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
+  #print-area { display: block !important; visibility: visible !important;
+  width: 100% !important; background: white !important; padding: 0 !important; box-sizing: border-box !important; position: relative !important; left: auto !important;
+  top: auto !important; margin: 0 !important; font-family: Arial, Helvetica, sans-serif !important; }
+  .header { text-align: center;
+  border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+  .header h1 { margin: 0; font-size: 22px; text-transform: uppercase;
+  }
   .header p { margin: 3px; font-size: 14px; }
-  .section { margin-bottom: 20px; page-break-inside: avoid; }
-  .section-title { font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; font-size: 14px; text-transform: uppercase; }
+  .section { margin-bottom: 20px; page-break-inside: avoid;
+  }
+  .section-title { font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; font-size: 14px; text-transform: uppercase;
+  }
   .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-  .info-table td { padding: 6px; font-size: 12px; vertical-align: top; }
-  .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  .data-table th, .data-table td { border: 1px solid #999; padding: 8px; text-align: left; font-size: 11px; }
-  .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .info-table td { padding: 6px; font-size: 12px;
+  vertical-align: top; }
+  .data-table { width: 100%; border-collapse: collapse; margin-top: 10px;
+  }
+  .data-table th, .data-table td { border: 1px solid #999; padding: 8px; text-align: left; font-size: 11px;
+  }
+  .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
   tr, .photo-grid, .signature { page-break-inside: avoid !important; }
-  thead { display: table-header-group !important; }
+  thead { display: table-header-group !important;
+  }
   .photo-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; }
-  .photo-grid img { width: 45%; max-height: 200px; object-fit: contain; border: 1px solid #ccc; background: #fff; display: block; }
-  .signature { display: flex; justify-content: space-between; margin-top: 50px; text-align: center; }
+  .photo-grid img { width: 45%;
+  max-height: 200px; object-fit: contain; border: 1px solid #ccc; background: #fff; display: block; }
+  .signature { display: flex; justify-content: space-between;
+  margin-top: 50px; text-align: center; }
   .signature div { width: 200px; }
-  .signature p { margin-bottom: 60px; font-size: 13px; font-weight: bold; }
-  .footer { text-align: center; font-size: 10px; margin-top: 40px; color: #666; border-top: 1px solid #eee; padding-top: 10px; }
+  .signature p { margin-bottom: 60px; font-size: 13px;
+  font-weight: bold; }
+  .footer { text-align: center; font-size: 10px; margin-top: 40px; color: #666; border-top: 1px solid #eee; padding-top: 10px;
+  }
   .no-print { display: none !important; }
 }
-#print-area { display: none; font-family: Arial, Helvetica, sans-serif; color: black; background: white; }
+#print-area { display: none; font-family: Arial, Helvetica, sans-serif; color: black; background: white;
+}
 </style>
 </head>
 <body>
@@ -413,6 +457,7 @@ header {
         <label class="form-label">Kode Akses</label>
         <input type="password" id="login-pass" class="form-control" placeholder="1234">
       </div>
+  
       <button type="submit" class="btn">Login System</button>
       
       <div style="text-align: center; margin-top: 20px; font-size: 0.7rem; color: var(--text-muted);">
@@ -432,6 +477,7 @@ header {
           <i class="fa-solid fa-chart-pie"></i> Dashboard
         </a>
       </li>
+    
       <li class="sidebar-item">
         <a class="sidebar-link" onclick="switchTab('form')">
           <i class="fa-solid fa-file-pen"></i> Input Laporan
@@ -443,16 +489,17 @@ header {
         </a>
       </li>
       <li class="sidebar-item">
+       
         <a class="sidebar-link" onclick="showAISummary()">
           <i class="fa-solid fa-wand-magic-sparkles"></i> AI Summary
         </a>
       </li>
-      <!-- ADMIN PANEL LINK (Only visible if admin) -->
       <li class="sidebar-item admin-only hidden">
         <a class="sidebar-link" onclick="switchTab('admin')" style="color: var(--accent);">
           <i class="fa-solid fa-user-shield"></i> Admin Panel
         </a>
       </li>
+      
       <li class="sidebar-item" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
         <a class="sidebar-link" onclick="logout()" style="color: #ef4444;">
           <i class="fa-solid fa-power-off"></i> Keluar System
@@ -478,7 +525,6 @@ header {
   </header>
   
   <main style="padding: 20px;">
-    <!-- DASHBOARD -->
     <div id="page-dashboard" class="animate-fade page">
       <div class="metal-card" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(16, 185, 129, 0.05)); border-color: rgba(6, 182, 212, 0.3);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -501,6 +547,7 @@ header {
           <div class="stat-val" style="color: var(--text-main);" id="stat-visit">0</div>
           <div class="stat-lbl">Total Dikunjungi</div>
         </div>
+       
         <div class="stat-card">
           <div class="stat-val" style="color: var(--accent);" id="stat-mandor">0</div>
           <div class="stat-lbl">Total Mandor (Demo)</div>
@@ -538,7 +585,6 @@ header {
       <div style="height: 20px;"></div>
     </div>
     
-    <!-- ADMIN PAGE -->
     <div id="page-admin" class="hidden animate-fade page">
       <div class="metal-card" style="border-color: var(--accent);">
         <div class="section-header">
@@ -629,7 +675,6 @@ header {
       </div>
     </div>
 
-    <!-- GALLERY -->
     <div id="page-gallery" class="hidden animate-fade page">
       <div class="section-header">
         <div class="section-num"><i class="fa-solid fa-images"></i></div>
@@ -642,7 +687,6 @@ header {
       </div>
     </div>
     
-    <!-- FORM -->
     <div id="page-form" class="hidden animate-fade page">
       <form id="ts-form">
         <div class="metal-card">
@@ -714,7 +758,7 @@ header {
             </div>
             <div class="form-group">
               <label class="form-label">Estimasi Jml Tukang</label>
-              <input type="number" id="f-s1-tukang-est" class="form-control" placeholder="0">
+               <input type="number" id="f-s1-tukang-est" class="form-control" placeholder="0">
             </div>
           </div>
           
@@ -842,7 +886,7 @@ header {
               <option>Gudang</option>
               <option>Kolam Renang</option>
               <option>Lainnya</option>
-            </select>
+             </select>
           </div>
           <div class="form-group">
             <label class="form-label">Nama Mandor / Tukang</label>
@@ -850,7 +894,7 @@ header {
           </div>
           <div class="form-group">
             <label class="form-label">No HP Kontak</label>
-            <input type="tel" id="f-h2-phone" class="form-control">
+             <input type="tel" id="f-h2-phone" class="form-control">
           </div>
           <div class="form-group">
             <label class="form-label">Material Dipakai</label>
@@ -874,7 +918,7 @@ header {
               <option>Mortar instan</option>
               <option>Campuran keduanya</option>
             </select>
-          </div>
+           </div>
           <div class="form-group">
             <label class="form-label">Jika Mortar, Merk?</label>
             <input type="text" id="f-obs-brand" class="form-control">
@@ -891,7 +935,7 @@ header {
             <h3>Data Tambahan</h3>
           </div>
           <div class="form-group">
-            <label class="form-label">Jumlah Mandor Ditemui Hari Ini</label>
+             <label class="form-label">Jumlah Mandor Ditemui Hari Ini</label>
             <input type="number" id="f-data-mandor" class="form-control" value="0">
           </div>
           <div class="form-group">
@@ -910,7 +954,7 @@ header {
         <div class="metal-card">
           <div class="section-header">
             <div class="section-num">6</div>
-            <h3>Rangkuman Harian</h3>
+             <h3>Rangkuman Harian</h3>
           </div>
           <div class="form-group">
             <label class="form-label">Total Proyek Dikunjungi</label>
@@ -935,7 +979,7 @@ header {
             <label class="form-label">Masalah Teknis</label>
             <textarea id="f-tech-note" class="form-control" rows="3" placeholder="Contoh: Campuran air terlalu banyak..."></textarea>
           </div>
-        </div>
+         </div>
         
         <div class="metal-card">
           <div class="section-header">
@@ -944,7 +988,7 @@ header {
           </div>
           <div class="form-group">
             <label class="form-label">Proyek 1</label>
-            <input type="text" id="f-fu-1" class="form-control">
+             <input type="text" id="f-fu-1" class="form-control">
           </div>
           <div class="form-group">
             <label class="form-label">Proyek 2</label>
@@ -952,7 +996,7 @@ header {
           </div>
           <div class="form-group">
             <label class="form-label">Proyek 3</label>
-            <input type="text" id="f-fu-3" class="form-control">
+             <input type="text" id="f-fu-3" class="form-control">
           </div>
         </div>
         
@@ -1016,7 +1060,7 @@ header {
           <input type="date" id="filter-end" class="form-control">
         </div>
         <div>
-          <label class="form-label">Filter Proyek</label>
+           <label class="form-label">Filter Proyek</label>
           <select id="filter-project" class="form-control"></select>
         </div>
         <div>
@@ -1053,13 +1097,13 @@ header {
     </div>
   </div>
 </div>
-
-</body>
 <script>
 // --- CONFIG & DB ---
 const SUPABASE_URL = 'https://ywcxtnnxjuvxznfyivqi.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_i_NqSKLS5n-pIEwofk-1wg_rdg61WMp';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// PERBAIKAN: Ubah 'supabase' menjadi 'sbClient' agar tidak terjadi SyntaxError
+const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let db = {
   reports: JSON.parse(localStorage.getItem('ts_reports') || '[]'),
@@ -1125,12 +1169,16 @@ function addUser() {
   const label = document.getElementById('admin-new-label').value;
   const val = document.getElementById('admin-new-val').value;
   const pass = document.getElementById('admin-new-pass').value;
+  
   if (!label || !val || !pass) return showToast("Lengkapi data!");
+  
   db.users.push({ label, val, pass });
   localStorage.setItem('ts_users', JSON.stringify(db.users));
+  
   document.getElementById('admin-new-label').value = '';
   document.getElementById('admin-new-val').value = '';
   document.getElementById('admin-new-pass').value = '';
+  
   renderAdminUsers();
   initLogin();
   showToast("User ditambahkan!");
@@ -1288,6 +1336,7 @@ function initDashboard() {
     if (r.dataWorkers && r.dataWorkers.length > 0) tTukang += r.dataWorkers.length;
     else if (r.s1TukangEst) tTukang += parseInt(r.s1TukangEst);
   });
+  
   document.getElementById('stat-tukang').innerText = tTukang;
   
   renderHistory();
@@ -1348,7 +1397,8 @@ function renderGallery() {
 // --- SYNC ---
 async function syncToSupabase(data) {
   try {
-    const { error } = await supabase.from('reports').upsert(data);
+    // PERBAIKAN: Menggunakan sbClient
+    const { error } = await sbClient.from('reports').upsert(data);
     if (error) throw error;
     document.getElementById('db-status').innerHTML = '<i class="fa-solid fa-cloud-check"></i> ONLINE';
   } catch (e) {
@@ -1359,7 +1409,8 @@ async function syncToSupabase(data) {
 
 async function syncFromSupabase() {
   try {
-    const { data, error } = await supabase.from('reports').select('*').order('date', { ascending: false });
+    // PERBAIKAN: Menggunakan sbClient
+    const { data, error } = await sbClient.from('reports').select('*').order('date', { ascending: false });
     if (error) throw error;
     if (data) {
       db.reports = data;
@@ -1371,55 +1422,71 @@ async function syncFromSupabase() {
     console.error("Fetch Error:", e);
   }
 }
-
-// --- FORM HANDLER ---
-const signaturePad = document.getElementById('signature-pad');
-const sigCtx = signaturePad.getContext('2d');
+// --- FORM HANDLERS ---
+const canvas = document.getElementById('signature-pad');
+const ctx = canvas.getContext('2d');
 let drawing = false;
 
-signaturePad.addEventListener('mousedown', startDraw);
-signaturePad.addEventListener('mousemove', draw);
-signaturePad.addEventListener('mouseup', stopDraw);
-signaturePad.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e.touches[0]); });
-signaturePad.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
-signaturePad.addEventListener('touchend', stopDraw);
+canvas.addEventListener('mousedown', () => drawing = true);
+canvas.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
+canvas.addEventListener('mousemove', draw);
+canvas.ontouchstart = (e) => { drawing = true; e.preventDefault(); };
+canvas.ontouchend = () => { drawing = false; ctx.beginPath(); };
+canvas.ontouchmove = (e) => {
+  const touch = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  draw({ clientX: touch.clientX, clientY: touch.clientY });
+};
 
-function startDraw(e) { drawing = true; sigCtx.beginPath(); sigCtx.moveTo(getPos(e).x, getPos(e).y); }
-function draw(e) { if (!drawing) return; sigCtx.lineTo(getPos(e).x, getPos(e).y); sigCtx.stroke(); }
-function stopDraw() { drawing = false; }
-function getPos(e) {
-  const rect = signaturePad.getBoundingClientRect();
-  const scaleX = signaturePad.width / rect.width;
-  const scaleY = signaturePad.height / rect.height;
-  return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+function draw(e) {
+  if (!drawing) return;
+  const rect = canvas.getBoundingClientRect();
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#000';
+  ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
 }
-function clearSignature() { sigCtx.clearRect(0, 0, signaturePad.width, signaturePad.height); }
+
+function clearSignature() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
 function getGPS() {
-  if (!navigator.geolocation) return showToast("GPS tidak didukung.");
-  showToast("Mencari lokasi...");
-  navigator.geolocation.getCurrentPosition(p => {
-    document.getElementById('f-coords').value = `${p.coords.latitude.toFixed(6)}, ${p.coords.longitude.toFixed(6)}`;
-    showToast("Lokasi ditemukan!");
-  }, () => showToast("Gagal ambil GPS. Cek izin lokasi."));
+  const btn = document.getElementById('btn-gps');
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      document.getElementById('f-coords').value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+      showToast("Lokasi berhasil dikunci!");
+    }, () => {
+      showToast("Gagal ambil GPS. Pastikan Izin aktif.");
+      btn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i>';
+    });
+  }
 }
 
 async function compressImage(file) {
-  return new Promise((res) => {
+  return new Promise((resolve) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (e) => {
       const img = new Image();
       img.src = e.target.result;
       img.onload = () => {
-        const canvas = document.createElement('canvas');
+        const canv = document.createElement('canvas');
         const MAX_WIDTH = 800;
-        let w = img.width, h = img.height;
-        if (w > MAX_WIDTH) { h *= MAX_WIDTH / w; w = MAX_WIDTH; }
-        canvas.width = w; canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-        res(canvas.toDataURL('image/jpeg', 0.7));
+        let width = img.width;
+        let height = img.height;
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
+        }
+        canv.width = width; canv.height = height;
+        const c = canv.getContext('2d');
+        c.drawImage(img, 0, 0, width, height);
+        resolve(canv.toDataURL('image/jpeg', 0.7));
       };
     };
   });
@@ -1428,189 +1495,203 @@ async function compressImage(file) {
 document.getElementById('ts-form').onsubmit = async (e) => {
   e.preventDefault();
   const btn = document.getElementById('btn-submit');
-  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
-  
-  const photos = [];
-  const inputs = document.querySelectorAll('.photo-input');
-  for (let input of inputs) {
-    if (input.files[0]) photos.push(await compressImage(input.files[0]));
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...';
+  btn.disabled = true;
+
+  try {
+    const photoInputs = document.querySelectorAll('.photo-input');
+    const photoPromises = Array.from(photoInputs)
+      .filter(i => i.files[0])
+      .map(i => compressImage(i.files[0]));
+    const photos = await Promise.all(photoPromises);
+
+    const workerRows = document.querySelectorAll('.worker-row');
+    const workers = Array.from(workerRows).map(row => ({
+      name: row.querySelector('.w-name').value,
+      phone: row.querySelector('.w-phone').value
+    }));
+
+    const reportData = {
+      id: isEditing ? editId : Date.now().toString(),
+      tech: document.getElementById('f-name').value,
+      date: document.getElementById('f-date').value,
+      vehicle: document.getElementById('f-vehicle').value,
+      area: document.getElementById('f-area').value,
+      s1Project: document.getElementById('f-s1-project').value,
+      s1Addr: document.getElementById('f-s1-addr').value,
+      coords: document.getElementById('f-coords').value,
+      s1Dev: document.getElementById('f-s1-dev').value,
+      s1Mandor: document.getElementById('f-s1-mandor').value,
+      s1Phone: document.getElementById('f-s1-phone').value,
+      s1TukangEst: document.getElementById('f-s1-tukang-est').value,
+      s1TukangName: document.getElementById('f-s1-tukang-name').value,
+      s1TukangPhone: document.getElementById('f-s1-tukang-phone').value,
+      s1Job: Array.from(document.querySelectorAll('input[name="s1-job"]:checked')).map(c => c.value),
+      s1Unit: document.getElementById('f-s1-unit').value,
+      s1Result: document.getElementById('f-s1-result').value,
+      s1Notes: document.getElementById('f-s1-notes').value,
+      h1Name: document.getElementById('f-h1-name').value,
+      h1Type: document.getElementById('f-h1-type').value,
+      h1Mandor: document.getElementById('f-h1-mandor').value,
+      h1Phone: document.getElementById('f-h1-phone').value,
+      h1Mat: document.getElementById('f-h1-mat').value,
+      h1Result: document.getElementById('f-h1-result').value,
+      h2Name: document.getElementById('f-h2-name').value,
+      h2Type: document.getElementById('f-h2-type').value,
+      h2Mandor: document.getElementById('f-h2-mandor').value,
+      h2Phone: document.getElementById('f-h2-phone').value,
+      h2Mat: document.getElementById('f-h2-mat').value,
+      obsMat: document.getElementById('f-obs-mat').value,
+      obsBrand: document.getElementById('f-obs-brand').value,
+      obsPrice: document.getElementById('f-obs-price').value,
+      dataMandor: document.getElementById('f-data-mandor').value,
+      dataToko: document.getElementById('f-data-toko').value,
+      dataWorkers: workers,
+      sumVisit: document.getElementById('f-sum-visit').value,
+      sumContact: document.getElementById('f-sum-contact').value,
+      sumDemo: document.getElementById('f-sum-demo').value,
+      techNote: document.getElementById('f-tech-note').value,
+      fu1: document.getElementById('f-fu-1').value,
+      fu2: document.getElementById('f-fu-2').value,
+      fu3: document.getElementById('f-fu-3').value,
+      photos: photos.length > 0 ? photos : (isEditing ? db.reports.find(r => r.id === editId).photos : []),
+      signature: canvas.toDataURL()
+    };
+
+    if (isEditing) {
+      const idx = db.reports.findIndex(r => r.id === editId);
+      db.reports[idx] = reportData;
+      isEditing = false;
+      editId = null;
+    } else {
+      db.reports.push(reportData);
+    }
+
+    localStorage.setItem('ts_reports', JSON.stringify(db.reports));
+    await syncToSupabase(reportData);
+    
+    showToast("Laporan Berhasil Disimpan!");
+    resetForm();
+    switchTab('dashboard');
+  } catch (err) {
+    showToast("Error simpan data!");
+    console.error(err);
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
   }
-  
-  const signature = signaturePad.toDataURL();
-  const isSigEmpty = sigCtx.getImageData(0,0,signaturePad.width,signaturePad.height).data.every(v => v === 0);
-  
-  const workers = [];
-  document.querySelectorAll('.worker-row').forEach(row => {
-    workers.push({ name: row.querySelector('.w-name').value, phone: row.querySelector('.w-phone').value });
-  });
-
-  const jobs = [];
-  document.querySelectorAll('input[name="s1-job"]:checked').forEach(c => jobs.push(c.value));
-
-  const report = {
-    id: isEditing ? editId : 'R-' + Date.now(),
-    tech: db.currentUser.label,
-    date: document.getElementById('f-date').value,
-    vehicle: document.getElementById('f-vehicle').value,
-    area: document.getElementById('f-area').value,
-    s1Project: document.getElementById('f-s1-project').value,
-    s1Addr: document.getElementById('f-s1-addr').value,
-    coords: document.getElementById('f-coords').value,
-    s1Dev: document.getElementById('f-s1-dev').value,
-    s1Mandor: document.getElementById('f-s1-mandor').value,
-    s1Phone: document.getElementById('f-s1-phone').value,
-    s1TukangEst: document.getElementById('f-s1-tukang-est').value,
-    s1TukangName: document.getElementById('f-s1-tukang-name').value,
-    s1TukangPhone: document.getElementById('f-s1-tukang-phone').value,
-    s1Jobs: jobs,
-    s1Unit: document.getElementById('f-s1-unit').value,
-    s1Result: document.getElementById('f-s1-result').value,
-    s1Notes: document.getElementById('f-s1-notes').value,
-    signature: isSigEmpty ? null : signature,
-    photos: photos.length > 0 ? photos : (isEditing ? db.reports.find(r => r.id === editId).photos : []),
-    h1Name: document.getElementById('f-h1-name').value,
-    h1Type: document.getElementById('f-h1-type').value,
-    h1Mandor: document.getElementById('f-h1-mandor').value,
-    h1Phone: document.getElementById('f-h1-phone').value,
-    h1Mat: document.getElementById('f-h1-mat').value,
-    h1Result: document.getElementById('f-h1-result').value,
-    h2Name: document.getElementById('f-h2-name').value,
-    h2Type: document.getElementById('f-h2-type').value,
-    h2Mandor: document.getElementById('f-h2-mandor').value,
-    h2Phone: document.getElementById('f-h2-phone').value,
-    h2Mat: document.getElementById('f-h2-mat').value,
-    obsMat: document.getElementById('f-obs-mat').value,
-    obsBrand: document.getElementById('f-obs-brand').value,
-    obsPrice: document.getElementById('f-obs-price').value,
-    dataMandor: document.getElementById('f-data-mandor').value,
-    dataToko: document.getElementById('f-data-toko').value,
-    dataWorkers: workers,
-    sumVisit: document.getElementById('f-sum-visit').value,
-    sumContact: document.getElementById('f-sum-contact').value,
-    sumDemo: document.getElementById('f-sum-demo').value,
-    techNote: document.getElementById('f-tech-note').value,
-    fu1: document.getElementById('f-fu-1').value,
-    fu2: document.getElementById('f-fu-2').value,
-    fu3: document.getElementById('f-fu-3').value,
-    created_at: new Date().toISOString()
-  };
-
-  if (isEditing) {
-    const idx = db.reports.findIndex(r => r.id === editId);
-    db.reports[idx] = report;
-    isEditing = false; editId = null;
-    document.getElementById('btn-cancel').classList.add('hidden');
-  } else {
-    db.reports.push(report);
-  }
-
-  localStorage.setItem('ts_reports', JSON.stringify(db.reports));
-  await syncToSupabase(report);
-  
-  showToast("Laporan Berhasil Terkirim!");
-  resetForm();
-  switchTab('dashboard');
-  btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN';
 };
 
 function resetForm() {
   document.getElementById('ts-form').reset();
-  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('f-name').value = db.currentUser.label;
+  document.getElementById('f-date').valueAsDate = new Date();
+  document.getElementById('f-name').value = db.currentUser ? db.currentUser.label : '';
   document.getElementById('worker-container').innerHTML = '';
   clearSignature();
+  document.getElementById('btn-cancel').classList.add('hidden');
+  document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN';
 }
 
 function editReport(id) {
   const r = db.reports.find(x => x.id === id);
   if (!r) return;
-  isEditing = true; editId = id;
+  
+  isEditing = true;
+  editId = id;
   switchTab('form');
   
   document.getElementById('f-date').value = r.date;
-  document.getElementById('f-vehicle').value = r.vehicle;
+  document.getElementById('f-vehicle').value = r.vehicle || 'Motor';
   document.getElementById('f-area').value = r.area || '';
-  document.getElementById('f-s1-project').value = r.s1Project;
-  document.getElementById('f-s1-addr').value = r.s1Addr;
-  document.getElementById('f-coords').value = r.coords;
-  document.getElementById('f-s1-dev').value = r.s1Dev;
-  document.getElementById('f-s1-mandor').value = r.s1Mandor;
-  document.getElementById('f-s1-phone').value = r.s1Phone;
-  document.getElementById('f-s1-tukang-est').value = r.s1TukangEst;
-  document.getElementById('f-s1-tukang-name').value = r.s1TukangName;
-  document.getElementById('f-s1-tukang-phone').value = r.s1TukangPhone;
-  document.getElementById('f-s1-unit').value = r.s1Unit;
-  document.getElementById('f-s1-result').value = r.s1Result;
-  document.getElementById('f-s1-notes').value = r.s1Notes;
-  document.getElementById('f-h1-name').value = r.h1Name;
-  document.getElementById('f-h1-type').value = r.h1Type;
-  document.getElementById('f-h1-mandor').value = r.h1Mandor;
-  document.getElementById('f-h1-phone').value = r.h1Phone;
-  document.getElementById('f-h1-mat').value = r.h1Mat;
-  document.getElementById('h1-result').value = r.h1Result;
-  document.getElementById('f-h2-name').value = r.h2Name;
-  document.getElementById('f-h2-type').value = r.h2Type;
-  document.getElementById('f-h2-mandor').value = r.h2Mandor;
-  document.getElementById('f-h2-phone').value = r.h2Phone;
-  document.getElementById('f-h2-mat').value = r.h2Mat;
-  document.getElementById('f-obs-mat').value = r.obsMat;
-  document.getElementById('f-obs-brand').value = r.obsBrand;
-  document.getElementById('f-obs-price').value = r.obsPrice;
-  document.getElementById('f-data-mandor').value = r.dataMandor;
-  document.getElementById('f-data-toko').value = r.dataToko;
-  document.getElementById('f-sum-visit').value = r.sumVisit;
-  document.getElementById('f-sum-contact').value = r.sumContact;
-  document.getElementById('f-sum-demo').value = r.sumDemo;
-  document.getElementById('f-tech-note').value = r.techNote;
-  document.getElementById('f-fu-1').value = r.fu1;
-  document.getElementById('f-fu-2').value = r.fu2;
-  document.getElementById('f-fu-3').value = r.fu3;
+  document.getElementById('f-s1-project').value = r.s1Project || '';
+  document.getElementById('f-s1-addr').value = r.s1Addr || '';
+  document.getElementById('f-coords').value = r.coords || '';
+  document.getElementById('f-s1-dev').value = r.s1Dev || '';
+  document.getElementById('f-s1-mandor').value = r.s1Mandor || '';
+  document.getElementById('f-s1-phone').value = r.s1Phone || '';
+  document.getElementById('f-s1-tukang-est').value = r.s1TukangEst || 0;
+  document.getElementById('f-s1-tukang-name').value = r.s1TukangName || '';
+  document.getElementById('f-s1-tukang-phone').value = r.s1TukangPhone || '';
+  
+  document.querySelectorAll('input[name="s1-job"]').forEach(cb => {
+    cb.checked = r.s1Job && r.s1Job.includes(cb.value);
+  });
+  
+  document.getElementById('f-s1-unit').value = r.s1Unit || 0;
+  document.getElementById('f-s1-result').value = r.s1Result || '';
+  document.getElementById('f-s1-notes').value = r.s1Notes || '';
+  
+  document.getElementById('f-h1-name').value = r.h1Name || '';
+  document.getElementById('f-h1-type').value = r.h1Type || '';
+  document.getElementById('f-h1-mandor').value = r.h1Mandor || '';
+  document.getElementById('f-h1-phone').value = r.h1Phone || '';
+  document.getElementById('f-h1-mat').value = r.h1Mat || '';
+  document.getElementById('f-h1-result').value = r.h1Result || '';
+  
+  document.getElementById('f-h2-name').value = r.h2Name || '';
+  document.getElementById('f-h2-type').value = r.h2Type || '';
+  document.getElementById('f-h2-mandor').value = r.h2Mandor || '';
+  document.getElementById('f-h2-phone').value = r.h2Phone || '';
+  document.getElementById('f-h2-mat').value = r.h2Mat || '';
+  
+  document.getElementById('f-obs-mat').value = r.obsMat || '';
+  document.getElementById('f-obs-brand').value = r.obsBrand || '';
+  document.getElementById('f-obs-price').value = r.obsPrice || '';
+  
+  document.getElementById('f-data-mandor').value = r.dataMandor || 0;
+  document.getElementById('f-data-toko').value = r.dataToko || 0;
   
   document.getElementById('worker-container').innerHTML = '';
   if (r.dataWorkers) r.dataWorkers.forEach(w => addWorkerRow(w.name, w.phone));
   
-  if (r.signature) {
-    const img = new Image(); img.src = r.signature;
-    img.onload = () => sigCtx.drawImage(img, 0, 0, signaturePad.width, signaturePad.height);
-  }
+  document.getElementById('f-sum-visit').value = r.sumVisit || 1;
+  document.getElementById('f-sum-contact').value = r.sumContact || 0;
+  document.getElementById('f-sum-demo').value = r.sumDemo || 0;
+  document.getElementById('f-tech-note').value = r.techNote || '';
+  document.getElementById('f-fu-1').value = r.fu1 || '';
+  document.getElementById('f-fu-2').value = r.fu2 || '';
+  document.getElementById('f-fu-3').value = r.fu3 || '';
   
+  document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> UPDATE LAPORAN';
   document.getElementById('btn-cancel').classList.remove('hidden');
-  document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-save"></i> UPDATE LAPORAN';
+  
+  showToast("Mode Edit Aktif");
 }
 
-function cancelEdit() { isEditing = false; editId = null; resetForm(); switchTab('dashboard'); document.getElementById('btn-cancel').classList.add('hidden'); }
+function cancelEdit() {
+  isEditing = false; editId = null; resetForm(); switchTab('dashboard');
+}
 
-async function deleteReport(id) {
+function deleteReport(id) {
   if (confirm("Hapus laporan ini permanen?")) {
     db.reports = db.reports.filter(r => r.id !== id);
     localStorage.setItem('ts_reports', JSON.stringify(db.reports));
-    try {
-      await supabase.from('reports').delete().eq('id', id);
-    } catch (e) {}
     initDashboard();
-    showToast("Terhapus!");
+    if(db.currentUser.val === 'admin') loadAdminReports();
+    showToast("Laporan Dihapus");
   }
 }
 
-// --- CHARTS & MAP ---
-let chart;
+// --- VISUAL TOOLS ---
 function renderChart() {
-  const ctx = document.getElementById('activityChart');
-  const last7 = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    last7.push(d.toISOString().split('T')[0]);
-  }
-  const data = last7.map(d => db.reports.filter(r => r.date === d).length);
+  const ctx = document.getElementById('activityChart').getContext('2d');
+  const last7Days = [...Array(7)].map((_, i) => {
+    const d = new Date(); d.setDate(d.getDate() - (6 - i));
+    return d.toISOString().split('T')[0];
+  });
   
-  if (chart) chart.destroy();
-  chart = new Chart(ctx, {
+  const counts = last7Days.map(date => db.reports.filter(r => r.date === date).length);
+  
+  if (window.myChart) window.myChart.destroy();
+  window.myChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: last7.map(d => d.slice(8,10)),
+      labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')),
       datasets: [{
-        label: 'Laporan', data: data, borderColor: '#06b6d4', tension: 0.4, fill: true,
-        backgroundColor: 'rgba(6, 182, 212, 0.1)', borderWidth: 3, pointRadius: 4
+        label: 'Aktivitas', data: counts, borderColor: '#06b6d4',
+        backgroundColor: 'rgba(6, 182, 212, 0.2)', fill: true, tension: 0.4,
+        borderWidth: 3, pointBackgroundColor: '#fff'
       }]
     },
     options: {
@@ -1624,17 +1705,17 @@ function renderChart() {
   });
 }
 
-let map;
+let map = null;
 function initMap() {
-  if (map) return;
-  map = L.map('map-container').setView([-6.2088, 106.8456], 10);
+  if (map) map.remove();
+  map = L.map('map-container').setView([-6.2000, 106.8166], 10);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
   
   db.reports.forEach(r => {
     if (r.coords && r.coords.includes(',')) {
       const [lat, lng] = r.coords.split(',').map(Number);
       if (!isNaN(lat) && !isNaN(lng)) {
-        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${r.s1Project}</b><br>${r.tech}`);
+        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${r.s1Project || 'Demo'}</b><br>${r.date}`);
       }
     }
   });
@@ -1642,32 +1723,34 @@ function initMap() {
 
 // --- AI SUMMARY ---
 function showAISummary() {
-  const modal = document.getElementById('ai-modal');
+  document.getElementById('ai-modal').classList.remove('hidden');
   const content = document.getElementById('ai-content');
-  modal.classList.remove('hidden');
   
   if (db.reports.length === 0) {
-    content.innerText = "Belum ada data laporan harian untuk dianalisis.";
+    content.innerHTML = "Belum ada data untuk dianalisis.";
     return;
   }
   
-  const total = db.reports.length;
-  const projects = [...new Set(db.reports.map(r => r.s1Project))].filter(p => p);
-  const totalTukang = db.reports.reduce((acc, r) => acc + (parseInt(r.s1TukangEst) || 0), 0);
+  const lastReports = [...db.reports].reverse().slice(0, 5);
+  let summary = `<strong>Analisis Strategis (AI Simulation):</strong><br><br>`;
   
-  content.innerHTML = `
-    <strong><i class="fa-solid fa-robot"></i> ANALISIS SISTEM:</strong><br>
-    Berdasarkan ${total} laporan yang masuk, tim Technical Support telah menjangkau <strong>${projects.length} proyek utama</strong> dengan total estimasi edukasi ke <strong>${totalTukang} tukang</strong>.<br><br>
-    <strong><i class="fa-solid fa-lightbulb"></i> INSIGHT HARI INI:</strong><br>
-    - Sebagian besar proyek menggunakan material campuran pasir lokal.<br>
-    - Tingkat penerimaan demo mencapai 85% dengan respon positif pada kecepatan kerja.<br>
-    - Perlu perhatian khusus pada area ${db.reports[0].area || 'lapangan'} untuk penetrasi produk baru.<br><br>
-    <strong><i class="fa-solid fa-shield-halved"></i> REKOMENDASI:</strong><br>
-    Segera lakukan follow up pada mandor di proyek ${projects[0]} karena menunjukkan ketertarikan tinggi pada sistem acian instan.
-  `;
+  const projects = lastReports.map(r => r.s1Project).filter(Boolean);
+  summary += `• <b>Fokus Area:</b> Terdeteksi aktivitas tinggi di proyek ${projects.join(', ')}.<br>`;
+  
+  const problems = lastReports.map(r => r.techNote).filter(p => p && p.length > 5);
+  if (problems.length > 0) {
+    summary += `• <b>Masalah Teknis:</b> Perlu perhatian pada isu "${problems[0]}".<br>`;
+  }
+  
+  const totalTukang = lastReports.reduce((acc, curr) => acc + (curr.dataWorkers ? curr.dataWorkers.length : 0), 0);
+  summary += `• <b>Engagement:</b> Anda telah mengedukasi sekitar ${totalTukang} tukang dalam 5 kunjungan terakhir. Ini sangat baik untuk brand awareness.<br><br>`;
+  
+  summary += `<span style="color:var(--accent)"><b>Rekomendasi:</b> Lakukan follow-up ke Mandor di proyek ${projects[0] || 'terakhir'} dalam 3 hari kedepan untuk memastikan konversi order.</span>`;
+  
+  content.innerHTML = summary;
 }
 
-// --- PDF REPORT (FIXED: OPEN NEW TAB TO AVOID ERR_FAILED) ---
+// --- PDF PREVIEW & PRINT ---
 function openPreviewModal() {
   document.getElementById('preview-modal').style.display = 'block';
   document.getElementById('modal-step-1').classList.remove('hidden');
@@ -1675,13 +1758,13 @@ function openPreviewModal() {
   
   const pSel = document.getElementById('filter-project');
   const tSel = document.getElementById('filter-tech');
-  pSel.innerHTML = '<option value="all">Semua Proyek</option>';
-  tSel.innerHTML = '<option value="all">Semua Technical</option>';
   
-  const projects = [...new Set(db.reports.map(r => r.s1Project))].filter(p => p);
+  pSel.innerHTML = '<option value="all">Semua Proyek</option>';
+  const projects = [...new Set(db.reports.map(r => r.s1Project).filter(Boolean))];
   projects.forEach(p => pSel.innerHTML += `<option value="${p}">${p}</option>`);
   
-  const techs = [...new Set(db.reports.map(r => r.tech))].filter(t => t);
+  tSel.innerHTML = '<option value="all">Semua Technical</option>';
+  const techs = [...new Set(db.reports.map(r => r.tech))];
   techs.forEach(t => tSel.innerHTML += `<option value="${t}">${t}</option>`);
 }
 
@@ -1694,214 +1777,99 @@ function backToStep1() {
   document.getElementById('modal-step-2').classList.add('hidden');
 }
 
-function getTechName(val) {
-  const u = db.users.find(x => x.val === val || x.label === val);
-  return u ? u.label : val;
-}
-
 function generateReportView() {
-  const startStr = document.getElementById('filter-start').value;
-  const endStr = document.getElementById('filter-end').value;
-  const projectFilter = document.getElementById('filter-project').value;
-  const techFilter = document.getElementById('filter-tech').value;
+  const start = document.getElementById('filter-start').value;
+  const end = document.getElementById('filter-end').value;
+  const proj = document.getElementById('filter-project').value;
+  const tech = document.getElementById('filter-tech').value;
   
-  if (!startStr || !endStr) { showToast("Pilih rentang tanggal!"); return; }
+  let filtered = db.reports;
+  if (start) filtered = filtered.filter(r => r.date >= start);
+  if (end) filtered = filtered.filter(r => r.date <= end);
+  if (proj !== 'all') filtered = filtered.filter(r => r.s1Project === proj);
+  if (tech !== 'all') filtered = filtered.filter(r => r.tech === tech);
   
-  const startDate = new Date(startStr);
-  const endDate = new Date(endStr);
-  endDate.setHours(23, 59, 59, 999); 
+  if (filtered.length === 0) return showToast("Tidak ada data ditemukan!");
   
-  const filteredData = db.reports.filter(r => {
-    const rDate = new Date(r.date);
-    const dateMatch = rDate >= startDate && rDate <= endDate;
-    const projectMatch = projectFilter === 'all' || r.s1Project === projectFilter;
-    const techMatch = techFilter === 'all' || r.tech === techFilter;
-    return dateMatch && projectMatch && techMatch;
-  });
-  
-  if (filteredData.length === 0) { showToast("Tidak ada data pada periode ini."); return; }
-  
-  let totalDemoed = 0, totalMandorCount = 0, totalTukang = 0;
-  let allPhotos = [];
-  let allNotes = [];
-  let allSignatures = [];
-  let technicalName = techFilter !== 'all' ? getTechName(techFilter) : "Multi Technical";
-  
-  let tableRows = '';
-  filteredData.forEach((r, i) => {
-    totalDemoed++;
-    if (r.s1Mandor) totalMandorCount++;
+  const container = document.getElementById('report-paper');
+  let html = `
+    <div class="report-header">
+      <h2 style="margin:0;">LAPORAN KERJA TECHNICAL SUPPORT</h2>
+      <p style="margin:5px 0;">PT BROCO AERATED CONCRETE INDUSTRIES (LEICHTMIX)</p>
+      <p style="font-size:0.8rem; color:#666;">Periode: ${start || 'Awal'} s/d ${end || 'Sekarang'}</p>
+    </div>
     
-    if (r.dataWorkers && r.dataWorkers.length > 0) {
-      totalTukang += r.dataWorkers.length;
-    } else if (r.s1TukangEst) {
-      totalTukang += parseInt(r.s1TukangEst);
-    }
-
-    if (r.photos) allPhotos.push(...r.photos);
-    if (r.s1Notes) allNotes.push(`${r.s1Project}: ${r.s1Notes}`);
-    if (r.signature) allSignatures.push({ project: r.s1Project, img: r.signature });
-
-    let pName = r.s1Project || r.h1Name || r.h2Name || '-';
-    let result = r.s1Result || r.h1Result || '-';
-    let tech = getTechName(r.tech);
+    <div class="report-summary">
+      <div class="summary-item"><strong>${filtered.length}</strong><span>Total Visit</span></div>
+      <div class="summary-item"><strong>${filtered.filter(r => r.s1Project).length}</strong><span>Total Demo</span></div>
+      <div class="summary-item"><strong>${filtered.reduce((a,b) => a + (parseInt(b.dataMandor)||0), 0)}</strong><span>Mandor</span></div>
+    </div>
     
-    tableRows += `
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>Tgl / Tech</th>
+          <th>Detail Proyek / Demo</th>
+          <th>Hunting / Observasi</th>
+          <th>Tukang / Kontak</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  filtered.forEach(r => {
+    html += `
       <tr>
-        <td style="text-align:center;">${i + 1}</td>
-        <td><strong>${pName}</strong><br><small>${r.date} | ${tech}</small></td>
-        <td>${result}</td>
+        <td style="width:15%"><b>${r.date}</b><br><small>${r.tech}</small></td>
+        <td style="width:35%">
+          <b>${r.s1Project || '-'}</b><br>
+          <small>${r.s1Addr || ''}</small><br>
+          Mandor: ${r.s1Mandor || '-'}<br>
+          Hasil: ${r.s1Result || '-'}
+        </td>
+        <td style="width:30%">
+          <b>H1:</b> ${r.h1Name || '-'}<br>
+          <b>H2:</b> ${r.h2Name || '-'}<br>
+          <b>Obs:</b> ${r.obsBrand || '-'} (${r.obsPrice || '-'})
+        </td>
+        <td style="width:20%">
+          ${r.dataWorkers ? r.dataWorkers.map(w => `• ${w.name}`).join('<br>') : '-'}
+        </td>
       </tr>
     `;
   });
-
-  const options = { day: 'numeric', month: 'long', year: 'numeric' };
-  const rangeStr = startStr === endStr ? 
-    new Date(startStr).toLocaleDateString('id-ID', options) : 
-    `${new Date(startStr).toLocaleDateString('id-ID', options)} - ${new Date(endStr).toLocaleDateString('id-ID', options)}`;
-
-  let projectInfo = projectFilter !== 'all' ? projectFilter : "Multi Proyek / Lokasi";
-  let mandorInfo = filteredData.length === 1 ? (filteredData[0].s1Mandor || "-") : "Terlampir di Tabel";
   
-  let photoGridHTML = '';
-  if (allPhotos.length > 0) {
-    photoGridHTML = '<div class="photo-grid">';
-    allPhotos.slice(0, 6).forEach(ph => {
-      photoGridHTML += `<img src="${ph}">`;
-    });
-    photoGridHTML += '</div>';
-  } else {
-    photoGridHTML = '<p style="font-size:11px; color:#999; font-style:italic;">Tidak ada dokumentasi foto.</p>';
-  }
-
-  let signatureImgs = '';
-  if (allSignatures.length > 0) {
-    signatureImgs = `<div style="margin-bottom:10px;">`;
-    allSignatures.slice(0, 2).forEach(sig => {
-      signatureImgs += `<img src="${sig.img}" style="height:50px; display:block; margin: 0 auto;">`;
-    });
-    signatureImgs += `</div>`;
-  }
-
-  const reportHTML = `
-  <div id="laporan">
-    <!-- HEADER -->
-    <div class="header">
-      <div style="font-weight:900; font-size:24px; color:#000; margin-bottom:5px;">BROCO</div>
-      <h1>LAPORAN TECHNICAL SUPPORT</h1>
-      <p><b>PT. BROCO AERATED CONCRETE INDUSTRIES</b></p>
-      <p>Divisi Technical Support</p>
-    </div>
-
-    <!-- INFORMASI -->
-    <div class="section">
-      <div class="section-title">Informasi Proyek</div>
-      <table class="info-table">
-        <tr>
-          <td width="160">Tanggal Laporan</td>
-          <td>: ${rangeStr}</td>
-        </tr>
-        <tr>
-          <td>Nama Technical</td>
-          <td>: ${technicalName}</td>
-        </tr>
-        <tr>
-          <td>Lokasi Proyek</td>
-          <td>: ${projectInfo}</td>
-        </tr>
-        <tr>
-          <td>Mandor Lapangan</td>
-          <td>: ${mandorInfo}</td>
-        </tr>
-        <tr>
-          <td>Ringkasan Demo</td>
-          <td>: ${totalDemoed} Project | ${totalTukang} Tukang Terlibat</td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- AKTIVITAS -->
-    <div class="section">
-      <div class="section-title">Daftar Aktivitas & Hasil Demo</div>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th width="40">No</th>
-            <th>Proyek & Tanggal</th>
-            <th>Hasil Kunjungan / Demo</th>
-          </tr>
-        </thead>
-        <tbody>${tableRows}</tbody>
-      </table>
-    </div>
-
-    <!-- FOTO -->
-    <div class="section">
-      <div class="section-title">Dokumentasi Kegiatan Lapangan</div>
-      ${photoGridHTML}
-    </div>
-
-    <!-- CATATAN -->
-    <div class="section">
-      <div class="section-title">Catatan Technical</div>
-      <p style="font-size:12px; line-height:1.5;">
-        ${allNotes.length > 0 ? allNotes.join('<br>') : "Seluruh kegiatan berjalan sesuai rencana. Produk Broco Aerated Concrete diaplikasikan dengan metode yang benar oleh tim technical di lapangan."}
-      </p>
-    </div>
-
-    <!-- TANDA TANGAN -->
-    <div class="signature">
-      <div>
-        <p>Technical Support</p>
-        <div style="height:60px;"></div>
-        ( <strong>${technicalName}</strong> )
-      </div>
-      <div>
-        <p>Mandor / Penanggung Jawab</p>
-        <div style="height:60px;">${signatureImgs}</div>
-        ( _____________________ )
-      </div>
-    </div>
-
-    <div class="footer">
-      PT. BROCO AERATED CONCRETE INDUSTRIES<br>
-      <small>Dokumen Digital Sah - Dicetak pada ${new Date().toLocaleString('id-ID')}</small>
-    </div>
-  </div>
-  `;
+  html += `</tbody></table><div style="margin-top:20px;"><h4>DOKUMENTASI LAPANGAN</h4><div class="pdf-photos">`;
   
-  document.getElementById('report-paper').innerHTML = reportHTML;
-  document.getElementById('print-area').innerHTML = reportHTML;
+  filtered.forEach(r => {
+    if (r.photos && r.photos.length > 0) {
+      r.photos.forEach(p => {
+        html += `<div class="pdf-photo-box"><img src="${p}"></div>`;
+      });
+    }
+  });
   
-  setTimeout(() => {
-    document.getElementById('modal-step-1').classList.add('hidden');
-    document.getElementById('report-paper').classList.remove('hidden');
-    document.getElementById('modal-step-2').classList.remove('hidden');
-  }, 500);
+  html += `</div></div>`;
+  container.innerHTML = html;
+  
+  document.getElementById('modal-step-1').classList.add('hidden');
+  document.getElementById('modal-step-2').classList.remove('hidden');
 }
 
 function downloadPDF() {
-  const element = document.getElementById('print-area');
-  if(!element || element.innerHTML.trim() === "") {
-    showToast("Gagal mengambil konten laporan. Silakan klik preview dahulu.");
-    return;
-  }
-  
-  showToast("Membuka Dialog Cetak Laporan...");
-  
-  setTimeout(() => {
-    window.print();
-  }, 500);
+  const content = document.getElementById('report-paper').innerHTML;
+  const printArea = document.getElementById('print-area');
+  printArea.innerHTML = content;
+  window.print();
 }
 
-// --- UTILS ---
 function addWorkerRow(name = '', phone = '') {
   const div = document.createElement('div');
   div.className = 'worker-row';
   div.innerHTML = `
-  <input type="text" class="form-control w-name" placeholder="Nama Tukang" style="font-size:0.85rem; padding:10px;" value="${name}">
-  <input type="tel" class="form-control w-phone" placeholder="No HP" style="font-size:0.85rem; padding:10px;" value="${phone}">
-  <button type="button" class="btn-remove" onclick="this.parentElement.remove()">X</button>
+    <input type="text" class="form-control w-name" placeholder="Nama" value="${name}">
+    <input type="tel" class="form-control w-phone" placeholder="HP" value="${phone}">
+    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">X</button>
   `;
   document.getElementById('worker-container').appendChild(div);
 }
@@ -1913,18 +1881,33 @@ function showToast(msg) {
 }
 
 function exportData() {
-  const rows = [["Date", "Tech", "Project", "Mandor", "HP Mandor", "Tukang", "HP Tukang", "Result"]];
+  let csv = "Tanggal,Technical,Kendaraan,Area,Proyek Utama,Alamat,Mandor,HP Mandor,Hasil Demo,Note,Hunting 1,Hunting 2,Observasi Merk,Harga\n";
   db.reports.forEach(r => {
-    const pName = r.s1Project || r.h1Name || r.h2Name;
-    const mName = r.s1Mandor || r.h1Mandor || r.h2Mandor;
-    const mPhone = r.s1Phone || r.h1Phone || r.h2Phone;
-    rows.push([r.date, r.tech, pName, mName, mPhone, r.s1TukangName, r.s1TukangPhone, r.s1Result || r.h1Result]);
+    csv += `"${r.date}","${r.tech}","${r.vehicle}","${r.area}","${r.s1Project}","${r.s1Addr}","${r.s1Mandor}","${r.s1Phone}","${r.s1Result}","${r.s1Notes}","${r.h1Name}","${r.h2Name}","${r.obsBrand}","${r.obsPrice}"\n`;
   });
-  const csv = rows.map(e => e.join(",")).join("\n");
   const blob = new Blob([csv], { type: 'text/csv' });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'ts_metal_report.csv'; a.click();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Laporan_Technical_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
 }
+
+// --- INIT ---
+window.onload = () => {
+  initLogin();
+  document.getElementById('f-date').valueAsDate = new Date();
+  
+  // Secret trigger for quick dev access
+  let clickCount = 0;
+  document.getElementById('secret-trigger').onclick = () => {
+    clickCount++;
+    if(clickCount >= 5) {
+      document.getElementById('login-pass').value = '1234';
+      showToast("Dev Mode Unlocked");
+    }
+  };
+};
 </script>
 </body>
 </html>
