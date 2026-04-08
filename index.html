@@ -274,7 +274,10 @@ h1, h2, h3, h4, h5 {
   font-size: 0.85rem;
 }
 </style>
-/* SIDEBAR NAVIGATION SYSTEM (MAXIMIZED) */
+
+/* ============================================================
+   SIDEBAR NAVIGATION SYSTEM (MAXIMIZED & REINFORCED)
+   ============================================================ */
 .sidebar {
   position: fixed;
   left: -320px;
@@ -306,7 +309,10 @@ h1, h2, h3, h4, h5 {
   transition: 0.3s;
 }
 
-.sidebar-overlay.active { display: block; opacity: 1; }
+.sidebar-overlay.active { 
+  display: block; 
+  opacity: 1; 
+}
 
 .sidebar-brand {
   display: flex;
@@ -321,7 +327,10 @@ h1, h2, h3, h4, h5 {
   color: var(--primary);
 }
 
-.nav-menu { list-style: none; flex: 1; }
+.nav-menu { 
+  list-style: none; 
+  flex: 1; 
+}
 
 .nav-item {
   display: flex;
@@ -351,19 +360,26 @@ h1, h2, h3, h4, h5 {
   border-left: 4px solid var(--primary);
 }
 
-.nav-item.active i { transform: scale(1.2); color: var(--primary); }
+.nav-item.active i { 
+  transform: scale(1.2); 
+  color: var(--primary); 
+}
 
-/* BOTTOM NAVIGATION (iOS/ANDROID STYLE) */
+/* ============================================================
+   BOTTOM NAVIGATION (ERGONOMIC iOS/ANDROID STYLE)
+   ============================================================ */
 .bottom-bar {
   position: fixed;
-  bottom: 0; left: 0; right: 0;
+  bottom: 0; 
+  left: 0; 
+  right: 0;
   height: 85px;
   background: rgba(15, 23, 42, 0.95);
   backdrop-filter: blur(25px);
   border-top: 1px solid var(--border-glass);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  padding: 10px 0 25px; /* Extra safe area */
+  padding: 10px 0 25px; /* Extra safe area for modern devices */
   z-index: 4000;
 }
 
@@ -381,12 +397,22 @@ h1, h2, h3, h4, h5 {
   transition: 0.3s;
 }
 
-.bar-item i { font-size: 1.4rem; }
+.bar-item i { 
+  font-size: 1.4rem; 
+}
 
-.bar-item.active { color: var(--primary); }
-.bar-item.active i { transform: translateY(-3px); filter: drop-shadow(0 0 5px var(--primary-glow)); }
+.bar-item.active { 
+  color: var(--primary); 
+}
 
-/* MAP CONTAINER DESIGN */
+.bar-item.active i { 
+  transform: translateY(-3px); 
+  filter: drop-shadow(0 0 5px var(--primary-glow)); 
+}
+
+/* ============================================================
+   VISUAL ELEMENTS & DATA CONTAINERS
+   ============================================================ */
 #map-viewer {
   height: 350px;
   width: 100%;
@@ -396,7 +422,6 @@ h1, h2, h3, h4, h5 {
   background: #f1f5f9;
 }
 
-/* DATA LIST CARDS */
 .log-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-glass);
@@ -409,9 +434,11 @@ h1, h2, h3, h4, h5 {
   transition: var(--transition);
 }
 
-.log-card:hover { background: rgba(255,255,255,0.06); border-color: var(--border-active); }
+.log-card:hover { 
+  background: rgba(255,255,255,0.06); 
+  border-color: var(--border-active); 
+}
 
-/* STATS ELEMENTS */
 .grid-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -429,8 +456,21 @@ h1, h2, h3, h4, h5 {
   overflow: hidden;
 }
 
-.stat-box .val { font-family: 'Rajdhani', sans-serif; font-size: 2.8rem; font-weight: 700; line-height: 1; }
-.stat-box .lbl { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; }
+.stat-box .val { 
+  font-family: 'Rajdhani', sans-serif; 
+  font-size: 2.8rem; 
+  font-weight: 700; 
+  line-height: 1; 
+}
+
+.stat-box .lbl { 
+  font-size: 0.75rem; 
+  color: var(--text-muted); 
+  text-transform: uppercase; 
+  margin-top: 5px; 
+}
+
+/* KHUSUS: MENUTUP TAG STYLE DENGAN BENAR AGAR TIDAK BOCOR KE HTML */
 </style>
 
 </head>
@@ -446,22 +486,22 @@ h1, h2, h3, h4, h5 {
     </div>
 </div>
 
-<section id="view-login" class="app-container" style="display:flex; align-items:center; justify-content:center; padding:20px;">
+<section id="view-login" class="app-container" style="display:flex; align-items:center; justify-content:center; padding:20px; min-height:100vh;">
     <div class="glass-card" style="width:100%; max-width:420px; padding:45px 35px; border-radius:var(--radius-xl);">
         <div style="text-align:center; margin-bottom:40px;">
             <div style="width:85px; height:85px; background:linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius:24px; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; box-shadow:0 15px 30px var(--primary-glow);">
                 <i class="fa-solid fa-helmet-safety" style="font-size:2.5rem; color:white;"></i>
             </div>
             <h1 style="font-size:2.5rem; margin-bottom:5px;">SI <span class="text-gradient">TUKANG</span></h1>
-            <p class="label-caps" style="color:var(--primary);">TS Monitoring v2.0 MAX</p>
+            <p class="label-caps" style="color:var(--primary); font-weight: 800;">TS Monitoring v2.0 MAX</p>
         </div>
 
         <form id="auth-form">
-            <div class="form-group">
-                <label class="label-caps">Identitas Sales Executive</label>
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label class="label-caps" style="margin-bottom: 10px; display: block;">Identitas Sales Executive</label>
                 <div class="input-container">
                     <i class="fa-solid fa-user-tie"></i>
-                    <select id="auth-user" class="form-input" required>
+                    <select id="auth-user" class="form-input" required style="appearance: none;">
                         <option value="" disabled selected>-- Pilih Personel --</option>
                         <option value="rudi">Rudi (National Sales Manager)</option>
                         <option value="ts_mlg">TS Malang Area</option>
@@ -473,71 +513,29 @@ h1, h2, h3, h4, h5 {
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="label-caps">Security Passcode</label>
+            <div class="form-group" style="margin-bottom: 30px;">
+                <label class="label-caps" style="margin-bottom: 10px; display: block;">Security Passcode</label>
                 <div class="input-container">
                     <i class="fa-solid fa-key"></i>
-                    <input type="password" id="auth-pass" class="form-input" placeholder="Masukkan PIN..." required>
+                    <input type="password" id="auth-pass" class="form-input" placeholder="Masukkan PIN Rahasia..." required>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:15px; height:60px; font-size:1.1rem;">
-                Akses Dashboard <i class="fa-solid fa-arrow-right"></i>
+            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:5px; height:60px; font-size:1.1rem; letter-spacing: 1px; font-weight: 700;">
+                AKSES DASHBOARD <i class="fa-solid fa-arrow-right" style="margin-left: 10px;"></i>
             </button>
         </form>
 
         <div style="margin-top:35px; text-align:center; border-top:1px solid var(--border-glass); padding-top:25px;">
-            <p style="font-size:0.7rem; color:var(--text-dim); line-height:1.6;">
+            <p style="font-size:0.7rem; color:var(--text-dim); line-height:1.6; font-weight: 600;">
                 Sistem Manajemen Laporan Teknis Retail Nasional<br>
-                <b>PT Broco Aerated Concrete Industries</b><br>
-                © 2026 LeichtMix Indonesia
+                <span style="color: var(--text-muted);">PT Broco Aerated Concrete Industries</span><br>
+                <b style="color: var(--primary);">© 2026 LEICHTMIX INDONESIA</b>
             </p>
         </div>
     </div>
 </section>
 
-<section id="view-app" class="hidden">
-    <header style="padding:20px 25px; display:flex; justify-content:space-between; align-items:center; background:rgba(15,23,42,0.8); backdrop-filter:blur(15px); position:sticky; top:0; z-index:3000; border-bottom:1px solid var(--border-glass);">
-        <div style="display:flex; align-items:center; gap:15px;">
-            <div onclick="sidebar(true)" style="width:45px; height:45px; background:rgba(255,255,255,0.05); border-radius:14px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-                <i class="fa-solid fa-bars-staggered" style="color:var(--primary); font-size:1.2rem;"></i>
-            </div>
-            <div>
-                <h3 style="margin:0; font-size:1.2rem;">LEICHT<span style="color:var(--primary);">MIX</span></h3>
-                <div style="font-size:0.6rem; color:var(--text-muted); font-weight:800; letter-spacing:1px;">NATIONAL MONITORING</div>
-            </div>
-        </div>
-        
-        <div style="display:flex; align-items:center; gap:12px; background:rgba(16, 185, 129, 0.1); padding:8px 16px; border-radius:50px; border:1px solid rgba(16, 185, 129, 0.2);">
-            <div style="width:8px; height:8px; background:var(--accent); border-radius:50%; box-shadow:0 0 10px var(--accent);"></div>
-            <span id="sync-status" style="font-size:0.65rem; font-weight:800; color:var(--accent);">SYNCED</span>
-        </div>
-    </header>
-
-    <div class="sidebar-overlay" id="sb-overlay" onclick="sidebar(false)"></div>
-    <div class="sidebar" id="sb-panel">
-        <div class="sidebar-brand">
-            <i class="fa-solid fa-helmet-safety"></i>
-            <div>
-                <h2 style="font-size:1.8rem;">SI <span class="text-gradient">TUKANG</span></h2>
-                <div style="font-size:0.6rem; letter-spacing:2px; font-weight:700;">PROFESSIONAL v2.0</div>
-            </div>
-        </div>
-
-        <nav class="nav-menu">
-            <div class="nav-item active" onclick="nav('home')"><i class="fa-solid fa-house"></i> Beranda Utama</div>
-            <div class="nav-item" onclick="nav('report')"><i class="fa-solid fa-file-circle-plus"></i> Input Laporan Baru</div>
-            <div class="nav-item" onclick="nav('archive')"><i class="fa-solid fa-box-archive"></i> Arsip Aktivitas</div>
-            <div class="nav-item" onclick="nav('analytics')"><i class="fa-solid fa-chart-line"></i> Analitik Pasar</div>
-            <div class="nav-item admin-feature" style="display:none;" onclick="nav('admin')"><i class="fa-solid fa-user-shield"></i> NSM Control Panel</div>
-        </nav>
-
-        <div style="margin-top:auto; border-top:1px solid var(--border-glass); padding-top:20px;">
-            <div class="nav-item" onclick="logout()" style="color:var(--danger); border-radius:var(--radius-md); background:rgba(239, 68, 68, 0.05);">
-                <i class="fa-solid fa-power-off"></i> Logout Personel
-            </div>
-        </div>
-    </div>
 <main class="app-container" style="padding: 25px 20px 120px;">
         
         <div id="page-home" class="view-page animate-up">
