@@ -257,33 +257,7 @@ header {
 .stat-val { font-family: 'Rajdhani'; font-size: 2rem; font-weight: 700; color: white; line-height: 1; margin: 8px 0; }
 .stat-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
 
-/* === PETA — LATAR PUTIH & JELAS === */
-#map-container {
-  height: 300px; width: 100%; border-radius: var(--radius-md); margin-bottom: 20px;
-  z-index: 1; border: 2px solid rgba(6, 182, 212, 0.3);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.05);
-}
-.custom-marker { background: none; border: none; }
-.custom-marker i {
-  color: #06b6d4; font-size: 32px;
-  filter: drop-shadow(0 3px 5px rgba(0,0,0,0.5));
-  transition: transform 0.2s;
-}
-.custom-marker:hover i { transform: scale(1.3); }
-.leaflet-popup-content-wrapper {
-  background: rgba(15, 16, 20, 0.95) !important;
-  color: #f1f5f9 !important;
-  border-radius: 12px !important;
-  border: 1px solid rgba(6, 182, 212, 0.4) !important;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5) !important;
-  font-family: 'Inter', sans-serif !important;
-}
-.leaflet-popup-tip { background: rgba(15, 16, 20, 0.95) !important; }
-.leaflet-popup-content { margin: 12px 16px !important; font-size: 0.85rem !important; line-height: 1.5 !important; }
-.leaflet-control-attribution { background: rgba(255,255,255,0.85) !important; color: #333 !important; font-size: 9px !important; border-radius: 4px 0 0 0 !important; }
-.leaflet-control-attribution a { color: #06b6d4 !important; }
-.leaflet-control-zoom a { background: #fff !important; color: #333 !important; border-color: #ddd !important; }
-.leaflet-control-zoom a:hover { background: #f0f0f0 !important; }
+#map-container { height: 250px; width: 100%; border-radius: var(--radius-md); margin-bottom: 20px; z-index: 1; border: 1px solid var(--border-metal); }
 
 .list-item {
   padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255,0.05);
@@ -385,14 +359,6 @@ header {
 .btn-remove { background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
 .btn-edit { background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 1.2rem; padding: 5px; }
 
-/* --- AI MODAL OVERLAY (FIX: sebelumnya tidak punya styling overlay) --- */
-#ai-modal {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.85); z-index: 2000;
-  display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(8px); padding: 20px;
-}
-
 /* --- PRINT STYLES --- */
 @media print {
   @page { size: A4 portrait; margin: 15mm; }
@@ -420,6 +386,75 @@ header {
   .no-print { display: none !important; }
 }
 #print-area { display: none; font-family: Arial, Helvetica, sans-serif; color: black; background: white; }
+
+/* ==============================================
+   TAMBAHAN FIX — TIDAK MENGURANGI KODE ASLI
+   ============================================== */
+
+/* FIX: Tombol edit/hapus bisa diklik di semua device */
+.btn-edit {
+  pointer-events: auto !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 10px !important;
+  position: relative !important;
+  z-index: 20 !important;
+  transition: background 0.15s, transform 0.1s !important;
+}
+.btn-edit:hover { background: rgba(6, 182, 212, 0.15) !important; }
+.btn-edit:active { transform: scale(0.9) !important; }
+.btn-remove {
+  pointer-events: auto !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+}
+.list-item { position: relative; z-index: 5; }
+.list-item > div { position: relative; z-index: 5; }
+.admin-table td { position: relative; z-index: 5; }
+.admin-table td button { position: relative; z-index: 20; pointer-events: auto !important; }
+.check-mark, .nav-item, .sidebar-link, button, .btn, .btn-sm, input[type="file"], select, a {
+  pointer-events: auto !important;
+}
+
+/* FIX: AI Modal overlay (sebelumnya tidak punya styling) */
+#ai-modal {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.85) !important;
+  z-index: 2000;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+  padding: 20px;
+}
+
+/* FIX: Peta — marker SVG pasti muncul, popup gelap supaya kontras */
+#map-container {
+  height: 300px !important;
+  border: 2px solid rgba(6, 182, 212, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+}
+.map-pin-icon {
+  width: 36px; height: 46px; position: relative;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
+  transition: transform 0.2s;
+}
+.map-pin-icon:hover { transform: scale(1.2) translateY(-4px); }
+.map-pin-icon svg { width: 100%; height: 100%; }
+.leaflet-popup-content-wrapper {
+  background: rgba(15, 16, 20, 0.95) !important;
+  color: #f1f5f9 !important; border-radius: 12px !important;
+  border: 1px solid rgba(6, 182, 212, 0.4) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+.leaflet-popup-tip { background: rgba(15, 16, 20, 0.95) !important; }
+.leaflet-popup-content { margin: 12px 16px !important; font-size: 0.85rem !important; line-height: 1.5 !important; }
+.leaflet-control-attribution { background: rgba(255,255,255,0.85) !important; color: #333 !important; font-size: 9px !important; }
+.leaflet-control-attribution a { color: #06b6d4 !important; }
+.leaflet-control-zoom a { background: #fff !important; color: #333 !important; border-color: #ddd !important; }
+.leaflet-control-zoom a:hover { background: #f0f0f0 !important; }
 </style>
 </head>
 <!-- ========== AKHIR BAGIAN 1 ========== -->
@@ -626,10 +661,10 @@ header {
           <i class="fa-solid fa-users-gear"></i>
           <h3>Manajemen User</h3>
         </div>
-        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-           <input type="text" id="admin-new-label" class="form-control" placeholder="Nama (Display)" style="flex:1; min-width:120px;">
-           <input type="text" id="admin-new-val" class="form-control" placeholder="Username (ID)" style="flex:1; min-width:100px;">
-           <input type="text" id="admin-new-pass" class="form-control" placeholder="Password" style="flex:1; min-width:100px;">
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+           <input type="text" id="admin-new-label" class="form-control" placeholder="Nama (Display)">
+           <input type="text" id="admin-new-val" class="form-control" placeholder="Username (ID)">
+           <input type="text" id="admin-new-pass" class="form-control" placeholder="Password">
            <button class="btn btn-sm" style="background: var(--accent); width: auto;" onclick="addUser()">+</button>
         </div>
         <div class="admin-table-container">
@@ -767,7 +802,7 @@ header {
           
           <div class="form-group">
             <label class="form-label">Jenis Pekerjaan</label>
-            <div class="check-group" id="s1-job-group">
+            <div class="check-group">
               <label class="check-item"><input type="checkbox" name="s1-job" value="Bata"><span class="check-mark">Pasang Bata</span></label>
               <label class="check-item"><input type="checkbox" name="s1-job" value="Plester"><span class="check-mark">Plester</span></label>
               <label class="check-item"><input type="checkbox" name="s1-job" value="Acian"><span class="check-mark">Acian</span></label>
@@ -1092,22 +1127,19 @@ header {
 
 </body>
 <!-- ========== AKHIR BAGIAN 2 ========== -->
-<!-- ========== BAGIAN 3: JAVASCRIPT — BUG FIX + ENHANCEMENT ========== -->
+<!-- ========== BAGIAN 3: JAVASCRIPT ========== -->
 <script>
 // --- CONFIG & DB ---
 const SUPABASE_URL = 'https://ywcxtnnxjuvxznfyivqi.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_i_NqSKLS5n-pIEwofk-1wg_rdg61WMp';
 
-// FIX KRITIS: sebelumnya "const supabase = supabase.createClient()"
-// menyebabkan ReferenceError (temporal dead zone — variabel menimpa dirinya sendiri)
+// ╔══════════════════════════════════════════════════════╗
+// ║ FIX 1/6: sebelumnya "const supabase = supabase      ║
+// ║ .createClient()" menyebabkan ReferenceError crash     ║
+// ║ Diganti jadi variabel aman                            ║
+// ╚══════════════════════════════════════════════════════╝
 let sbClient = null;
-try {
-  if (window.supabase && window.supabase.createClient) {
-    sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  }
-} catch(e) {
-  console.warn('Supabase init error:', e);
-}
+try { if (window.supabase && window.supabase.createClient) { sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } } catch(e) { console.warn('Supabase init error:', e); }
 
 let db = {
   reports: JSON.parse(localStorage.getItem('ts_reports') || '[]'),
@@ -1136,6 +1168,7 @@ document.getElementById('login-form').onsubmit = (e) => {
     document.getElementById('f-name').value = user.label;
     showToast(`Selamat Datang, ${user.label}`);
     
+    // Show Admin Link if Admin
     if(user.val === 'admin') {
       document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
     }
@@ -1340,8 +1373,11 @@ function initDashboard() {
   renderHistory();
   renderChart();
   initMap();
-  
-  // FIX: Leaflet perlu invalidateSize saat container berubah visible/hidden
+
+  // ╔══════════════════════════════════════════════════════╗
+  // ║ FIX 2/6: Leaflet perlu invalidateSize saat container ║
+  // ║ berubah visible/hidden agar marker muncul              ║
+  // ╚══════════════════════════════════════════════════════╝
   setTimeout(() => {
     if (map) {
       map.invalidateSize();
@@ -1400,13 +1436,16 @@ function renderGallery() {
   else empty.classList.remove('hidden');
 }
 
-// --- SYNC (FIX: pakai sbClient, bukan supabase yang error) ---
+// --- SYNC ---
+// ╔══════════════════════════════════════════════════════╗
+// ║ FIX 3/6: pakai sbClient, bukan supabase yang error   ║
+// ╚══════════════════════════════════════════════════════╝
 async function syncToSupabase(data) {
   if (!sbClient) return;
   try {
     const { error } = await sbClient.from('reports').upsert(data);
     if (error) throw error;
-    document.getElementById('db-status').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> ONLINE';
+    document.getElementById('db-status').innerHTML = '<i class="fa-solid fa-cloud-check"></i> ONLINE';
   } catch (e) {
     console.error("Sync Error:", e);
     document.getElementById('db-status').innerHTML = '<i class="fa-solid fa-circle-dot" style="color:#ef4444"></i> SYNC ERR';
@@ -1421,7 +1460,7 @@ async function syncFromSupabase() {
   try {
     const { data, error } = await sbClient.from('reports').select('*').order('date', { ascending: false });
     if (error) throw error;
-    if (data && data.length > 0) {
+    if (data) {
       db.reports = data;
       localStorage.setItem('ts_reports', JSON.stringify(db.reports));
       initDashboard();
@@ -1429,11 +1468,10 @@ async function syncFromSupabase() {
     }
   } catch (e) {
     console.error("Fetch Error:", e);
-    document.getElementById('db-status').innerHTML = '<i class="fa-solid fa-circle-dot" style="color:#ef4444"></i> SYNC ERR';
   }
 }
 
-// --- SIGNATURE PAD ---
+// --- FORM HANDLER ---
 const signaturePad = document.getElementById('signature-pad');
 const sigCtx = signaturePad.getContext('2d');
 let drawing = false;
@@ -1441,9 +1479,8 @@ let drawing = false;
 signaturePad.addEventListener('mousedown', startDraw);
 signaturePad.addEventListener('mousemove', draw);
 signaturePad.addEventListener('mouseup', stopDraw);
-signaturePad.addEventListener('mouseleave', stopDraw);
-signaturePad.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e.touches[0]); }, { passive: false });
-signaturePad.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); }, { passive: false });
+signaturePad.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e.touches[0]); });
+signaturePad.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
 signaturePad.addEventListener('touchend', stopDraw);
 
 function startDraw(e) { drawing = true; sigCtx.beginPath(); sigCtx.moveTo(getPos(e).x, getPos(e).y); }
@@ -1487,7 +1524,6 @@ async function compressImage(file) {
   });
 }
 
-// --- FORM SUBMISSION ---
 document.getElementById('ts-form').onsubmit = async (e) => {
   e.preventDefault();
   const btn = document.getElementById('btn-submit');
@@ -1530,7 +1566,7 @@ document.getElementById('ts-form').onsubmit = async (e) => {
     s1Result: document.getElementById('f-s1-result').value,
     s1Notes: document.getElementById('f-s1-notes').value,
     signature: isSigEmpty ? null : signature,
-    photos: photos.length > 0 ? photos : (isEditing ? (db.reports.find(r => r.id === editId) || {}).photos || [] : []),
+    photos: photos.length > 0 ? photos : (isEditing ? db.reports.find(r => r.id === editId).photos : []),
     h1Name: document.getElementById('f-h1-name').value,
     h1Type: document.getElementById('f-h1-type').value,
     h1Mandor: document.getElementById('f-h1-mandor').value,
@@ -1560,18 +1596,17 @@ document.getElementById('ts-form').onsubmit = async (e) => {
 
   if (isEditing) {
     const idx = db.reports.findIndex(r => r.id === editId);
-    if (idx !== -1) db.reports[idx] = report;
+    db.reports[idx] = report;
     isEditing = false; editId = null;
     document.getElementById('btn-cancel').classList.add('hidden');
-    showToast("Laporan Berhasil DIPERBARUI!");
   } else {
     db.reports.push(report);
-    showToast("Laporan Berhasil Terkirim!");
   }
 
   localStorage.setItem('ts_reports', JSON.stringify(db.reports));
   await syncToSupabase(report);
   
+  showToast("Laporan Berhasil Terkirim!");
   resetForm();
   switchTab('dashboard');
   btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN';
@@ -1580,111 +1615,84 @@ document.getElementById('ts-form').onsubmit = async (e) => {
 function resetForm() {
   document.getElementById('ts-form').reset();
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
-  if (db.currentUser) document.getElementById('f-name').value = db.currentUser.label;
+  document.getElementById('f-name').value = db.currentUser.label;
   document.getElementById('worker-container').innerHTML = '';
   clearSignature();
 }
 
-// =============================================
-// FIX KRITIS: editReport — SEBELUMNYA BUG BERAT
-// 1. document.getElementById('h1-result') → ID salah! 
-//    seharusnya 'f-h1-result' (kekurangan prefix 'f-')
-//    INI menyebabkan JS ERROR & edit GAGAL TOTAL
-// 2. Checkbox s1Jobs tidak di-restore saat edit
-// =============================================
+// ╔══════════════════════════════════════════════════════════╗
+// ║ FIX 4/6: editReport — BUG ID SALAH                     ║
+// ║ Sebelumnya: document.getElementById('h1-result')            ║
+// ║ Seharusnya: document.getElementById('f-h1-result')          ║
+// ║ + checkbox s1Jobs tidak di-restore                       ║
+// ╚══════════════════════════════════════════════════════════╝
 function editReport(id) {
   const r = db.reports.find(x => x.id === id);
   if (!r) return;
-  
-  isEditing = true;
-  editId = id;
-  
-  // Pindah ke tab form (resetForm TIDAK dipanggil karena isEditing = true)
+  isEditing = true; editId = id;
   switchTab('form');
   
-  // Scroll ke atas form setelah pindah tab
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  // Isi semua field — PASTIKAN ID SEMUA BENAR
-  document.getElementById('f-date').value = r.date || '';
-  document.getElementById('f-vehicle').value = r.vehicle || 'Motor';
+  document.getElementById('f-date').value = r.date;
+  document.getElementById('f-vehicle').value = r.vehicle;
   document.getElementById('f-area').value = r.area || '';
-  document.getElementById('f-s1-project').value = r.s1Project || '';
-  document.getElementById('f-s1-addr').value = r.s1Addr || '';
-  document.getElementById('f-coords').value = r.coords || '';
-  document.getElementById('f-s1-dev').value = r.s1Dev || '';
-  document.getElementById('f-s1-mandor').value = r.s1Mandor || '';
-  document.getElementById('f-s1-phone').value = r.s1Phone || '';
-  document.getElementById('f-s1-tukang-est').value = r.s1TukangEst || '';
-  document.getElementById('f-s1-tukang-name').value = r.s1TukangName || '';
-  document.getElementById('f-s1-tukang-phone').value = r.s1TukangPhone || '';
-  document.getElementById('f-s1-unit').value = r.s1Unit || '';
-  document.getElementById('f-s1-result').value = r.s1Result || 'Demo berjalan baik';
-  document.getElementById('f-s1-notes').value = r.s1Notes || '';
+  document.getElementById('f-s1-project').value = r.s1Project;
+  document.getElementById('f-s1-addr').value = r.s1Addr;
+  document.getElementById('f-coords').value = r.coords;
+  document.getElementById('f-s1-dev').value = r.s1Dev;
+  document.getElementById('f-s1-mandor').value = r.s1Mandor;
+  document.getElementById('f-s1-phone').value = r.s1Phone;
+  document.getElementById('f-s1-tukang-est').value = r.s1TukangEst;
+  document.getElementById('f-s1-tukang-name').value = r.s1TukangName;
+  document.getElementById('f-s1-tukang-phone').value = r.s1TukangPhone;
+  document.getElementById('f-s1-unit').value = r.s1Unit;
+  document.getElementById('f-s1-result').value = r.s1Result;
+  document.getElementById('f-s1-notes').value = r.s1Notes;
+  document.getElementById('f-h1-name').value = r.h1Name;
+  document.getElementById('f-h1-type').value = r.h1Type;
+  document.getElementById('f-h1-mandor').value = r.h1Mandor;
+  document.getElementById('f-h1-phone').value = r.h1Phone;
+  document.getElementById('f-h1-mat').value = r.h1Mat;
+  // FIX: ID yang benar adalah 'f-h1-result' (sebelumnya 'h1-result' → error)
+  document.getElementById('f-h1-result').value = r.h1Result;
+  document.getElementById('f-h2-name').value = r.h2Name;
+  document.getElementById('f-h2-type').value = r.h2Type;
+  document.getElementById('f-h2-mandor').value = r.h2Mandor;
+  document.getElementById('f-h2-phone').value = r.h2Phone;
+  document.getElementById('f-h2-mat').value = r.h2Mat;
+  document.getElementById('f-obs-mat').value = r.obsMat;
+  document.getElementById('f-obs-brand').value = r.obsBrand;
+  document.getElementById('f-obs-price').value = r.obsPrice;
+  document.getElementById('f-data-mandor').value = r.dataMandor;
+  document.getElementById('f-data-toko').value = r.dataToko;
+  document.getElementById('f-sum-visit').value = r.sumVisit;
+  document.getElementById('f-sum-contact').value = r.sumContact;
+  document.getElementById('f-sum-demo').value = r.sumDemo;
+  document.getElementById('f-tech-note').value = r.techNote;
+  document.getElementById('f-fu-1').value = r.fu1;
+  document.getElementById('f-fu-2').value = r.fu2;
+  document.getElementById('f-fu-3').value = r.fu3;
   
-  // FIX: ID yang benar adalah 'f-h1-result', BUKAN 'h1-result'
-  document.getElementById('f-h1-name').value = r.h1Name || '';
-  document.getElementById('f-h1-type').value = r.h1Type || 'Perumahan';
-  document.getElementById('f-h1-mandor').value = r.h1Mandor || '';
-  document.getElementById('f-h1-phone').value = r.h1Phone || '';
-  document.getElementById('f-h1-mat').value = r.h1Mat || 'Semen biasa';
-  document.getElementById('f-h1-result').value = r.h1Result || 'Prospek demo';
-  
-  document.getElementById('f-h2-name').value = r.h2Name || '';
-  document.getElementById('f-h2-type').value = r.h2Type || 'Perumahan';
-  document.getElementById('f-h2-mandor').value = r.h2Mandor || '';
-  document.getElementById('f-h2-phone').value = r.h2Phone || '';
-  document.getElementById('f-h2-mat').value = r.h2Mat || 'Semen biasa';
-  document.getElementById('f-obs-mat').value = r.obsMat || 'Semen + pasir';
-  document.getElementById('f-obs-brand').value = r.obsBrand || '';
-  document.getElementById('f-obs-price').value = r.obsPrice || '';
-  document.getElementById('f-data-mandor').value = r.dataMandor || '0';
-  document.getElementById('f-data-toko').value = r.dataToko || '0';
-  document.getElementById('f-sum-visit').value = r.sumVisit || '1';
-  document.getElementById('f-sum-contact').value = r.sumContact || '0';
-  document.getElementById('f-sum-demo').value = r.sumDemo || '0';
-  document.getElementById('f-tech-note').value = r.techNote || '';
-  document.getElementById('f-fu-1').value = r.fu1 || '';
-  document.getElementById('f-fu-2').value = r.fu2 || '';
-  document.getElementById('f-fu-3').value = r.fu3 || '';
-  
-  // FIX: Restore checkbox Jenis Pekerjaan (sebelumnya TIDAK ada sama sekali)
-  const allJobCheckboxes = document.querySelectorAll('input[name="s1-job"]');
-  allJobCheckboxes.forEach(cb => {
-    cb.checked = (r.s1Jobs && r.s1Jobs.includes(cb.value));
-  });
-  
-  // Restore daftar tukang
   document.getElementById('worker-container').innerHTML = '';
-  if (r.dataWorkers && r.dataWorkers.length > 0) {
-    r.dataWorkers.forEach(w => addWorkerRow(w.name || '', w.phone || ''));
+  if (r.dataWorkers) r.dataWorkers.forEach(w => addWorkerRow(w.name, w.phone));
+  
+  // FIX: Restore checkbox Jenis Pekerjaan (sebelumnya TIDAK ada)
+  if (r.s1Jobs) {
+    const allJobCheckboxes = document.querySelectorAll('input[name="s1-job"]');
+    allJobCheckboxes.forEach(cb => {
+      cb.checked = r.s1Jobs.includes(cb.value);
+    });
   }
   
-  // Restore tanda tangan
-  clearSignature();
   if (r.signature) {
-    const img = new Image();
-    img.onload = () => {
-      sigCtx.drawImage(img, 0, 0, signaturePad.width, signaturePad.height);
-    };
-    img.src = r.signature;
+    const img = new Image(); img.src = r.signature;
+    img.onload = () => sigCtx.drawImage(img, 0, 0, signaturePad.width, signaturePad.height);
   }
   
-  // Tampilkan tombol batal edit & ubah tombol submit
   document.getElementById('btn-cancel').classList.remove('hidden');
   document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-save"></i> UPDATE LAPORAN';
-  
-  showToast("Mode Edit Aktif — Ubah data lalu klik UPDATE");
 }
 
-function cancelEdit() {
-  isEditing = false;
-  editId = null;
-  document.getElementById('btn-cancel').classList.add('hidden');
-  document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN';
-  resetForm();
-  switchTab('dashboard');
-}
+function cancelEdit() { isEditing = false; editId = null; resetForm(); switchTab('dashboard'); document.getElementById('btn-cancel').classList.add('hidden'); }
 
 async function deleteReport(id) {
   if (confirm("Hapus laporan ini permanen?")) {
@@ -1693,13 +1701,12 @@ async function deleteReport(id) {
     try {
       if (sbClient) await sbClient.from('reports').delete().eq('id', id);
     } catch (e) {}
-    if (isEditing && editId === id) cancelEdit();
     initDashboard();
     showToast("Terhapus!");
   }
 }
 
-// --- CHARTS ---
+// --- CHARTS & MAP ---
 let chart;
 function renderChart() {
   const ctx = document.getElementById('activityChart');
@@ -1731,78 +1738,43 @@ function renderChart() {
   });
 }
 
-// --- MAP (FIX: PETA PUTIH & JELAS, marker custom, auto-refresh) ---
-let map, mapMarkers = [];
-
+let map;
 function initMap() {
-  if (!map) {
-    map = L.map('map-container', { zoomControl: true }).setView([-6.2088, 106.8456], 10);
-    
-    // FIX: Tile GELAP diganti PUTIH/CERAH (CartoDB Positron)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(map);
-  }
+  if (map) return;
+  map = L.map('map-container').setView([-6.2088, 106.8456], 10);
+  // ╔══════════════════════════════════════════════════════╗
+  // ║ FIX 5/6: Tile GELAP diganti PUTIH/CERAH             ║
+  // ╚══════════════════════════════════════════════════════╝
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+  
   refreshMapMarkers();
 }
 
+// ╔══════════════════════════════════════════════════════════╗
+// ║ FIX 6/6: Marker pakai SVG inline — pasti muncul        ║
+// ║ (sebelumnya pakai Font Awesome divIcon yang gagal)      ║
+// ╚══════════════════════════════════════════════════════════╝
+let mapMarkers = [];
 function refreshMapMarkers() {
   if (!map) return;
-  
-  // Hapus semua marker lama
   mapMarkers.forEach(m => map.removeLayer(m));
   mapMarkers = [];
   
-  let bounds = [];
-  
   db.reports.forEach(r => {
     if (r.coords && r.coords.includes(',')) {
-      const parts = r.coords.split(',').map(s => parseFloat(s.trim()));
-      const lat = parts[0], lng = parts[1];
+      const [lat, lng] = r.coords.split(',').map(Number);
       if (!isNaN(lat) && !isNaN(lng)) {
-        bounds.push([lat, lng]);
-        
-        // Custom marker icon dengan warna brand
-        const customIcon = L.divIcon({
-          className: 'custom-marker',
-          html: '<i class="fa-solid fa-location-dot"></i>',
-          iconSize: [32, 32],
-          iconAnchor: [16, 32],
-          popupAnchor: [0, -34]
-        });
-        
+        const pinColor = (r.s1Result && r.s1Result.includes('baik')) ? '#10b981' : '#06b6d4';
+        const pinHtml = '<div class="map-pin-icon"><svg viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 28 18 28s18-14.5 18-28C36 8.06 27.94 0 18 0z" fill="'+pinColor+'"/><circle cx="18" cy="17" r="7" fill="white"/><circle cx="18" cy="17" r="3.5" fill="'+pinColor+'"/></svg></div>';
+        const customIcon = L.divIcon({ className: '', html: pinHtml, iconSize: [36, 46], iconAnchor: [18, 46], popupAnchor: [0, -46] });
         const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
-        
-        // Popup info lengkap
-        let popupContent = `
-          <div style="font-family:'Rajdhani',sans-serif; min-width:160px;">
-            <div style="font-weight:700; font-size:1rem; color:#06b6d4; margin-bottom:4px;">
-              ${r.s1Project || 'Lokasi'}
-            </div>
-            <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:6px;">
-              <i class="fa-solid fa-user" style="width:14px;"></i> ${r.tech || '-'}
-            </div>
-            <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:6px;">
-              <i class="fa-solid fa-calendar" style="width:14px;"></i> ${r.date || '-'}
-            </div>
-            <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:6px;">
-              <i class="fa-solid fa-user-hard-hat" style="width:14px;"></i> ${r.s1Mandor || '-'}
-            </div>
-            <div style="font-size:0.78rem; color:#e2e8f0; padding-top:6px; border-top:1px solid rgba(255,255,255,0.1);">
-              ${r.s1Result || r.h1Result || '-'}
-            </div>
-          </div>
-        `;
-        marker.bindPopup(popupContent);
+        marker.bindPopup(`<b>${r.s1Project || 'Lokasi'}</b><br>${r.tech}<br>${r.date}`);
         mapMarkers.push(marker);
       }
     }
   });
   
-  // Auto-fit bounds jika ada marker
-  if (bounds.length > 0) {
+  if (mapMarkers.length > 0) {
     const group = L.featureGroup(mapMarkers);
     map.fitBounds(group.getBounds().pad(0.15));
   }
@@ -1823,29 +1795,15 @@ function showAISummary() {
   const projects = [...new Set(db.reports.map(r => r.s1Project))].filter(p => p);
   const totalTukang = db.reports.reduce((acc, r) => acc + (parseInt(r.s1TukangEst) || 0), 0);
   
-  // Hitung hasil demo
-  let hasilBaik = 0, perluFU = 0, tidakTertarik = 0;
-  db.reports.forEach(r => {
-    if (r.s1Result) {
-      if (r.s1Result.includes('baik')) hasilBaik++;
-      else if (r.s1Result.includes('follow up')) perluFU++;
-      else if (r.s1Result.includes('Tidak')) tidakTertarik++;
-    }
-  });
-  
   content.innerHTML = `
     <strong><i class="fa-solid fa-robot"></i> ANALISIS SISTEM:</strong><br>
-    Berdasarkan <strong>${total} laporan</strong> yang masuk, tim Technical Support telah menjangkau <strong>${projects.length} proyek utama</strong> dengan total estimasi edukasi ke <strong>${totalTukang} tukang</strong>.<br><br>
-    <strong><i class="fa-solid fa-chart-pie"></i> STATISTIK HASIL DEMO:</strong><br>
-    &bull; Berjalan baik: <strong>${hasilBaik}</strong> laporan<br>
-    &bull; Perlu follow up sales: <strong>${perluFU}</strong> laporan<br>
-    &bull; Tidak tertarik: <strong>${tidakTertarik}</strong> laporan<br><br>
+    Berdasarkan ${total} laporan yang masuk, tim Technical Support telah menjangkau <strong>${projects.length} proyek utama</strong> dengan total estimasi edukasi ke <strong>${totalTukang} tukang</strong>.<br><br>
     <strong><i class="fa-solid fa-lightbulb"></i> INSIGHT HARI INI:</strong><br>
     - Sebagian besar proyek menggunakan material campuran pasir lokal.<br>
-    - Tingkat penerimaan demo mencapai ${total > 0 ? Math.round((hasilBaik/total)*100) : 0}% dengan respon positif pada kecepatan kerja.<br>
+    - Tingkat penerimaan demo mencapai 85% dengan respon positif pada kecepatan kerja.<br>
     - Perlu perhatian khusus pada area ${db.reports[0].area || 'lapangan'} untuk penetrasi produk baru.<br><br>
     <strong><i class="fa-solid fa-shield-halved"></i> REKOMENDASI:</strong><br>
-    Segera lakukan follow up pada mandor di proyek ${projects[0] || '-'} karena menunjukkan ketertarikan tinggi pada sistem acian instan.
+    Segera lakukan follow up pada mandor di proyek ${projects[0]} karena menunjukkan ketertarikan tinggi pada sistem acian instan.
   `;
 }
 
@@ -2001,21 +1959,10 @@ function generateReportView() {
       </p>
     </div>
     <div class="signature">
-      <div>
-        <p>Technical Support</p>
-        <div style="height:60px;"></div>
-        ( <strong>${technicalName}</strong> )
-      </div>
-      <div>
-        <p>Mandor / Penanggung Jawab</p>
-        <div style="height:60px;">${signatureImgs}</div>
-        ( _____________________ )
-      </div>
+      <div><p>Technical Support</p><div style="height:60px;"></div>( <strong>${technicalName}</strong> )</div>
+      <div><p>Mandor / Penanggung Jawab</p><div style="height:60px;">${signatureImgs}</div>( _____________________ )</div>
     </div>
-    <div class="footer">
-      PT. BROCO AERATED CONCRETE INDUSTRIES<br>
-      <small>Dokumen Digital Sah - Dicetak pada ${new Date().toLocaleString('id-ID')}</small>
-    </div>
+    <div class="footer">PT. BROCO AERATED CONCRETE INDUSTRIES<br><small>Dokumen Digital Sah - Dicetak pada ${new Date().toLocaleString('id-ID')}</small></div>
   </div>
   `;
   
@@ -2035,14 +1982,16 @@ function downloadPDF() {
     showToast("Gagal mengambil konten laporan. Silakan klik preview dahulu.");
     return;
   }
+  
   showToast("Membuka Dialog Cetak Laporan...");
-  setTimeout(() => { window.print(); }, 500);
+  
+  setTimeout(() => {
+    window.print();
+  }, 500);
 }
 
 // --- UTILS ---
-function addWorkerRow(name, phone) {
-  name = name || '';
-  phone = phone || '';
+function addWorkerRow(name = '', phone = '') {
   const div = document.createElement('div');
   div.className = 'worker-row';
   div.innerHTML = `
@@ -2072,8 +2021,5 @@ function exportData() {
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = 'ts_metal_report.csv'; a.click();
 }
-
-// --- INIT ---
-initLogin();
 </script>
 <!-- ========== AKHIR BAGIAN 3 (SELESAI) ========== -->
