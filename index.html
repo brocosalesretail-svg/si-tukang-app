@@ -386,83 +386,8 @@ header {
   .no-print { display: none !important; }
 }
 #print-area { display: none; font-family: Arial, Helvetica, sans-serif; color: black; background: white; }
-
-/* ==============================================
-   TAMBAHAN FIX — TIDAK MENGURANGI KODE ASLI
-   ============================================== */
-
-/* FIX: Tombol edit/hapus bisa diklik di semua device */
-.btn-edit {
-  pointer-events: auto !important;
-  user-select: auto !important;
-  -webkit-user-select: auto !important;
-  touch-action: manipulation !important;
-  min-width: 44px !important;
-  min-height: 44px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border-radius: 10px !important;
-  position: relative !important;
-  z-index: 20 !important;
-  transition: background 0.15s, transform 0.1s !important;
-}
-.btn-edit:hover { background: rgba(6, 182, 212, 0.15) !important; }
-.btn-edit:active { transform: scale(0.9) !important; }
-.btn-remove {
-  pointer-events: auto !important;
-  min-width: 42px !important;
-  min-height: 42px !important;
-}
-.list-item { position: relative; z-index: 5; }
-.list-item > div { position: relative; z-index: 5; }
-.admin-table td { position: relative; z-index: 5; }
-.admin-table td button { position: relative; z-index: 20; pointer-events: auto !important; }
-.check-mark, .nav-item, .sidebar-link, button, .btn, .btn-sm, input[type="file"], select, a {
-  pointer-events: auto !important;
-}
-
-/* FIX: AI Modal overlay (sebelumnya tidak punya styling) */
-#ai-modal {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.85) !important;
-  z-index: 2000;
-  display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(8px);
-  padding: 20px;
-}
-
-/* FIX: Peta — marker SVG pasti muncul, popup gelap supaya kontras */
-#map-container {
-  height: 300px !important;
-  border: 2px solid rgba(6, 182, 212, 0.3) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
-}
-.map-pin-icon {
-  width: 36px; height: 46px; position: relative;
-  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
-  transition: transform 0.2s;
-}
-.map-pin-icon:hover { transform: scale(1.2) translateY(-4px); }
-.map-pin-icon svg { width: 100%; height: 100%; }
-.leaflet-popup-content-wrapper {
-  background: rgba(15, 16, 20, 0.95) !important;
-  color: #f1f5f9 !important; border-radius: 12px !important;
-  border: 1px solid rgba(6, 182, 212, 0.4) !important;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5) !important;
-  font-family: 'Inter', sans-serif !important;
-}
-.leaflet-popup-tip { background: rgba(15, 16, 20, 0.95) !important; }
-.leaflet-popup-content { margin: 12px 16px !important; font-size: 0.85rem !important; line-height: 1.5 !important; }
-.leaflet-control-attribution { background: rgba(255,255,255,0.85) !important; color: #333 !important; font-size: 9px !important; }
-.leaflet-control-attribution a { color: #06b6d4 !important; }
-.leaflet-control-zoom a { background: #fff !important; color: #333 !important; border-color: #ddd !important; }
-.leaflet-control-zoom a:hover { background: #f0f0f0 !important; }
-.leaflet-div-icon.map-pin-icon { background: none !important; border: none !important; }
 </style>
 </head>
-<!-- ========== AKHIR BAGIAN 1 ========== -->
-<!-- ========== BAGIAN 2: HTML BODY ========== -->
 <body>
 
 <div id="login-view">
@@ -1130,20 +1055,11 @@ header {
 </div>
 
 </body>
-<!-- ========== AKHIR BAGIAN 2 ========== -->
-<!-- ========== BAGIAN 3: JAVASCRIPT ========== -->
 <script>
 // --- CONFIG & DB ---
 const SUPABASE_URL = 'https://ywcxtnnxjuvxznfyivqi.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_i_NqSKLS5n-pIEwofk-1wg_rdg61WMp';
-
-// ╔══════════════════════════════════════════════════════╗
-// ║ FIX 1/6: sebelumnya "const supabase = supabase      ║
-// ║ .createClient()" menyebabkan ReferenceError crash     ║
-// ║ Diganti jadi variabel aman                            ║
-// ╚══════════════════════════════════════════════════════╝
-let sbClient = null;
-try { if (window.supabase && window.supabase.createClient) { sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } } catch(e) { console.warn('Supabase init error:', e); }
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let db = {
   reports: JSON.parse(localStorage.getItem('ts_reports') || '[]'),
@@ -1377,17 +1293,6 @@ function initDashboard() {
   renderHistory();
   renderChart();
   initMap();
-
-  // ╔══════════════════════════════════════════════════════╗
-  // ║ FIX 2/6: Leaflet perlu invalidateSize saat container ║
-  // ║ berubah visible/hidden agar marker muncul              ║
-  // ╚══════════════════════════════════════════════════════╝
-  setTimeout(() => {
-    if (map) {
-      map.invalidateSize();
-      refreshMapMarkers();
-    }
-  }, 300);
 }
 
 function renderHistory() {
@@ -1441,13 +1346,9 @@ function renderGallery() {
 }
 
 // --- SYNC ---
-// ╔══════════════════════════════════════════════════════╗
-// ║ FIX 3/6: pakai sbClient, bukan supabase yang error   ║
-// ╚══════════════════════════════════════════════════════╝
 async function syncToSupabase(data) {
-  if (!sbClient) return;
   try {
-    const { error } = await sbClient.from('reports').upsert(data);
+    const { error } = await supabase.from('reports').upsert(data);
     if (error) throw error;
     document.getElementById('db-status').innerHTML = '<i class="fa-solid fa-cloud-check"></i> ONLINE';
   } catch (e) {
@@ -1457,12 +1358,8 @@ async function syncToSupabase(data) {
 }
 
 async function syncFromSupabase() {
-  if (!sbClient) {
-    document.getElementById('db-status').innerHTML = '<i class="fa-solid fa-circle-dot" style="color:#f59e0b"></i> LOCAL ONLY';
-    return;
-  }
   try {
-    const { data, error } = await sbClient.from('reports').select('*').order('date', { ascending: false });
+    const { data, error } = await supabase.from('reports').select('*').order('date', { ascending: false });
     if (error) throw error;
     if (data) {
       db.reports = data;
@@ -1624,12 +1521,6 @@ function resetForm() {
   clearSignature();
 }
 
-// ╔══════════════════════════════════════════════════════════╗
-// ║ FIX 4/6: editReport — BUG ID SALAH                     ║
-// ║ Sebelumnya: document.getElementById('h1-result')            ║
-// ║ Seharusnya: document.getElementById('f-h1-result')          ║
-// ║ + checkbox s1Jobs tidak di-restore                       ║
-// ╚══════════════════════════════════════════════════════════╝
 function editReport(id) {
   const r = db.reports.find(x => x.id === id);
   if (!r) return;
@@ -1656,8 +1547,7 @@ function editReport(id) {
   document.getElementById('f-h1-mandor').value = r.h1Mandor;
   document.getElementById('f-h1-phone').value = r.h1Phone;
   document.getElementById('f-h1-mat').value = r.h1Mat;
-  // FIX: ID yang benar adalah 'f-h1-result' (sebelumnya 'h1-result' → error)
-  document.getElementById('f-h1-result').value = r.h1Result;
+  document.getElementById('h1-result').value = r.h1Result;
   document.getElementById('f-h2-name').value = r.h2Name;
   document.getElementById('f-h2-type').value = r.h2Type;
   document.getElementById('f-h2-mandor').value = r.h2Mandor;
@@ -1679,14 +1569,6 @@ function editReport(id) {
   document.getElementById('worker-container').innerHTML = '';
   if (r.dataWorkers) r.dataWorkers.forEach(w => addWorkerRow(w.name, w.phone));
   
-  // FIX: Restore checkbox Jenis Pekerjaan (sebelumnya TIDAK ada)
-  if (r.s1Jobs) {
-    const allJobCheckboxes = document.querySelectorAll('input[name="s1-job"]');
-    allJobCheckboxes.forEach(cb => {
-      cb.checked = r.s1Jobs.includes(cb.value);
-    });
-  }
-  
   if (r.signature) {
     const img = new Image(); img.src = r.signature;
     img.onload = () => sigCtx.drawImage(img, 0, 0, signaturePad.width, signaturePad.height);
@@ -1703,7 +1585,7 @@ async function deleteReport(id) {
     db.reports = db.reports.filter(r => r.id !== id);
     localStorage.setItem('ts_reports', JSON.stringify(db.reports));
     try {
-      if (sbClient) await sbClient.from('reports').delete().eq('id', id);
+      await supabase.from('reports').delete().eq('id', id);
     } catch (e) {}
     initDashboard();
     showToast("Terhapus!");
@@ -1746,49 +1628,16 @@ let map;
 function initMap() {
   if (map) return;
   map = L.map('map-container').setView([-6.2088, 106.8456], 10);
-  // ╔══════════════════════════════════════════════════════╗
-  // ║ FIX 5/6: Tile GELAP diganti PUTIH/CERAH             ║
-  // ╚══════════════════════════════════════════════════════╝
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
-  
-  refreshMapMarkers();
-}
-
-// ╔══════════════════════════════════════════════════════════╗
-// ║ FIX 6/6: Marker pakai SVG inline — pasti muncul        ║
-// ║ (sebelumnya pakai Font Awesome divIcon yang gagal)      ║
-// ╚══════════════════════════════════════════════════════════╝
-
-let mapMarkers = [];
-function refreshMapMarkers() {
-  if (!map) return;
-  mapMarkers.forEach(m => map.removeLayer(m));
-  mapMarkers = [];
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
   
   db.reports.forEach(r => {
     if (r.coords && r.coords.includes(',')) {
       const [lat, lng] = r.coords.split(',').map(Number);
       if (!isNaN(lat) && !isNaN(lng)) {
-        const pinColor = (r.s1Result && r.s1Result.includes('baik')) ? '#10b981' : '#06b6d4';
-        const svgStr = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 46" width="36" height="46"><path d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 28 18 28s18-14.5 18-28C36 8.06 27.94 0 18 0z" fill="'+pinColor+'"/><circle cx="18" cy="17" r="7" fill="white"/><circle cx="18" cy="17" r="3.5" fill="'+pinColor+'"/></svg>';
-        const customIcon = L.icon({
-          iconUrl: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr),
-          iconSize: [36, 46],
-          iconAnchor: [18, 46],
-          popupAnchor: [0, -46],
-          className: 'map-pin-icon'
-        });
-        const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
-        marker.bindPopup(`<b>${r.s1Project || 'Lokasi'}</b><br>${r.tech}<br>${r.date}`);
-        mapMarkers.push(marker);
+        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${r.s1Project}</b><br>${r.tech}`);
       }
     }
   });
-  
-  if (mapMarkers.length > 0) {
-    const group = L.featureGroup(mapMarkers);
-    map.fitBounds(group.getBounds().pad(0.15));
-  }
 }
 
 // --- AI SUMMARY ---
@@ -1818,7 +1667,7 @@ function showAISummary() {
   `;
 }
 
-// --- PDF REPORT ---
+// --- PDF REPORT (FIXED: OPEN NEW TAB TO AVOID ERR_FAILED) ---
 function openPreviewModal() {
   document.getElementById('preview-modal').style.display = 'block';
   document.getElementById('modal-step-1').classList.remove('hidden');
@@ -1936,44 +1785,88 @@ function generateReportView() {
 
   const reportHTML = `
   <div id="laporan">
+    <!-- HEADER -->
     <div class="header">
       <div style="font-weight:900; font-size:24px; color:#000; margin-bottom:5px;">BROCO</div>
       <h1>LAPORAN TECHNICAL SUPPORT</h1>
       <p><b>PT. BROCO AERATED CONCRETE INDUSTRIES</b></p>
       <p>Divisi Technical Support</p>
     </div>
+
+    <!-- INFORMASI -->
     <div class="section">
       <div class="section-title">Informasi Proyek</div>
       <table class="info-table">
-        <tr><td width="160">Tanggal Laporan</td><td>: ${rangeStr}</td></tr>
-        <tr><td>Nama Technical</td><td>: ${technicalName}</td></tr>
-        <tr><td>Lokasi Proyek</td><td>: ${projectInfo}</td></tr>
-        <tr><td>Mandor Lapangan</td><td>: ${mandorInfo}</td></tr>
-        <tr><td>Ringkasan Demo</td><td>: ${totalDemoed} Project | ${totalTukang} Tukang Terlibat</td></tr>
+        <tr>
+          <td width="160">Tanggal Laporan</td>
+          <td>: ${rangeStr}</td>
+        </tr>
+        <tr>
+          <td>Nama Technical</td>
+          <td>: ${technicalName}</td>
+        </tr>
+        <tr>
+          <td>Lokasi Proyek</td>
+          <td>: ${projectInfo}</td>
+        </tr>
+        <tr>
+          <td>Mandor Lapangan</td>
+          <td>: ${mandorInfo}</td>
+        </tr>
+        <tr>
+          <td>Ringkasan Demo</td>
+          <td>: ${totalDemoed} Project | ${totalTukang} Tukang Terlibat</td>
+        </tr>
       </table>
     </div>
+
+    <!-- AKTIVITAS -->
     <div class="section">
       <div class="section-title">Daftar Aktivitas & Hasil Demo</div>
       <table class="data-table">
-        <thead><tr><th width="40">No</th><th>Proyek & Tanggal</th><th>Hasil Kunjungan / Demo</th></tr></thead>
+        <thead>
+          <tr>
+            <th width="40">No</th>
+            <th>Proyek & Tanggal</th>
+            <th>Hasil Kunjungan / Demo</th>
+          </tr>
+        </thead>
         <tbody>${tableRows}</tbody>
       </table>
     </div>
+
+    <!-- FOTO -->
     <div class="section">
       <div class="section-title">Dokumentasi Kegiatan Lapangan</div>
       ${photoGridHTML}
     </div>
+
+    <!-- CATATAN -->
     <div class="section">
       <div class="section-title">Catatan Technical</div>
       <p style="font-size:12px; line-height:1.5;">
         ${allNotes.length > 0 ? allNotes.join('<br>') : "Seluruh kegiatan berjalan sesuai rencana. Produk Broco Aerated Concrete diaplikasikan dengan metode yang benar oleh tim technical di lapangan."}
       </p>
     </div>
+
+    <!-- TANDA TANGAN -->
     <div class="signature">
-      <div><p>Technical Support</p><div style="height:60px;"></div>( <strong>${technicalName}</strong> )</div>
-      <div><p>Mandor / Penanggung Jawab</p><div style="height:60px;">${signatureImgs}</div>( _____________________ )</div>
+      <div>
+        <p>Technical Support</p>
+        <div style="height:60px;"></div>
+        ( <strong>${technicalName}</strong> )
+      </div>
+      <div>
+        <p>Mandor / Penanggung Jawab</p>
+        <div style="height:60px;">${signatureImgs}</div>
+        ( _____________________ )
+      </div>
     </div>
-    <div class="footer">PT. BROCO AERATED CONCRETE INDUSTRIES<br><small>Dokumen Digital Sah - Dicetak pada ${new Date().toLocaleString('id-ID')}</small></div>
+
+    <div class="footer">
+      PT. BROCO AERATED CONCRETE INDUSTRIES<br>
+      <small>Dokumen Digital Sah - Dicetak pada ${new Date().toLocaleString('id-ID')}</small>
+    </div>
   </div>
   `;
   
@@ -2032,22 +1925,6 @@ function exportData() {
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = 'ts_metal_report.csv'; a.click();
 }
-// FIX: Interceptor click untuk tombol edit/hapus yang diblokir user-select:none
-(function() {
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest('.btn-edit');
-    if (btn) {
-      var onclickStr = btn.getAttribute('onclick');
-      if (onclickStr) {
-        var editMatch = onclickStr.match(/editReport\(['"]([^'"]*)['"]\)/);
-        if (editMatch) { e.preventDefault(); e.stopPropagation(); editReport(editMatch[1]); return; }
-        var deleteMatch = onclickStr.match(/deleteReport\(['"]([^'"]*)['"]\)/);
-        if (deleteMatch) { e.preventDefault(); e.stopPropagation(); deleteReport(deleteMatch[1]); return; }
-      }
-    }
-  }, true);
-})();
-
-initLogin();
 </script>
-<!-- ========== AKHIR BAGIAN 3 (SELESAI) ========== -->
+</body>
+</html>
