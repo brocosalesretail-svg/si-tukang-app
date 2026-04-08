@@ -394,6 +394,9 @@ header {
 /* FIX: Tombol edit/hapus bisa diklik di semua device */
 .btn-edit {
   pointer-events: auto !important;
+  user-select: auto !important;
+  -webkit-user-select: auto !important;
+  touch-action: manipulation !important;
   min-width: 44px !important;
   min-height: 44px !important;
   display: inline-flex !important;
@@ -455,6 +458,7 @@ header {
 .leaflet-control-attribution a { color: #06b6d4 !important; }
 .leaflet-control-zoom a { background: #fff !important; color: #333 !important; border-color: #ddd !important; }
 .leaflet-control-zoom a:hover { background: #f0f0f0 !important; }
+.leaflet-div-icon.map-pin-icon { background: none !important; border: none !important; }
 </style>
 </head>
 <!-- ========== AKHIR BAGIAN 1 ========== -->
@@ -1754,6 +1758,7 @@ function initMap() {
 // ║ FIX 6/6: Marker pakai SVG inline — pasti muncul        ║
 // ║ (sebelumnya pakai Font Awesome divIcon yang gagal)      ║
 // ╚══════════════════════════════════════════════════════════╝
+
 let mapMarkers = [];
 function refreshMapMarkers() {
   if (!map) return;
@@ -1765,8 +1770,14 @@ function refreshMapMarkers() {
       const [lat, lng] = r.coords.split(',').map(Number);
       if (!isNaN(lat) && !isNaN(lng)) {
         const pinColor = (r.s1Result && r.s1Result.includes('baik')) ? '#10b981' : '#06b6d4';
-        const pinHtml = '<div class="map-pin-icon"><svg viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 28 18 28s18-14.5 18-28C36 8.06 27.94 0 18 0z" fill="'+pinColor+'"/><circle cx="18" cy="17" r="7" fill="white"/><circle cx="18" cy="17" r="3.5" fill="'+pinColor+'"/></svg></div>';
-        const customIcon = L.divIcon({ className: '', html: pinHtml, iconSize: [36, 46], iconAnchor: [18, 46], popupAnchor: [0, -46] });
+        const svgStr = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 46" width="36" height="46"><path d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 28 18 28s18-14.5 18-28C36 8.06 27.94 0 18 0z" fill="'+pinColor+'"/><circle cx="18" cy="17" r="7" fill="white"/><circle cx="18" cy="17" r="3.5" fill="'+pinColor+'"/></svg>';
+        const customIcon = L.icon({
+          iconUrl: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr),
+          iconSize: [36, 46],
+          iconAnchor: [18, 46],
+          popupAnchor: [0, -46],
+          className: 'map-pin-icon'
+        });
         const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
         marker.bindPopup(`<b>${r.s1Project || 'Lokasi'}</b><br>${r.tech}<br>${r.date}`);
         mapMarkers.push(marker);
@@ -2021,6 +2032,22 @@ function exportData() {
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = 'ts_metal_report.csv'; a.click();
 }
-  initLogin();
+// FIX: Interceptor click untuk tombol edit/hapus yang diblokir user-select:none
+(function() {
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.btn-edit');
+    if (btn) {
+      var onclickStr = btn.getAttribute('onclick');
+      if (onclickStr) {
+        var editMatch = onclickStr.match(/editReport\(['"]([^'"]*)['"]\)/);
+        if (editMatch) { e.preventDefault(); e.stopPropagation(); editReport(editMatch[1]); return; }
+        var deleteMatch = onclickStr.match(/deleteReport\(['"]([^'"]*)['"]\)/);
+        if (deleteMatch) { e.preventDefault(); e.stopPropagation(); deleteReport(deleteMatch[1]); return; }
+      }
+    }
+  }, true);
+})();
+
+initLogin();
 </script>
 <!-- ========== AKHIR BAGIAN 3 (SELESAI) ========== -->
