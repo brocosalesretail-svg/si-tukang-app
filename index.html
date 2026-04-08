@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -10,7 +11,19 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  if (typeof html2pdf === 'undefined') {
+    document.write('<script src="https://unpkg.com/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"><\/script>');
+  }
+</script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+  // Fallback if unpkg fails
+  if (typeof supabase === 'undefined') {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
+  }
+</script>
 <link href="https://fonts.googleapis.com/css?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -42,6 +55,7 @@ body {
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  /* --- ANTI COPY --- */
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -64,7 +78,9 @@ body {
   display: flex;
   flex-direction: column;
 }
-.sidebar.active { left: 0; }
+.sidebar.active {
+  left: 0;
+}
 .sidebar-overlay {
   position: fixed;
   top: 0;
@@ -75,7 +91,9 @@ body {
   display: none;
   z-index: 999;
 }
-.sidebar-overlay.active { display: block; }
+.sidebar-overlay.active {
+  display: block;
+}
 .sidebar-brand {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
@@ -91,7 +109,9 @@ body {
   margin: 0;
   flex-grow: 1;
 }
-.sidebar-item { margin-bottom: 10px; }
+.sidebar-item {
+  margin-bottom: 10px;
+}
 .sidebar-link {
   display: flex;
   align-items: center;
@@ -128,7 +148,10 @@ body {
   padding: 5px;
 }
 
-.chart-container { height: 300px; margin-top: 20px; }
+.chart-container {
+  height: 300px;
+  margin-top: 20px;
+}
 
 /* Page Transition */
 .page {
@@ -140,6 +163,7 @@ body {
 }
 
 .hidden { display: none !important; }
+/* Kembalikan fungsi seleksi khusus untuk input agar tetap bisa mengetik */
 input, textarea, select {
   -webkit-user-select: auto;
   -moz-user-select: auto;
@@ -148,8 +172,7 @@ input, textarea, select {
 }
 
 body::before {
-  content:""; position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
+  content:""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none; z-index: 0;
 }
@@ -178,16 +201,13 @@ h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
 }
 .section-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
 .section-num {
-  background: rgba(6, 182, 212, 0.15); color: var(--primary);
-  width: 28px; height: 28px;
+  background: rgba(6, 182, 212, 0.15); color: var(--primary); width: 28px; height: 28px;
   border-radius: 6px; display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 0.9rem;
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  font-weight: 700; font-size: 0.9rem; border: 1px solid rgba(6, 182, 212, 0.3);
 }
 .form-group { margin-bottom: 16px; }
 .form-label {
-  display: block; margin-bottom: 6px; font-size: 0.8rem;
-  color: var(--text-muted); 
+  display: block; margin-bottom: 6px; font-size: 0.8rem; color: var(--text-muted); 
   font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;
 }
 .form-control {
@@ -196,8 +216,7 @@ h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
   color: white; font-family: inherit; font-size: 0.95rem; transition: all 0.3s;
 }
 .form-control:focus {
-  outline: none;
-  border-color: var(--primary); box-shadow: var(--shadow-neon); 
+  outline: none; border-color: var(--primary); box-shadow: var(--shadow-neon); 
   background: rgba(0, 0, 0, 0.5);
 }
 select.form-control option { background: #1a1c23; color: white; }
@@ -207,8 +226,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
 .check-item input { position: absolute; opacity: 0; cursor: pointer; }
 .check-mark {
   padding: 8px 16px; background: rgba(255, 255, 255,0.05); border: 1px solid var(--border-metal);
-  border-radius: 20px;
-  font-size: 0.85rem; color: var(--text-muted);
+  border-radius: 20px; font-size: 0.85rem; color: var(--text-muted);
   transition: all 0.2s; display: flex; align-items: center; gap: 6px; cursor: pointer;
 }
 .check-item input:checked+.check-mark {
@@ -235,8 +253,7 @@ header {
   justify-content: space-between; align-items: center;
   border-bottom: 1px solid var(--border-metal);
 }
-.brand { font-family: 'Rajdhani', sans-serif;
-  font-weight: 700; font-size: 1.5rem; color: white; text-shadow: 0 0 10px var(--primary); }
+.brand { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.5rem; color: white; text-shadow: 0 0 10px var(--primary); }
 .brand span { color: var(--primary); }
 
 .bottom-nav {
@@ -250,8 +267,7 @@ header {
 .nav-item {
   color: var(--text-muted); font-size: 0.7rem; text-align: center;
   cursor: pointer; flex: 1; transition: color 0.3s;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
 .nav-item i { display: block; font-size: 1.2rem; margin-bottom: 2px; }
 .nav-item.active { color: var(--primary); }
@@ -287,54 +303,33 @@ header {
 @keyframes pulse { 0% { transform: scale(1); opacity: 0.1; } 100% { transform: scale(1.2); opacity: 0.2; } }
 
 #toast {
-  position: fixed; top: 20px; left: 50%;
-  transform: translateX(-50%) translateY(-100px);
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
   background: rgba(15, 23, 42, 0.95); border: 1px solid var(--primary); color: white;
-  padding: 12px 24px; border-radius: 50px;
-  font-weight: 600; font-size: 0.9rem;
+  padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 0.9rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 3000; transition: transform 0.4s;
-  display: flex; align-items: center; gap: 10px;
-  backdrop-filter: blur(10px);
+  display: flex; align-items: center; gap: 10px; backdrop-filter: blur(10px);
 }
 #toast.show { transform: translateX(-50%) translateY(0); }
 
+.hidden { display: none !important; }
 .animate-fade { animation: fadeIn 0.5s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* --- ADMIN PANEL STYLES --- */
-.admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-.admin-stat-box {
-  background: rgba(255,255,255,0.03); border: 1px solid var(--border-metal); padding: 20px; border-radius: var(--radius-md);
-  text-align: center;
-}
-.admin-table-container { overflow-x: auto; }
-.admin-table {
-  width: 100%; border-collapse: collapse; font-size: 0.85rem;
-}
-.admin-table th { text-align: left; padding: 10px; color: var(--text-muted); border-bottom: 1px solid var(--border-metal); }
-.admin-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.danger-text { color: #ef4444; }
-.warn-text { color: #f59e0b; }
-
 /* --- GALLERY STYLES --- */
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px;
 }
 .gallery-item {
   background: rgba(255,255,255,0.05); border: 1px solid var(--border-metal); border-radius: var(--radius-md);
-  overflow: hidden;
-  transition: transform 0.2s; position: relative;
+  overflow: hidden; transition: transform 0.2s; position: relative;
 }
 .gallery-item:hover { transform: translateY(-5px); border-color: var(--primary); }
 .gallery-img-placeholder {
-  height: 120px; background: #1a1c23; display: flex;
-  align-items: center; justify-content: center;
+  height: 120px; background: #1a1c23; display: flex; align-items: center; justify-content: center;
   color: var(--text-muted); flex-direction: column; gap: 5px;
 }
 .gallery-info { padding: 10px; }
-.gallery-title { font-weight: 600; font-size: 0.9rem;
-  color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gallery-title { font-weight: 600; font-size: 0.9rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gallery-meta { font-size: 0.7rem; color: var(--text-muted); }
 
 /* --- PREVIEW MODAL --- */
@@ -349,86 +344,47 @@ header {
   margin-bottom: 20px; border: 1px solid var(--border-metal);
 }
 .a4-paper {
-  background: white;
-  color: black; width: 100%; max-width: 210mm; min-height: 297mm; padding: 10mm; margin: 0 auto;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  font-family: 'Arial', sans-serif;
+  background: white; color: black; width: 100%; max-width: 210mm; min-height: 297mm; padding: 10mm; margin: 0 auto;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5); font-family: 'Arial', sans-serif;
 }
 .report-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
 .report-summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); gap: 10px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
   background: #f2f2f2; padding: 15px; border-radius: 5px; margin-bottom: 20px;
 }
-.summary-item strong { display: block; font-size: 1.5rem;
-  color: #000; }
+.summary-item strong { display: block; font-size: 1.5rem; color: #000; }
 .summary-item span { font-size: 0.8rem; color: #555; }
-.report-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px;
-}
+.report-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
 .report-table th, .report-table td { border: 1px solid #000; padding: 6px; text-align: left; vertical-align: top; }
-.report-table th { background-color: #ddd;
-  text-align: center; }
+.report-table th { background-color: #ddd; text-align: center; }
 .report-table tr { page-break-inside: avoid; page-break-after: auto; }
-.pdf-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;
-  page-break-inside: avoid; }
+.pdf-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; page-break-inside: avoid; }
 .pdf-photo-box {
   width: 100%; height: 80px; background: #eee; display: flex; align-items: center; justify-content: center;
   border: 1px solid #ccc; font-size: 0.7rem; color: #777; text-align: center; padding: 5px; overflow: hidden;
 }
 .pdf-photo-box img {
-  width: 100%;
-  height: 100%; object-fit: cover;
+  width: 100%; height: 100%; object-fit: cover;
 }
-.worker-row { display: grid; grid-template-columns: 2fr 2fr 40px; gap: 8px; margin-bottom: 8px; animation: fadeIn 0.3s;
-}
+.worker-row { display: grid; grid-template-columns: 2fr 2fr 40px; gap: 8px; margin-bottom: 8px; animation: fadeIn 0.3s; }
 .btn-remove { background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-.btn-edit { background: transparent; border: none;
-  color: var(--primary); cursor: pointer; font-size: 1.2rem; padding: 5px; }
+.btn-edit { background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 1.2rem; padding: 5px; }
 
-/* --- PRINT STYLES --- */
-@media print {
-  @page { size: A4 portrait; margin: 15mm; }
-  html, body { height: auto !important; min-height: auto !important; overflow: visible !important; background: white !important;
-  color: black !important; margin: 0 !important; padding: 0 !important; display: block !important;
-  }
-  body > *:not(#print-area) { display: none !important; }
-  #print-area { display: block !important; visibility: visible !important;
-  width: 100% !important; background: white !important; padding: 0 !important; box-sizing: border-box !important; position: relative !important; left: auto !important;
-  top: auto !important; margin: 0 !important; font-family: Arial, Helvetica, sans-serif !important; }
-  .header { text-align: center;
-  border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-  .header h1 { margin: 0; font-size: 22px; text-transform: uppercase;
-  }
-  .header p { margin: 3px; font-size: 14px; }
-  .section { margin-bottom: 20px; page-break-inside: avoid;
-  }
-  .section-title { font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; font-size: 14px; text-transform: uppercase;
-  }
-  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-  .info-table td { padding: 6px; font-size: 12px;
-  vertical-align: top; }
-  .data-table { width: 100%; border-collapse: collapse; margin-top: 10px;
-  }
-  .data-table th, .data-table td { border: 1px solid #999; padding: 8px; text-align: left; font-size: 11px;
-  }
-  .data-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;
-  }
-  tr, .photo-grid, .signature { page-break-inside: avoid !important; }
-  thead { display: table-header-group !important;
-  }
-  .photo-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; }
-  .photo-grid img { width: 45%;
-  max-height: 200px; object-fit: contain; border: 1px solid #ccc; background: #fff; display: block; }
-  .signature { display: flex; justify-content: space-between;
-  margin-top: 50px; text-align: center; }
-  .signature div { width: 200px; }
-  .signature p { margin-bottom: 60px; font-size: 13px;
-  font-weight: bold; }
-  .footer { text-align: center; font-size: 10px; margin-top: 40px; color: #666; border-top: 1px solid #eee; padding-top: 10px;
-  }
-  .no-print { display: none !important; }
+/* --- ADMIN MODAL (NEW) --- */
+#admin-modal {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.95); z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(10px);
 }
-#print-area { display: none; font-family: Arial, Helvetica, sans-serif; color: black; background: white;
+.admin-card {
+  width: 90%; max-width: 400px;
+  max-height: 80vh; overflow-y: auto;
+}
+.user-row {
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(255,255,255,0.05); padding: 10px;
+  border-radius: var(--radius-md); margin-bottom: 8px;
 }
 </style>
 </head>
@@ -457,7 +413,6 @@ header {
         <label class="form-label">Kode Akses</label>
         <input type="password" id="login-pass" class="form-control" placeholder="1234">
       </div>
-  
       <button type="submit" class="btn">Login System</button>
       
       <div style="text-align: center; margin-top: 20px; font-size: 0.7rem; color: var(--text-muted);">
@@ -466,6 +421,34 @@ header {
     </form>
   </div>
 </div>
+
+<div id="admin-modal" class="hidden">
+  <div class="metal-card admin-card animate-fade">
+    <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+      <h3 style="margin:0; color:var(--primary); font-size:1.2rem;">Manajemen User</h3>
+      <button style="background:transparent; border:none; color:#ef4444; font-size:1.2rem; cursor:pointer;" onclick="closeAdmin()">X</button>
+    </div>
+    
+    <div id="admin-user-list"></div>
+
+    <hr style="border: 1px dashed rgba(255,255,255,0.1); margin:15px 0;">
+
+    <div class="form-group">
+      <label class="form-label">Nama Tampilan (Contoh: Tech Delta)</label>
+      <input type="text" id="admin-new-label" class="form-control" placeholder="Tech Delta">
+    </div>
+    <div class="form-group">
+      <label class="form-label">ID Username (Contoh: Tech D)</label>
+      <input type="text" id="admin-new-val" class="form-control" placeholder="Tech D">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="text" id="admin-new-pass" class="form-control" placeholder="1234">
+    </div>
+    <button class="btn btn-sm" style="background:var(--accent); width:100%;" onclick="addUser()">+ Tambah User</button>
+  </div>
+</div>
+
 
 <div id="app-view" class="hidden">
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
@@ -477,7 +460,6 @@ header {
           <i class="fa-solid fa-chart-pie"></i> Dashboard
         </a>
       </li>
-    
       <li class="sidebar-item">
         <a class="sidebar-link" onclick="switchTab('form')">
           <i class="fa-solid fa-file-pen"></i> Input Laporan
@@ -489,17 +471,10 @@ header {
         </a>
       </li>
       <li class="sidebar-item">
-       
         <a class="sidebar-link" onclick="showAISummary()">
           <i class="fa-solid fa-wand-magic-sparkles"></i> AI Summary
         </a>
       </li>
-      <li class="sidebar-item admin-only hidden">
-        <a class="sidebar-link" onclick="switchTab('admin')" style="color: var(--accent);">
-          <i class="fa-solid fa-user-shield"></i> Admin Panel
-        </a>
-      </li>
-      
       <li class="sidebar-item" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
         <a class="sidebar-link" onclick="logout()" style="color: #ef4444;">
           <i class="fa-solid fa-power-off"></i> Keluar System
@@ -507,7 +482,7 @@ header {
       </li>
     </ul>
     <div style="margin-top: auto; font-size: 0.7rem; color: var(--text-muted); text-align: center;">
-      Credit by: Rudi Philipus<br>build 2026 — v8.0 (Admin Pro)
+      Credit by: Rudi Philipus<br>build 2026 — v6.0
     </div>
   </aside>
 
@@ -547,7 +522,6 @@ header {
           <div class="stat-val" style="color: var(--text-main);" id="stat-visit">0</div>
           <div class="stat-lbl">Total Dikunjungi</div>
         </div>
-       
         <div class="stat-card">
           <div class="stat-val" style="color: var(--accent);" id="stat-mandor">0</div>
           <div class="stat-lbl">Total Mandor (Demo)</div>
@@ -585,102 +559,13 @@ header {
       <div style="height: 20px;"></div>
     </div>
     
-    <div id="page-admin" class="hidden animate-fade page">
-      <div class="metal-card" style="border-color: var(--accent);">
-        <div class="section-header">
-          <i class="fa-solid fa-user-shield" style="color: var(--accent);"></i>
-          <h3>ADMINISTRATOR PANEL</h3>
-        </div>
-        <div class="admin-grid">
-          <div class="admin-stat-box">
-            <div style="font-size: 2rem; font-weight: 700; color: white;" id="admin-stat-reports">0</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">TOTAL LAPORAN</div>
-          </div>
-          <div class="admin-stat-box">
-            <div style="font-size: 2rem; font-weight: 700; color: var(--primary);" id="admin-stat-users">0</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">TOTAL USER</div>
-          </div>
-          <div class="admin-stat-box">
-            <div style="font-size: 1.2rem; font-weight: 700; color: var(--accent);" id="admin-storage">0 KB</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">PENGGUNAAN MEMORI</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="metal-card">
-        <div class="section-header">
-          <i class="fa-solid fa-database"></i>
-          <h3>Kontrol Data</h3>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-          <button class="btn btn-sm" style="background: #3b82f6;" onclick="downloadBackup()">
-            <i class="fa-solid fa-download"></i> Backup Data (JSON)
-          </button>
-          <div style="position:relative;">
-             <button class="btn btn-sm" style="background: #8b5cf6;" onclick="document.getElementById('import-file').click()">
-              <i class="fa-solid fa-upload"></i> Restore Data
-             </button>
-             <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importBackup(this)">
-          </div>
-          <button class="btn btn-sm" style="background: #ef4444;" onclick="confirmReset()">
-            <i class="fa-solid fa-trash-can"></i> Hapus Semua Data
-          </button>
-        </div>
-        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 10px;">
-          <i class="fa-solid fa-circle-info"></i> Backup akan menyimpan Laporan & User. Restore akan menimpa data yang ada.
-        </p>
-      </div>
-
-      <div class="metal-card">
-        <div class="section-header">
-          <i class="fa-solid fa-users-gear"></i>
-          <h3>Manajemen User</h3>
-        </div>
-        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-           <input type="text" id="admin-new-label" class="form-control" placeholder="Nama (Display)">
-           <input type="text" id="admin-new-val" class="form-control" placeholder="Username (ID)">
-           <input type="text" id="admin-new-pass" class="form-control" placeholder="Password">
-           <button class="btn btn-sm" style="background: var(--accent); width: auto;" onclick="addUser()">+</button>
-        </div>
-        <div class="admin-table-container">
-          <table class="admin-table">
-            <thead><tr><th>Display Name</th><th>Username</th><th>Pass</th><th>Aksi</th></tr></thead>
-            <tbody id="admin-user-list"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="metal-card">
-        <div class="section-header">
-          <i class="fa-solid fa-list-check"></i>
-          <h3>Daftar Laporan (Recent 50)</h3>
-        </div>
-        <div class="admin-table-container">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Tanggal</th>
-                <th>Tech</th>
-                <th>Project</th>
-                <th>Mandor</th>
-                <th style="text-align: right;">Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="admin-report-list"></tbody>
-          </table>
-        </div>
-        <div style="margin-top: 10px; text-align: center;">
-           <button class="btn btn-sm" style="background: #64748b; width: auto;" onclick="loadAdminReports(50)">Muat Lebih Banyak</button>
-        </div>
-      </div>
-    </div>
-
     <div id="page-gallery" class="hidden animate-fade page">
       <div class="section-header">
         <div class="section-num"><i class="fa-solid fa-images"></i></div>
         <h3>Galeri Demo</h3>
       </div>
-      <div class="gallery-grid" id="gallery-container"></div>
+      <div class="gallery-grid" id="gallery-container">
+        </div>
       <div id="gallery-empty" style="text-align: center; padding: 40px; color: var(--text-muted);">
         <i class="fa-regular fa-image" style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;"></i>
         <p>Belum ada foto yang diupload.</p>
@@ -758,7 +643,7 @@ header {
             </div>
             <div class="form-group">
               <label class="form-label">Estimasi Jml Tukang</label>
-               <input type="number" id="f-s1-tukang-est" class="form-control" placeholder="0">
+              <input type="number" id="f-s1-tukang-est" class="form-control" placeholder="0">
             </div>
           </div>
           
@@ -886,7 +771,7 @@ header {
               <option>Gudang</option>
               <option>Kolam Renang</option>
               <option>Lainnya</option>
-             </select>
+            </select>
           </div>
           <div class="form-group">
             <label class="form-label">Nama Mandor / Tukang</label>
@@ -894,7 +779,7 @@ header {
           </div>
           <div class="form-group">
             <label class="form-label">No HP Kontak</label>
-             <input type="tel" id="f-h2-phone" class="form-control">
+            <input type="tel" id="f-h2-phone" class="form-control">
           </div>
           <div class="form-group">
             <label class="form-label">Material Dipakai</label>
@@ -918,7 +803,7 @@ header {
               <option>Mortar instan</option>
               <option>Campuran keduanya</option>
             </select>
-           </div>
+          </div>
           <div class="form-group">
             <label class="form-label">Jika Mortar, Merk?</label>
             <input type="text" id="f-obs-brand" class="form-control">
@@ -935,7 +820,7 @@ header {
             <h3>Data Tambahan</h3>
           </div>
           <div class="form-group">
-             <label class="form-label">Jumlah Mandor Ditemui Hari Ini</label>
+            <label class="form-label">Jumlah Mandor Ditemui Hari Ini</label>
             <input type="number" id="f-data-mandor" class="form-control" value="0">
           </div>
           <div class="form-group">
@@ -954,7 +839,7 @@ header {
         <div class="metal-card">
           <div class="section-header">
             <div class="section-num">6</div>
-             <h3>Rangkuman Harian</h3>
+            <h3>Rangkuman Harian</h3>
           </div>
           <div class="form-group">
             <label class="form-label">Total Proyek Dikunjungi</label>
@@ -979,7 +864,7 @@ header {
             <label class="form-label">Masalah Teknis</label>
             <textarea id="f-tech-note" class="form-control" rows="3" placeholder="Contoh: Campuran air terlalu banyak..."></textarea>
           </div>
-         </div>
+        </div>
         
         <div class="metal-card">
           <div class="section-header">
@@ -988,7 +873,7 @@ header {
           </div>
           <div class="form-group">
             <label class="form-label">Proyek 1</label>
-             <input type="text" id="f-fu-1" class="form-control">
+            <input type="text" id="f-fu-1" class="form-control">
           </div>
           <div class="form-group">
             <label class="form-label">Proyek 2</label>
@@ -996,7 +881,7 @@ header {
           </div>
           <div class="form-group">
             <label class="form-label">Proyek 3</label>
-             <input type="text" id="f-fu-3" class="form-control">
+            <input type="text" id="f-fu-3" class="form-control">
           </div>
         </div>
         
@@ -1044,8 +929,6 @@ header {
 
 <div id="toast"><i class="fa-solid fa-circle-check" style="color: var(--accent);"></i> <span id="toast-msg">Success</span></div>
 
-<div id="print-area"></div>
-
 <div id="preview-modal">
   <div class="modal-content">
     <div class="modal-controls" id="modal-step-1">
@@ -1060,7 +943,7 @@ header {
           <input type="date" id="filter-end" class="form-control">
         </div>
         <div>
-           <label class="form-label">Filter Proyek</label>
+          <label class="form-label">Filter Proyek</label>
           <select id="filter-project" class="form-control"></select>
         </div>
         <div>
@@ -1068,401 +951,622 @@ header {
           <select id="filter-tech" class="form-control"></select>
         </div>
       </div>
-      <div style="display:flex; gap:10px;">
-        <button class="btn" style="flex:1;" onclick="generateReportView()">Preview Laporan</button>
-        <button class="btn" style="flex:1; background:#ef4444;" onclick="closePreviewModal()">Tutup</button>
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="btn btn-sm" style="background: transparent; border: 1px solid white;" onclick="closePreviewModal()">Batal</button>
+        <button class="btn btn-sm" onclick="generateReportView()">Tampilkan Preview</button>
       </div>
     </div>
-    
-    <div id="modal-step-2" class="hidden">
-      <div class="metal-card" style="margin-bottom: 20px; border-color: var(--accent); background: rgba(16, 185, 129, 0.1);">
-        <h4 style="margin-top:0; color:var(--accent);"><i class="fa-solid fa-circle-check"></i> Preview Laporan Siap</h4>
-        <p style="font-size:0.85rem; color:var(--text-main); margin-bottom:15px;">Silakan periksa isi laporan di bawah. Jika sudah benar, klik tombol Cetak di bawah ini.</p>
-        <div style="display: flex; gap: 10px;">
-          <button class="btn" style="flex:1; background: var(--accent);" onclick="downloadPDF()">
-            <i class="fa-solid fa-print"></i> CETAK / SIMPAN PDF
-          </button>
-          <button class="btn" style="flex:1; background: #64748b;" onclick="backToStep1()">
-            <i class="fa-solid fa-rotate-left"></i> ULANGI FILTER
-          </button>
-        </div>
-        <p style="font-size: 0.75rem; color: #cbd5e1; margin-top: 12px; text-align: center; line-height: 1.4;">
-          <i class="fa-solid fa-circle-info"></i> <strong>PENTING:</strong> Sistem akan membuka <b>Tab Baru</b>.<br>Pada dialog cetak, pilih <b>"Save as PDF"</b>.<br>Pastikan opsi <b>"Background Graphics"</b> dicentang.
-        </p>
-      </div>
-      <div id="report-paper" class="a4-paper"></div>
-      <div style="margin-top: 20px; text-align: center;">
-        <button class="btn btn-sm" style="background: #ef4444;" onclick="closePreviewModal()">TUTUP PREVIEW</button>
-      </div>
+    <div id="report-paper" class="a4-paper hidden"></div>
+    <div id="modal-step-2" class="hidden" style="text-align: center; margin-top: 20px;">
+      <button class="btn btn-sm" style="background: var(--primary); margin-right: 10px;" onclick="downloadPDF()">
+        <i class="fa-solid fa-download"></i> Download PDF
+      </button>
+      <button class="btn btn-sm" style="background: #ef4444;" onclick="closePreviewModal()">Tutup</button>
     </div>
   </div>
 </div>
+
 <script>
-// --- CONFIG & DB ---
-const SUPABASE_URL = 'https://ywcxtnnxjuvxznfyivqi.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_i_NqSKLS5n-pIEwofk-1wg_rdg61WMp';
+// --- SUPABASE CONFIG ---
+const SUPABASE_URL = 'https://ywcxtnnxjuvxznfyivqi.supabase.co'.trim();
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3h0bm54anV2eHpuZnlpdnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzAwMzAsImV4cCI6MjA4OTAwNjAzMH0.I1IRWSys7SHxkgJryi3pEH8O4_xE-LTOFR3TrqrnKEE'.trim();
 
-// PERBAIKAN: Ubah 'supabase' menjadi 'sbClient' agar tidak terjadi SyntaxError
-const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let supabaseClient = null;
 
-let db = {
-  reports: JSON.parse(localStorage.getItem('ts_reports') || '[]'),
-  users: JSON.parse(localStorage.getItem('ts_users') || '[{"label":"Admin Utama","val":"admin","pass":"1234"},{"label":"Demo Tech Alpha","val":"tech_a","pass":"1234"}]'),
-  currentUser: null
-};
-
-// --- AUTH ---
-function initLogin() {
-  const sel = document.getElementById('login-name');
-  sel.innerHTML = '<option value="" disabled selected>-- Pilih User --</option>';
-  db.users.forEach(u => sel.innerHTML += `<option value="${u.val}">${u.label}</option>`);
+function initSupabase() {
+  if (supabaseClient) return true;
+  try {
+    if (typeof supabase !== 'undefined') {
+      // Re-check URL valid format
+      if (!SUPABASE_URL.startsWith('https://')) {
+        console.error("URL Supabase tidak valid");
+        return false;
+      }
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.error("Gagal inisialisasi Supabase:", e);
+    return false;
+  }
 }
 
-document.getElementById('login-form').onsubmit = (e) => {
-  e.preventDefault();
-  const val = document.getElementById('login-name').value;
-  const pass = document.getElementById('login-pass').value;
-  const user = db.users.find(u => u.val === val && u.pass === pass);
+// --- ANTI COPY SCRIPT ---
+// Dinonaktifkan sementara untuk debugging
+/*
+document.addEventListener('contextmenu', event => event.preventDefault());
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'p' || e.key === 'c' || e.key === 'x')) {
+    e.preventDefault();
+  }
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+    e.preventDefault();
+  }
+});
+*/
+
+// --- STATE ---
+let db = { reports: [] };
+let currentUser = null;
+let map = null;
+let markersLayer = L.layerGroup();
+let isEditing = false;
+let editId = null;
+
+// --- MANAJEMEN USER DINAMIS ---
+let usersDb = JSON.parse(localStorage.getItem('ts_users_db')) || [
+  { val: "Tech A", label: "Tech Alpha", pass: "1234" },
+  { val: "Tech B", label: "Tech Beta", pass: "1234" },
+  { val: "Tech C", label: "Tech Gamma", pass: "1234" }
+];
+
+function renderUserSelect() {
+  const select = document.getElementById('login-name');
+  select.innerHTML = '<option value="" disabled selected>-- Pilih User --</option>';
+  usersDb.forEach((u, i) => {
+    select.innerHTML += `<option value="${i}">${u.label}</option>`;
+  });
+}
+
+// --- INIT ---
+window.addEventListener('DOMContentLoaded', async () => {
+  // Register Service Worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(() => console.log('Service Worker Registered'))
+      .catch(err => console.error('Service Worker Failed', err));
+  }
   
-  if (user) {
-    db.currentUser = user;
-    document.getElementById('login-view').classList.add('hidden');
-    document.getElementById('app-view').classList.remove('hidden');
-    document.getElementById('header-user').innerText = user.label;
-    document.getElementById('f-name').value = user.label;
-    showToast(`Selamat Datang, ${user.label}`);
+  // Populate user list immediately
+  renderUserSelect();
+  document.getElementById('f-date').valueAsDate = new Date();
+  addWorkerRow();
+  
+  // Ensure Supabase is initialized before sync
+  initSupabase();
+  
+  // Try to load from Supabase first, fallback to localStorage
+  await syncFromSupabase();
+});
+
+async function syncFromSupabase() {
+  const statusEl = document.getElementById('db-status');
+  
+  if (!initSupabase()) {
+    if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-dot"></i> OFFLINE (Lib Error)';
+    return;
+  }
+  
+  if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> SYNCING...';
+  
+  try {
+    // 1. Cek Protokol
+    if (window.location.protocol === 'file:') {
+      throw new Error("Supabase diblokir pada protocol 'file://'. Silakan upload ke Vercel/GitHub.");
+    }
+
+    // 2. Ambil Data Langsung (Hanya gunakan SDK resmi)
+    const { data, error } = await supabaseClient.from('reports').select('*').order('date', { ascending: false });
     
-    // Show Admin Link if Admin
-    if(user.val === 'admin') {
-      document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+    if (error) {
+      if (error.message === 'Failed to fetch') {
+        throw new Error("Koneksi diblokir (Network Error). Coba gunakan Hotspot HP atau cek apakah domain Vercel sudah di-izinkan di Dashboard Supabase (Authentication -> URL Configuration).");
+      }
+      throw error;
     }
     
-    initDashboard();
-    syncFromSupabase();
-  } else {
-    showToast("Login Gagal! Cek User/Password.");
+    if (data) {
+      const localReports = db.reports || [];
+      const remoteReports = data;
+      const combined = [...remoteReports];
+      localReports.forEach(lr => {
+        if (!combined.find(cr => cr.id === lr.id)) combined.push(lr);
+      });
+      
+      db.reports = combined.sort((a, b) => b.id - a.id);
+      localStorage.setItem('ts_metal_db', JSON.stringify(db));
+      
+      // Push local only reports
+      for (const lr of localReports) {
+        if (!remoteReports.find(rr => rr.id === lr.id)) await saveToSupabase(lr);
+      }
+      
+      if (statusEl) {
+        statusEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--accent)"></i> ONLINE';
+        statusEl.onclick = null;
+      }
+      if (typeof loadDashboard === 'function') loadDashboard();
+    }
+  } catch (err) {
+    console.error('Supabase Sync Error:', err);
+    if (statusEl) {
+      statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444"></i> SYNC ERROR';
+      statusEl.style.cursor = "pointer";
+      statusEl.onclick = () => {
+        alert("DIAGNOSA:\n" + 
+              "----------\n" + 
+              "Pesan: " + (err.message || "Unknown Error") + "\n\n" +
+              "Klik OK untuk mencoba lagi.");
+        syncFromSupabase();
+      };
+    }
+    const stored = localStorage.getItem('ts_metal_db');
+    if (stored) db = JSON.parse(stored);
   }
-};
-
-function logout() {
-  db.currentUser = null;
-  document.getElementById('app-view').classList.add('hidden');
-  document.getElementById('login-view').classList.remove('hidden');
 }
 
-// --- ADMIN FUNCTIONS ---
-function renderAdminUsers() {
+async function saveToSupabase(reportData) {
+  if (!initSupabase()) return false;
+  try {
+    const { error } = await supabaseClient.from('reports').upsert(reportData);
+    if (error) {
+      console.error('Supabase Upsert Error:', error);
+      throw error;
+    }
+    return true;
+  } catch (err) {
+    console.error('Supabase Save Error:', err.message);
+    showToast("Gagal simpan online. Data tetap tersimpan di HP.");
+    return false;
+  }
+}
+
+function saveDB() { 
+  localStorage.setItem('ts_metal_db', JSON.stringify(db)); 
+}
+
+function getTechName(tech) {
+  if (!tech) return '-';
+  const found = usersDb.find(u => u.val === tech || u.label === tech);
+  return found ? found.label : tech;
+}
+
+// --- SIGNATURE PAD ---
+let isDrawing = false;
+const canvas = document.getElementById('signature-pad');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+  canvas.width = canvas.offsetWidth * ratio;
+  canvas.height = canvas.offsetHeight * ratio;
+  ctx.scale(ratio, ratio);
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+}
+window.addEventListener('resize', resizeCanvas);
+
+function startDrawing(e) {
+  isDrawing = true;
+  draw(e);
+}
+function stopDrawing() {
+  isDrawing = false;
+  ctx.beginPath();
+}
+function draw(e) {
+  if (!isDrawing) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX || e.touches[0].clientX) - rect.left;
+  const y = (e.clientY || e.touches[0].clientY) - rect.top;
+  ctx.lineTo(x, y);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+}
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); });
+canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
+canvas.addEventListener('touchend', stopDrawing);
+
+function clearSignature() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// --- WA INTEGRATION ---
+function sendWA(id) {
+  const r = db.reports.find(item => item.id === id);
+  if (!r) return;
+  const text = `*LAPORAN TECHNICAL SUPPORT*\n\n` +
+               `Proyek: ${r.s1Project || r.h1Name}\n` +
+               `Alamat: ${r.s1Addr || '-'}\n` +
+               `Mandor: ${r.s1Mandor || '-'}\n` +
+               `Hasil: ${r.s1Result || r.h1Result}\n` +
+               `Technical: ${getTechName(r.tech)}\n` +
+               `Tanggal: ${r.date}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+}
+
+// --- AI SUMMARY ---
+function showAISummary() {
+  const modal = document.getElementById('ai-modal');
+  const content = document.getElementById('ai-content');
+  modal.classList.remove('hidden');
+  content.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menganalisis data laporan...';
+
+  setTimeout(() => {
+    const total = db.reports.length;
+    const projects = db.reports.filter(r => r.s1Project).length;
+    const issues = db.reports.filter(r => r.s1Notes && r.s1Notes.length > 20).length;
+    
+    content.innerHTML = `
+      <strong>Analisis Cerdas Si Tukang:</strong><br><br>
+      • Total aktivitas tercatat: ${total} laporan.<br>
+      • Fokus utama pada ${projects} proyek demo aktif.<br>
+      • Ditemukan ${issues} catatan teknis penting dari lapangan.<br><br>
+      <strong>Rekomendasi Strategis:</strong><br>
+      1. Tingkatkan penetrasi pada area dengan tingkat hunting rendah.<br>
+      2. Follow up segera pada hasil demo yang bertanda 'Tukang Tertarik'.<br>
+      3. Dokumentasikan masalah teknis berulang untuk materi training internal.
+    `;
+  }, 1500);
+}
+
+// --- MENU RAHASIA (KLIK HELM 5 KALI) ---
+let clickCount = 0;
+let clickTimer;
+document.getElementById('secret-trigger').addEventListener('click', () => {
+  clickCount++;
+  clearTimeout(clickTimer);
+  clickTimer = setTimeout(() => { clickCount = 0; }, 1500); 
+  if(clickCount >= 5) {
+    clickCount = 0;
+    openAdmin();
+  }
+});
+
+function openAdmin() {
+  document.getElementById('admin-modal').classList.remove('hidden');
+  renderAdminList();
+}
+function closeAdmin() {
+  document.getElementById('admin-modal').classList.add('hidden');
+  renderUserSelect(); 
+}
+
+function renderAdminList() {
   const list = document.getElementById('admin-user-list');
-  list.innerHTML = db.users.map((u, i) => `
-    <tr>
-      <td><strong>${u.label}</strong></td>
-      <td>${u.val}</td>
-      <td>${u.pass}</td>
-      <td>${i > 0 ? `<button onclick="removeUser(${i})" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>` : '-'}</td>
-    </tr>
-  `).join('');
-  document.getElementById('admin-stat-users').innerText = db.users.length;
-  updateStorageInfo();
+  list.innerHTML = '';
+  usersDb.forEach((u, i) => {
+    list.innerHTML += `
+      <div class="user-row">
+        <div>
+          <strong style="color:white; font-size:0.9rem;">${u.label} (${u.val})</strong><br>
+          <span style="font-size:0.7rem; color:var(--text-muted);">Pass: ${u.pass}</span>
+        </div>
+        <button onclick="hapusUser(${i})" style="background:#ef4444; border:none; color:white; border-radius:4px; padding:4px 8px; cursor:pointer;">Hapus</button>
+      </div>
+    `;
+  });
 }
 
 function addUser() {
   const label = document.getElementById('admin-new-label').value;
   const val = document.getElementById('admin-new-val').value;
   const pass = document.getElementById('admin-new-pass').value;
+  if(!label || !val || !pass) { showToast("Isi semua form tambah user!"); return; }
   
-  if (!label || !val || !pass) return showToast("Lengkapi data!");
-  
-  db.users.push({ label, val, pass });
-  localStorage.setItem('ts_users', JSON.stringify(db.users));
+  usersDb.push({ val: val, label: label, pass: pass });
+  localStorage.setItem('ts_users_db', JSON.stringify(usersDb));
   
   document.getElementById('admin-new-label').value = '';
   document.getElementById('admin-new-val').value = '';
   document.getElementById('admin-new-pass').value = '';
-  
-  renderAdminUsers();
-  initLogin();
-  showToast("User ditambahkan!");
+  renderAdminList(); showToast("User ditambahkan!");
 }
 
-function removeUser(i) {
-  if (confirm("Hapus user ini?")) {
-    db.users.splice(i, 1);
-    localStorage.setItem('ts_users', JSON.stringify(db.users));
-    renderAdminUsers();
-    initLogin();
+function hapusUser(index) {
+  if(confirm("Yakin hapus user ini?")) {
+    usersDb.splice(index, 1);
+    localStorage.setItem('ts_users_db', JSON.stringify(usersDb));
+    renderAdminList(); showToast("User dihapus!");
   }
 }
 
-function loadAdminReports(limit = 50) {
-  const container = document.getElementById('admin-report-list');
-  const sorted = [...db.reports].reverse().slice(0, limit);
+// --- LOGIN LOGIC ---
+document.getElementById('login-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const userIndex = document.getElementById('login-name').value;
+  const pass = document.getElementById('login-pass').value;
+  if (!userIndex) { showToast("Pilih User dulu!"); return; }
   
-  if(sorted.length === 0) {
-    container.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Tidak ada data laporan.</td></tr>';
-    return;
-  }
-
-  container.innerHTML = sorted.map(r => `
-    <tr>
-      <td>${r.date}</td>
-      <td>${r.tech}</td>
-      <td>${r.s1Project || r.h1Name || '-'}</td>
-      <td>${r.s1Mandor || r.h1Mandor || '-'}</td>
-      <td style="text-align: right;">
-        <button class="btn-edit" onclick="editReport('${r.id}')" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-        <button class="btn-edit" style="color:#ef4444;" onclick="deleteReport('${r.id}')" title="Hapus"><i class="fa-solid fa-trash"></i></button>
-      </td>
-    </tr>
-  `).join('');
+  const selectedUser = usersDb[userIndex];
+  if (pass.trim() !== selectedUser.pass) { showToast("Password Salah!"); return; }
   
-  document.getElementById('admin-stat-reports').innerText = db.reports.length;
-  updateStorageInfo();
-}
-
-function updateStorageInfo() {
-  let total = 0;
-  for (let key in localStorage) {
-    if(localStorage.hasOwnProperty(key)) {
-      total += (localStorage[key].length + key.length) * 2;
-    }
-  }
-  const sizeKB = (total / 1024).toFixed(2);
-  document.getElementById('admin-storage').innerText = sizeKB + " KB";
-}
-
-function downloadBackup() {
-  const data = {
-    reports: db.reports,
-    users: db.users,
-    backupDate: new Date().toISOString()
+  // Try to use Supabase Auth for real online multi-user if email is provided in usersDb
+  // For now, keep using simple pass logic but link to user metadata
+  currentUser = selectedUser.label; 
+  document.getElementById('login-view').classList.add('hidden');
+  document.getElementById('app-view').classList.remove('hidden');
+  document.getElementById('header-user').innerText = selectedUser.label;
+  document.getElementById('f-name').value = selectedUser.label; 
+  
+  // Log login activity to Supabase if online
+  const logEntry = {
+    user_name: selectedUser.label,
+    action: 'Login',
+    timestamp: new Date().toISOString()
   };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `backup_broco_${new Date().toISOString().split('T')[0]}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast("Backup berhasil didownload!");
+  if (supabaseClient) {
+    supabaseClient.from('activity_logs').insert([logEntry]).then();
+  }
+  
+  // Local log fallback
+  const logs = JSON.parse(localStorage.getItem('ts_activity_logs') || '[]');
+  logs.push(logEntry);
+  localStorage.setItem('ts_activity_logs', JSON.stringify(logs.slice(-50)));
+  
+  showToast("Login Berhasil");
+  try {
+    initMap();
+    loadDashboard();
+  } catch (err) {
+    console.error("Gagal load peta/dashboard:", err);
+    // Masih tetap bisa masuk meski peta gagal
+  }
+});
+
+function logout() { if(confirm('Logout?')) location.reload(); }
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('active');
+  document.getElementById('sidebar-overlay').classList.toggle('active');
 }
 
-function importBackup(input) {
-  const file = input.files[0];
-  if (!file) return;
+let activityChart = null;
+function updateActivityChart() {
+  const ctx = document.getElementById('activityChart').getContext('2d');
+  const last7Days = [];
+  const reportCounts = [];
   
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const imported = JSON.parse(e.target.result);
-      if (imported.reports && imported.users) {
-        if(confirm("Restore akan MENIMPA data yang ada sekarang. Lanjutkan?")) {
-          db.reports = imported.reports;
-          db.users = imported.users;
-          localStorage.setItem('ts_reports', JSON.stringify(db.reports));
-          localStorage.setItem('ts_users', JSON.stringify(db.users));
-          showToast("Data berhasil dipulihkan! Halaman akan dimuat ulang.");
-          setTimeout(() => location.reload(), 1000);
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    last7Days.push(d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' }));
+    
+    const count = db.reports.filter(r => r.date === dateStr).length;
+    reportCounts.push(count);
+  }
+
+  if (activityChart) activityChart.destroy();
+  
+  activityChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: last7Days,
+      datasets: [{
+        label: 'Jumlah Laporan',
+        data: reportCounts,
+        borderColor: '#06b6d4',
+        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+        borderWidth: 3,
+        pointBackgroundColor: '#06b6d4',
+        pointRadius: 4,
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#94a3b8', stepSize: 1 }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#94a3b8' }
         }
-      } else {
-        showToast("Format file backup salah!");
       }
-    } catch (err) {
-      showToast("Gagal membaca file JSON.");
     }
-  };
-  reader.readAsText(file);
+  });
 }
-
-function confirmReset() {
-  if(confirm("PERINGATAN: Ini akan menghapus SEMUA data laporan dan user secara permanen. Lanjutkan?")) {
-    if(confirm("Anda yakin? Tindakan ini tidak bisa dibatalkan.")) {
-      localStorage.clear();
-      location.reload();
-    }
-  }
-}
-
-// --- CORE LOGIC ---
-let isEditing = false;
-let editId = null;
 
 function switchTab(tab) {
-  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-  document.getElementById(`page-${tab}`).classList.remove('hidden');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-  
-  const navItems = document.querySelectorAll('.bottom-nav .nav-item');
-  if (tab === 'dashboard') navItems[0].classList.add('active');
-  if (tab === 'form') navItems[1].classList.add('active');
-  if (tab === 'gallery') navItems[2].classList.add('active');
-  
+  const dash = document.getElementById('page-dashboard');
+  const form = document.getElementById('page-form');
+  const gallery = document.getElementById('page-gallery');
+  const navs = document.querySelectorAll('.nav-item');
   const sidebarLinks = document.querySelectorAll('.sidebar-link');
-  if (tab === 'dashboard') sidebarLinks[0].classList.add('active');
-  if (tab === 'form') sidebarLinks[1].classList.add('active');
-  if (tab === 'gallery') sidebarLinks[2].classList.add('active');
-  if (tab === 'admin') sidebarLinks[3].classList.add('active');
   
-  if (tab === 'dashboard') initDashboard();
-  if (tab === 'gallery') renderGallery();
-  if (tab === 'admin') {
-    renderAdminUsers();
-    loadAdminReports();
-  }
-  if (tab === 'form' && !isEditing) resetForm();
+  navs.forEach(n => n.classList.remove('active'));
+  sidebarLinks.forEach(l => l.classList.remove('active'));
   
-  if (window.innerWidth < 1024) toggleSidebar(false);
-}
+  dash.classList.add('hidden');
+  form.classList.add('hidden');
+  gallery.classList.add('hidden');
 
-function toggleSidebar(force) {
-  const sb = document.getElementById('sidebar');
-  const ov = document.getElementById('sidebar-overlay');
-  if (force === false) {
-    sb.classList.remove('active'); ov.classList.remove('active');
-  } else {
-    sb.classList.toggle('active'); ov.classList.toggle('active');
-  }
-}
-
-function initDashboard() {
-  document.getElementById('stat-demo').innerText = db.reports.filter(r => r.s1Project).length;
-  document.getElementById('stat-visit').innerText = db.reports.length;
-  document.getElementById('stat-mandor').innerText = db.reports.filter(r => r.s1Mandor).length;
-  
-  let tTukang = 0;
-  db.reports.forEach(r => {
-    if (r.dataWorkers && r.dataWorkers.length > 0) tTukang += r.dataWorkers.length;
-    else if (r.s1TukangEst) tTukang += parseInt(r.s1TukangEst);
-  });
-  
-  document.getElementById('stat-tukang').innerText = tTukang;
-  
-  renderHistory();
-  renderChart();
-  initMap();
-}
-
-function renderHistory() {
-  const container = document.getElementById('report-history');
-  if (db.reports.length === 0) {
-    container.innerHTML = '<p style="padding:20px; color:var(--text-muted); text-align:center;">Belum ada laporan.</p>';
-    return;
+  if (tab === 'dashboard') {
+    dash.classList.remove('hidden');
+    navs[0].classList.add('active');
+    sidebarLinks[0].classList.add('active');
+    loadDashboard(); 
+    setTimeout(() => { if(map) map.invalidateSize(); }, 300);
+  } else if (tab === 'form') {
+    form.classList.remove('hidden');
+    navs[1].classList.add('active');
+    sidebarLinks[1].classList.add('active');
+    if(!isEditing) resetForm();
+    setTimeout(resizeCanvas, 100); // Ensure signature pad is sized correctly
+  } else if (tab === 'gallery') {
+    gallery.classList.remove('hidden');
+    navs[2].classList.add('active');
+    sidebarLinks[2].classList.add('active');
+    loadGallery();
   }
   
-  const sorted = [...db.reports].reverse().slice(0, 10);
-  container.innerHTML = sorted.map(r => `
-    <div class="list-item">
-      <div>
-        <div style="font-weight:600; color:white;">${r.s1Project || r.h1Name || 'No Name'}</div>
-        <div style="font-size:0.75rem; color:var(--text-muted);">${r.date} • ${r.tech}</div>
-      </div>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <span class="badge badge-new">${r.s1Result ? 'Demo' : 'Hunting'}</span>
-        <button class="btn-edit" onclick="editReport('${r.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
-        <button class="btn-edit" style="color:#ef4444;" onclick="deleteReport('${r.id}')"><i class="fa-solid fa-trash"></i></button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderGallery() {
-  const container = document.getElementById('gallery-container');
-  const empty = document.getElementById('gallery-empty');
-  container.innerHTML = '';
-  
-  let hasPhotos = false;
-  db.reports.forEach(r => {
-    if (r.photos && r.photos.length > 0) {
-      hasPhotos = true;
-      r.photos.forEach(p => {
-        container.innerHTML += `
-          <div class="gallery-item">
-            <img src="${p}" style="width:100%; height:120px; object-fit:cover;">
-            <div class="gallery-info">
-              <div class="gallery-title">${r.s1Project || 'Demo'}</div>
-              <div class="gallery-meta">${r.date}</div>
-            </div>
-          </div>
-        `;
-      });
-    }
-  });
-  
-  if (hasPhotos) empty.classList.add('hidden');
-  else empty.classList.remove('hidden');
-}
-
-// --- SYNC ---
-async function syncToSupabase(data) {
-  try {
-    // PERBAIKAN: Menggunakan sbClient
-    const { error } = await sbClient.from('reports').upsert(data);
-    if (error) throw error;
-    document.getElementById('db-status').innerHTML = '<i class="fa-solid fa-cloud-check"></i> ONLINE';
-  } catch (e) {
-    console.error("Sync Error:", e);
-    document.getElementById('db-status').innerHTML = '<i class="fa-solid fa-circle-dot" style="color:#ef4444"></i> SYNC ERR';
+  // Close sidebar on mobile after clicking
+  if (window.innerWidth < 1024) {
+    document.getElementById('sidebar').classList.remove('active');
+    document.getElementById('sidebar-overlay').classList.remove('active');
   }
 }
 
-async function syncFromSupabase() {
-  try {
-    // PERBAIKAN: Menggunakan sbClient
-    const { data, error } = await sbClient.from('reports').select('*').order('date', { ascending: false });
-    if (error) throw error;
-    if (data) {
-      db.reports = data;
-      localStorage.setItem('ts_reports', JSON.stringify(db.reports));
-      initDashboard();
-      document.getElementById('db-status').innerHTML = '<i class="fa-solid fa-cloud-check" style="color:var(--accent)"></i> ONLINE';
-    }
-  } catch (e) {
-    console.error("Fetch Error:", e);
-  }
-}
-// --- FORM HANDLERS ---
-const canvas = document.getElementById('signature-pad');
-const ctx = canvas.getContext('2d');
-let drawing = false;
-
-canvas.addEventListener('mousedown', () => drawing = true);
-canvas.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
-canvas.addEventListener('mousemove', draw);
-canvas.ontouchstart = (e) => { drawing = true; e.preventDefault(); };
-canvas.ontouchend = () => { drawing = false; ctx.beginPath(); };
-canvas.ontouchmove = (e) => {
-  const touch = e.touches[0];
-  const rect = canvas.getBoundingClientRect();
-  draw({ clientX: touch.clientX, clientY: touch.clientY });
-};
-
-function draw(e) {
-  if (!drawing) return;
-  const rect = canvas.getBoundingClientRect();
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.strokeStyle = '#000';
-  ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-}
-
-function clearSignature() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-
+// --- GPS ---
 function getGPS() {
   const btn = document.getElementById('btn-gps');
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      document.getElementById('f-coords').value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
-      btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-      showToast("Lokasi berhasil dikunci!");
-    }, () => {
-      showToast("Gagal ambil GPS. Pastikan Izin aktif.");
-      btn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i>';
+  const input = document.getElementById('f-coords');
+  const originalIcon = btn.innerHTML;
+  if (!navigator.geolocation) { showToast("Browser ini tidak support GPS"); return; }
+  
+  btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+  input.value = "Mencari Lokasi...";
+  
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude.toFixed(6);
+      const lng = position.coords.longitude.toFixed(6);
+      input.value = `${lat}, ${lng}`;
+      showToast("Lokasi Berhasil Didapat!");
+      btn.innerHTML = '<i class="fa-solid fa-check" style="color:var(--success)"></i>';
+    },
+    (error) => {
+      let msg = "Gagal ambil lokasi.";
+      if(error.code === error.PERMISSION_DENIED) msg = "Izin Lokasi Ditolak!";
+      else if(error.code === error.POSITION_UNAVAILABLE) msg = "Informasi Lokasi Tidak Tersedia.";
+      else if(error.code === error.TIMEOUT) msg = "Waktu Habis Mencari Lokasi.";
+      showToast(msg);
+      input.value = "";
+      btn.innerHTML = '<i class="fa-solid fa-xmark" style="color:var(--danger)"></i>';
+      setTimeout(() => { showToast("Tips: Copy koordinat manual dari Google Maps."); }, 3000);
+    }
+  );
+  setTimeout(() => { if(btn.innerHTML.includes('fa-spin')) { btn.innerHTML = originalIcon; input.value = ""; } }, 10000);
+}
+
+// --- DASHBOARD LOGIC ---
+function loadDashboard() {
+  let demoCount = 0, mandorCount = 0, tukangCount = 0;
+  const visitCount = db.reports.length;
+  db.reports.forEach(r => {
+    const isDemo = r.s1Project && r.s1Project.trim() !== "";
+    if (isDemo) {
+      demoCount++;
+      if (r.s1Mandor && r.s1Mandor.trim() !== "") mandorCount++;
+      if (r.dataWorkers && r.dataWorkers.length > 0) {
+        tukangCount += r.dataWorkers.length;
+      } else if (r.s1TukangEst) {
+        tukangCount += parseInt(r.s1TukangEst);
+      } else if (r.s1TukangCount) {
+        tukangCount += parseInt(r.s1TukangCount);
+      }
+    }
+  });
+  document.getElementById('stat-demo').innerText = demoCount;
+  document.getElementById('stat-visit').innerText = visitCount;
+  document.getElementById('stat-mandor').innerText = mandorCount;
+  document.getElementById('stat-tukang').innerText = tukangCount;
+  
+  updateActivityChart();
+  
+  const list = document.getElementById('report-history');
+  list.innerHTML = '';
+  [...db.reports].reverse().slice(0, 10).forEach(r => {
+    const hasGps = r.lat ? '<span style="color:var(--primary); margin-left:5px;"><i class="fa-solid fa-location-dot"></i></span>' : '';
+    const type = r.s1Project ? 'Demo' : 'Hunting';
+    const techName = getTechName(r.tech);
+    
+    list.innerHTML += `
+    <div class="list-item">
+      <div style="flex:1;">
+        <div style="font-weight:600; font-size:0.9rem; color:white;">${r.s1Project || r.h1Name || r.h2Name || 'Tanpa Nama'} <span style="font-size:0.7rem; opacity:0.7; font-weight:400; margin-left:5px;">(${type})</span> ${hasGps}</div>
+        <div style="font-size:0.75rem; color:var(--text-muted);">${r.date} • ${r.area} • <span style="color:var(--primary); font-weight:600;">${techName}</span></div>
+      </div>
+      <div style="display:flex; gap:5px;">
+        <button class="btn-edit" onclick="sendWA(${r.id})" style="background:#25d366; color:white; border:none; padding:5px 8px; border-radius:4px;"><i class="fa-brands fa-whatsapp"></i></button>
+        <button class="btn-edit" onclick="editReport(${r.id})"><i class="fa-solid fa-pen-to-square"></i></button>
+      </div>
+    </div>`;
+  });
+  if (map) updateMapMarkers();
+}
+
+// --- MAP (PURPLE PIN) ---
+function initMap() {
+  if (map) return;
+  map = L.map('map-container').setView([-2.5489, 118.0149], 5);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 20
+  }).addTo(map);
+  markersLayer.addTo(map);
+}
+function updateMapMarkers() {
+  if (!map) return;
+  markersLayer.clearLayers();
+  const bounds = []; let count = 0;
+  
+  const purplePin = L.divIcon({
+    className: 'custom-pin',
+    html: `<div style="background-color: #8b5cf6; width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"></div><div style="width: 10px; height: 10px; background: white; border-radius: 50%; position: absolute; top: 5px; left: 10px;"></div>`,
+    iconSize: [30, 42],
+    iconAnchor: [15, 42]
+  });
+  
+  db.reports.forEach(r => {
+    if (r.lat && r.lng) {
+      const techName = getTechName(r.tech);
+      const marker = L.marker([r.lat, r.lng], {icon: purplePin}).addTo(markersLayer);
+      marker.bindPopup(`<b>${r.s1Project || r.h1Name || r.h2Name}</b><br>${techName}<br>${r.date}`);
+      bounds.push([r.lat, r.lng]); count++;
+    }
+  });
+  if (count > 0) { map.fitBounds(bounds, { padding: [50, 50] }); } else { map.setView([-2.5489, 118.0149], 5); }
+}
+
+// --- GALLERY LOGIC ---
+function loadGallery() {
+  const container = document.getElementById('gallery-container');
+  const emptyMsg = document.getElementById('gallery-empty');
+  container.innerHTML = '';
+  
+  const reportsWithPhotos = db.reports.filter(r => r.photos && r.photos.length > 0);
+  if (reportsWithPhotos.length === 0) {
+    emptyMsg.classList.remove('hidden');
+  } else {
+    emptyMsg.classList.add('hidden');
+    reportsWithPhotos.forEach(r => {
+      r.photos.forEach((photoData, index) => {
+        const div = document.createElement('div');
+        div.className = 'gallery-item';
+        div.innerHTML = `
+        <div class="gallery-img-placeholder">
+          <img src="${photoData}" style="width:100%; height:120px; object-fit:cover;" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-image\' style=\'font-size: 2rem;\'></i>'">
+        </div>
+        <div class="gallery-info">
+          <div class="gallery-title">${r.s1Project || r.h1Name}</div>
+          <div class="gallery-meta">${r.date}</div>
+        </div>
+        `;
+        container.appendChild(div);
+      });
     });
   }
 }
@@ -1471,405 +1575,429 @@ async function compressImage(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = (e) => {
+    reader.onload = (event) => {
       const img = new Image();
-      img.src = e.target.result;
+      img.src = event.target.result;
       img.onload = () => {
-        const canv = document.createElement('canvas');
+        const canvas = document.createElement('canvas');
         const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 600;
         let width = img.width;
         let height = img.height;
-        if (width > MAX_WIDTH) {
-          height *= MAX_WIDTH / width;
-          width = MAX_WIDTH;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
         }
-        canv.width = width; canv.height = height;
-        const c = canv.getContext('2d');
-        c.drawImage(img, 0, 0, width, height);
-        resolve(canv.toDataURL('image/jpeg', 0.7));
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
       };
     };
   });
 }
 
-document.getElementById('ts-form').onsubmit = async (e) => {
+// --- FORM SUBMIT (WITH EDIT SUPPORT & VALIDATION) ---
+document.getElementById('ts-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const btn = document.getElementById('btn-submit');
-  const originalText = btn.innerHTML;
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...';
-  btn.disabled = true;
-
-  try {
-    const photoInputs = document.querySelectorAll('.photo-input');
-    const photoPromises = Array.from(photoInputs)
-      .filter(i => i.files[0])
-      .map(i => compressImage(i.files[0]));
-    const photos = await Promise.all(photoPromises);
-
-    const workerRows = document.querySelectorAll('.worker-row');
-    const workers = Array.from(workerRows).map(row => ({
-      name: row.querySelector('.w-name').value,
-      phone: row.querySelector('.w-phone').value
-    }));
-
-    const reportData = {
-      id: isEditing ? editId : Date.now().toString(),
-      tech: document.getElementById('f-name').value,
-      date: document.getElementById('f-date').value,
-      vehicle: document.getElementById('f-vehicle').value,
-      area: document.getElementById('f-area').value,
-      s1Project: document.getElementById('f-s1-project').value,
-      s1Addr: document.getElementById('f-s1-addr').value,
-      coords: document.getElementById('f-coords').value,
-      s1Dev: document.getElementById('f-s1-dev').value,
-      s1Mandor: document.getElementById('f-s1-mandor').value,
-      s1Phone: document.getElementById('f-s1-phone').value,
-      s1TukangEst: document.getElementById('f-s1-tukang-est').value,
-      s1TukangName: document.getElementById('f-s1-tukang-name').value,
-      s1TukangPhone: document.getElementById('f-s1-tukang-phone').value,
-      s1Job: Array.from(document.querySelectorAll('input[name="s1-job"]:checked')).map(c => c.value),
-      s1Unit: document.getElementById('f-s1-unit').value,
-      s1Result: document.getElementById('f-s1-result').value,
-      s1Notes: document.getElementById('f-s1-notes').value,
-      h1Name: document.getElementById('f-h1-name').value,
-      h1Type: document.getElementById('f-h1-type').value,
-      h1Mandor: document.getElementById('f-h1-mandor').value,
-      h1Phone: document.getElementById('f-h1-phone').value,
-      h1Mat: document.getElementById('f-h1-mat').value,
-      h1Result: document.getElementById('f-h1-result').value,
-      h2Name: document.getElementById('f-h2-name').value,
-      h2Type: document.getElementById('f-h2-type').value,
-      h2Mandor: document.getElementById('f-h2-mandor').value,
-      h2Phone: document.getElementById('f-h2-phone').value,
-      h2Mat: document.getElementById('f-h2-mat').value,
-      obsMat: document.getElementById('f-obs-mat').value,
-      obsBrand: document.getElementById('f-obs-brand').value,
-      obsPrice: document.getElementById('f-obs-price').value,
-      dataMandor: document.getElementById('f-data-mandor').value,
-      dataToko: document.getElementById('f-data-toko').value,
-      dataWorkers: workers,
-      sumVisit: document.getElementById('f-sum-visit').value,
-      sumContact: document.getElementById('f-sum-contact').value,
-      sumDemo: document.getElementById('f-sum-demo').value,
-      techNote: document.getElementById('f-tech-note').value,
-      fu1: document.getElementById('f-fu-1').value,
-      fu2: document.getElementById('f-fu-2').value,
-      fu3: document.getElementById('f-fu-3').value,
-      photos: photos.length > 0 ? photos : (isEditing ? db.reports.find(r => r.id === editId).photos : []),
-      signature: canvas.toDataURL()
-    };
-
-    if (isEditing) {
-      const idx = db.reports.findIndex(r => r.id === editId);
-      db.reports[idx] = reportData;
-      isEditing = false;
-      editId = null;
-    } else {
-      db.reports.push(reportData);
-    }
-
-    localStorage.setItem('ts_reports', JSON.stringify(db.reports));
-    await syncToSupabase(reportData);
-    
-    showToast("Laporan Berhasil Disimpan!");
-    resetForm();
-    switchTab('dashboard');
-  } catch (err) {
-    showToast("Error simpan data!");
-    console.error(err);
-  } finally {
-    btn.innerHTML = originalText;
-    btn.disabled = false;
+  const projectName = document.getElementById('f-s1-project').value;
+  if (!projectName || projectName.trim() === "") {
+    showToast(" Wajib isi Nama Proyek!"); 
+    document.getElementById('f-s1-project').focus();
+    return;
   }
-};
+  
+  const btn = document.getElementById('btn-submit');
+  const oldText = btn.innerHTML;
+  btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> SEDANG MEMPROSES...';
+  
+  const coordStr = document.getElementById('f-coords').value;
+  let lat = null, lng = null;
+  if (coordStr && coordStr.includes(',')) { 
+    [lat, lng] = coordStr.split(',').map(n => parseFloat(n.trim()));
+  }
+  
+  const workers = [];
+  document.querySelectorAll('.worker-row').forEach(row => {
+    const name = row.querySelector('.w-name').value;
+    const phone = row.querySelector('.w-phone').value;
+    if(name) workers.push({name, phone});
+  });
+  
+  const photoInputs = document.querySelectorAll('.photo-input');
+  const photos = [];
+  for (const input of photoInputs) {
+    if(input.files && input.files[0]) {
+      const compressed = await compressImage(input.files[0]);
+      photos.push(compressed);
+    }
+  }
+
+  // Get Signature
+  const signatureData = canvas.toDataURL('image/png');
+  const isCanvasEmpty = ctx.getImageData(0,0,canvas.width,canvas.height).data.every(p => p === 0);
+  
+  const reportData = {
+    id: isEditing ? editId : Date.now(),
+    date: document.getElementById('f-date').value, tech: currentUser,
+    area: document.getElementById('f-area').value, vehicle: document.getElementById('f-vehicle').value,
+    s1Project: projectName,
+    s1Addr: document.getElementById('f-s1-addr').value,
+    s1Dev: document.getElementById('f-s1-dev').value,
+    s1Mandor: document.getElementById('f-s1-mandor').value,
+    s1Phone: document.getElementById('f-s1-phone').value,
+    s1TukangEst: document.getElementById('f-s1-tukang-est').value,
+    s1TukangName: document.getElementById('f-s1-tukang-name').value,
+    s1TukangPhone: document.getElementById('f-s1-tukang-phone').value,
+    s1Unit: document.getElementById('f-s1-unit').value,
+    s1Result: document.getElementById('f-s1-result').value,
+    s1Notes: document.getElementById('f-s1-notes').value,
+    photos: photos.length > 0 ? photos : (isEditing ? (db.reports.find(r => r.id === editId)?.photos || []) : []),
+    signature: !isCanvasEmpty ? signatureData : (isEditing ? (db.reports.find(r => r.id === editId)?.signature || null) : null),
+    h1Name: document.getElementById('f-h1-name').value,
+    h1Type: document.getElementById('f-h1-type').value,
+    h1Mat: document.getElementById('f-h1-mat').value,
+    h1Mandor: document.getElementById('f-h1-mandor').value,
+    h1Phone: document.getElementById('f-h1-phone').value,
+    h1Result: document.getElementById('f-h1-result').value,
+    h2Name: document.getElementById('f-h2-name').value,
+    h2Type: document.getElementById('f-h2-type').value,
+    h2Mat: document.getElementById('f-h2-mat').value,
+    h2Mandor: document.getElementById('f-h2-mandor').value,
+    h2Phone: document.getElementById('f-h2-phone').value,
+    obsMat: document.getElementById('f-obs-mat').value,
+    obsBrand: document.getElementById('f-obs-brand').value,
+    obsPrice: document.getElementById('f-obs-price').value,
+    dataMandor: document.getElementById('f-data-mandor').value,
+    dataToko: document.getElementById('f-data-toko').value,
+    dataWorkers: workers,
+    sumVisit: document.getElementById('f-sum-visit').value,
+    sumContact: document.getElementById('f-sum-contact').value,
+    sumDemo: document.getElementById('f-sum-demo').value,
+    techNote: document.getElementById('f-tech-note').value,
+    fu1: document.getElementById('f-fu-1').value, fu2: document.getElementById('f-fu-2').value, fu3: document.getElementById('f-fu-3').value,
+    lat: lat, lng: lng 
+  };
+  
+  if (isEditing) {
+    const index = db.reports.findIndex(r => r.id === editId);
+    if (index !== -1) db.reports[index] = reportData;
+    
+    // Log edit activity
+    const logs = JSON.parse(localStorage.getItem('ts_activity_logs') || '[]');
+    logs.push({
+      user: currentUser,
+      action: 'Edit Laporan: ' + projectName,
+      timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('ts_activity_logs', JSON.stringify(logs.slice(-50)));
+    
+    await saveToSupabase(reportData);
+    showToast(" Data Berhasil Diperbarui!"); 
+    cancelEdit();
+  } else {
+    db.reports.push(reportData);
+    
+    // Log new report activity
+    const logs = JSON.parse(localStorage.getItem('ts_activity_logs') || '[]');
+    logs.push({
+      user: currentUser,
+      action: 'Input Laporan Baru: ' + projectName,
+      timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('ts_activity_logs', JSON.stringify(logs.slice(-50)));
+    
+    await saveToSupabase(reportData);
+    showToast(" Data Berhasil Disimpan!"); 
+    resetForm();
+  }
+  
+  saveDB();
+  btn.innerHTML = oldText;
+  switchTab('dashboard');
+  
+  // Refresh data from Supabase to ensure all clients are synced
+  setTimeout(syncFromSupabase, 1000);
+});
+
+// --- EDIT FUNCTION ---
+function editReport(id) {
+  const report = db.reports.find(r => r.id === id);
+  if (!report) return;
+  
+  isEditing = true;
+  editId = id;
+  document.getElementById('page-dashboard').classList.add('hidden');
+  document.getElementById('page-form').classList.remove('hidden');
+  
+  const navs = document.querySelectorAll('.nav-item'); navs.forEach(n => n.classList.remove('active')); navs[1].classList.add('active');
+  
+  document.getElementById('f-date').value = report.date;
+  document.getElementById('f-area').value = report.area;
+  document.getElementById('f-vehicle').value = report.vehicle;
+  document.getElementById('f-s1-project').value = report.s1Project;
+  document.getElementById('f-s1-addr').value = report.s1Addr;
+  document.getElementById('f-coords').value = report.lat ? `${report.lat}, ${report.lng}` : '';
+  document.getElementById('f-s1-dev').value = report.s1Dev;
+  document.getElementById('f-s1-mandor').value = report.s1Mandor;
+  document.getElementById('f-s1-phone').value = report.s1Phone;
+  document.getElementById('f-s1-tukang-est').value = report.s1TukangEst || '';
+  document.getElementById('f-s1-tukang-name').value = report.s1TukangName;
+  document.getElementById('f-s1-tukang-phone').value = report.s1TukangPhone;
+  document.getElementById('f-s1-unit').value = report.s1Unit;
+  document.getElementById('f-s1-result').value = report.s1Result;
+  document.getElementById('f-s1-notes').value = report.s1Notes;
+  
+  document.getElementById('f-h1-name').value = report.h1Name || '';
+  document.getElementById('f-h1-type').value = report.h1Type || 'Perumahan';
+  document.getElementById('f-h1-mandor').value = report.h1Mandor || '';
+  document.getElementById('f-h1-phone').value = report.h1Phone || '';
+  document.getElementById('f-h1-result').value = report.h1Result || 'Prospek demo';
+  
+  document.getElementById('f-h2-name').value = report.h2Name || '';
+  document.getElementById('f-h2-type').value = report.h2Type || 'Perumahan';
+  document.getElementById('f-h2-mandor').value = report.h2Mandor || '';
+  document.getElementById('f-h2-phone').value = report.h2Phone || '';
+  
+  document.getElementById('f-obs-mat').value = report.obsMat || 'Semen + pasir';
+  document.getElementById('f-obs-brand').value = report.obsBrand || '';
+  document.getElementById('f-obs-price').value = report.obsPrice || '';
+  
+  document.getElementById('f-data-mandor').value = report.dataMandor || '0';
+  document.getElementById('f-data-toko').value = report.dataToko || '0';
+  
+  document.getElementById('f-sum-visit').value = report.sumVisit || '1';
+  document.getElementById('f-sum-contact').value = report.sumContact || '0';
+  document.getElementById('f-sum-demo').value = report.sumDemo || '0';
+  
+  document.getElementById('f-tech-note').value = report.techNote || '';
+  
+  document.getElementById('f-fu-1').value = report.fu1 || '';
+  document.getElementById('f-fu-2').value = report.fu2 || '';
+  document.getElementById('f-fu-3').value = report.fu3 || '';
+
+  const workerContainer = document.getElementById('worker-container');
+  workerContainer.innerHTML = '';
+  if (report.dataWorkers && report.dataWorkers.length > 0) {
+    report.dataWorkers.forEach(w => addWorkerRow(w.name, w.phone));
+  } else {
+    addWorkerRow();
+  }
+  
+  const btn = document.getElementById('btn-submit');
+  btn.innerHTML = '<i class="fa-solid fa-pen"></i> UPDATE LAPORAN';
+  btn.classList.add('btn-update');
+  document.getElementById('btn-cancel').classList.remove('hidden');
+}
+
+function cancelEdit() {
+  isEditing = false;
+  editId = null;
+  resetForm();
+  const btn = document.getElementById('btn-submit');
+  btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN';
+  btn.classList.remove('btn-update');
+  document.getElementById('btn-cancel').classList.add('hidden');
+}
 
 function resetForm() {
   document.getElementById('ts-form').reset();
   document.getElementById('f-date').valueAsDate = new Date();
-  document.getElementById('f-name').value = db.currentUser ? db.currentUser.label : '';
+  document.getElementById('f-name').value = currentUser;
   document.getElementById('worker-container').innerHTML = '';
   clearSignature();
-  document.getElementById('btn-cancel').classList.add('hidden');
-  document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN';
+  addWorkerRow();
 }
 
-function editReport(id) {
-  const r = db.reports.find(x => x.id === id);
-  if (!r) return;
-  
-  isEditing = true;
-  editId = id;
-  switchTab('form');
-  
-  document.getElementById('f-date').value = r.date;
-  document.getElementById('f-vehicle').value = r.vehicle || 'Motor';
-  document.getElementById('f-area').value = r.area || '';
-  document.getElementById('f-s1-project').value = r.s1Project || '';
-  document.getElementById('f-s1-addr').value = r.s1Addr || '';
-  document.getElementById('f-coords').value = r.coords || '';
-  document.getElementById('f-s1-dev').value = r.s1Dev || '';
-  document.getElementById('f-s1-mandor').value = r.s1Mandor || '';
-  document.getElementById('f-s1-phone').value = r.s1Phone || '';
-  document.getElementById('f-s1-tukang-est').value = r.s1TukangEst || 0;
-  document.getElementById('f-s1-tukang-name').value = r.s1TukangName || '';
-  document.getElementById('f-s1-tukang-phone').value = r.s1TukangPhone || '';
-  
-  document.querySelectorAll('input[name="s1-job"]').forEach(cb => {
-    cb.checked = r.s1Job && r.s1Job.includes(cb.value);
-  });
-  
-  document.getElementById('f-s1-unit').value = r.s1Unit || 0;
-  document.getElementById('f-s1-result').value = r.s1Result || '';
-  document.getElementById('f-s1-notes').value = r.s1Notes || '';
-  
-  document.getElementById('f-h1-name').value = r.h1Name || '';
-  document.getElementById('f-h1-type').value = r.h1Type || '';
-  document.getElementById('f-h1-mandor').value = r.h1Mandor || '';
-  document.getElementById('f-h1-phone').value = r.h1Phone || '';
-  document.getElementById('f-h1-mat').value = r.h1Mat || '';
-  document.getElementById('f-h1-result').value = r.h1Result || '';
-  
-  document.getElementById('f-h2-name').value = r.h2Name || '';
-  document.getElementById('f-h2-type').value = r.h2Type || '';
-  document.getElementById('f-h2-mandor').value = r.h2Mandor || '';
-  document.getElementById('f-h2-phone').value = r.h2Phone || '';
-  document.getElementById('f-h2-mat').value = r.h2Mat || '';
-  
-  document.getElementById('f-obs-mat').value = r.obsMat || '';
-  document.getElementById('f-obs-brand').value = r.obsBrand || '';
-  document.getElementById('f-obs-price').value = r.obsPrice || '';
-  
-  document.getElementById('f-data-mandor').value = r.dataMandor || 0;
-  document.getElementById('f-data-toko').value = r.dataToko || 0;
-  
-  document.getElementById('worker-container').innerHTML = '';
-  if (r.dataWorkers) r.dataWorkers.forEach(w => addWorkerRow(w.name, w.phone));
-  
-  document.getElementById('f-sum-visit').value = r.sumVisit || 1;
-  document.getElementById('f-sum-contact').value = r.sumContact || 0;
-  document.getElementById('f-sum-demo').value = r.sumDemo || 0;
-  document.getElementById('f-tech-note').value = r.techNote || '';
-  document.getElementById('f-fu-1').value = r.fu1 || '';
-  document.getElementById('f-fu-2').value = r.fu2 || '';
-  document.getElementById('f-fu-3').value = r.fu3 || '';
-  
-  document.getElementById('btn-submit').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> UPDATE LAPORAN';
-  document.getElementById('btn-cancel').classList.remove('hidden');
-  
-  showToast("Mode Edit Aktif");
-}
-
-function cancelEdit() {
-  isEditing = false; editId = null; resetForm(); switchTab('dashboard');
-}
-
-function deleteReport(id) {
-  if (confirm("Hapus laporan ini permanen?")) {
-    db.reports = db.reports.filter(r => r.id !== id);
-    localStorage.setItem('ts_reports', JSON.stringify(db.reports));
-    initDashboard();
-    if(db.currentUser.val === 'admin') loadAdminReports();
-    showToast("Laporan Dihapus");
-  }
-}
-
-// --- VISUAL TOOLS ---
-function renderChart() {
-  const ctx = document.getElementById('activityChart').getContext('2d');
-  const last7Days = [...Array(7)].map((_, i) => {
-    const d = new Date(); d.setDate(d.getDate() - (6 - i));
-    return d.toISOString().split('T')[0];
-  });
-  
-  const counts = last7Days.map(date => db.reports.filter(r => r.date === date).length);
-  
-  if (window.myChart) window.myChart.destroy();
-  window.myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')),
-      datasets: [{
-        label: 'Aktivitas', data: counts, borderColor: '#06b6d4',
-        backgroundColor: 'rgba(6, 182, 212, 0.2)', fill: true, tension: 0.4,
-        borderWidth: 3, pointBackgroundColor: '#fff'
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-      }
-    }
-  });
-}
-
-let map = null;
-function initMap() {
-  if (map) map.remove();
-  map = L.map('map-container').setView([-6.2000, 106.8166], 10);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
-  
-  db.reports.forEach(r => {
-    if (r.coords && r.coords.includes(',')) {
-      const [lat, lng] = r.coords.split(',').map(Number);
-      if (!isNaN(lat) && !isNaN(lng)) {
-        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${r.s1Project || 'Demo'}</b><br>${r.date}`);
-      }
-    }
-  });
-}
-
-// --- AI SUMMARY ---
-function showAISummary() {
-  document.getElementById('ai-modal').classList.remove('hidden');
-  const content = document.getElementById('ai-content');
-  
-  if (db.reports.length === 0) {
-    content.innerHTML = "Belum ada data untuk dianalisis.";
-    return;
-  }
-  
-  const lastReports = [...db.reports].reverse().slice(0, 5);
-  let summary = `<strong>Analisis Strategis (AI Simulation):</strong><br><br>`;
-  
-  const projects = lastReports.map(r => r.s1Project).filter(Boolean);
-  summary += `• <b>Fokus Area:</b> Terdeteksi aktivitas tinggi di proyek ${projects.join(', ')}.<br>`;
-  
-  const problems = lastReports.map(r => r.techNote).filter(p => p && p.length > 5);
-  if (problems.length > 0) {
-    summary += `• <b>Masalah Teknis:</b> Perlu perhatian pada isu "${problems[0]}".<br>`;
-  }
-  
-  const totalTukang = lastReports.reduce((acc, curr) => acc + (curr.dataWorkers ? curr.dataWorkers.length : 0), 0);
-  summary += `• <b>Engagement:</b> Anda telah mengedukasi sekitar ${totalTukang} tukang dalam 5 kunjungan terakhir. Ini sangat baik untuk brand awareness.<br><br>`;
-  
-  summary += `<span style="color:var(--accent)"><b>Rekomendasi:</b> Lakukan follow-up ke Mandor di proyek ${projects[0] || 'terakhir'} dalam 3 hari kedepan untuk memastikan konversi order.</span>`;
-  
-  content.innerHTML = summary;
-}
-
-// --- PDF PREVIEW & PRINT ---
+// --- PREVIEW & REPORT LOGIC ---
 function openPreviewModal() {
   document.getElementById('preview-modal').style.display = 'block';
   document.getElementById('modal-step-1').classList.remove('hidden');
   document.getElementById('modal-step-2').classList.add('hidden');
+  document.getElementById('report-paper').classList.add('hidden');
   
-  const pSel = document.getElementById('filter-project');
-  const tSel = document.getElementById('filter-tech');
+  // Update filter lists
+  const projectList = document.getElementById('filter-project');
+  const techList = document.getElementById('filter-tech');
   
-  pSel.innerHTML = '<option value="all">Semua Proyek</option>';
-  const projects = [...new Set(db.reports.map(r => r.s1Project).filter(Boolean))];
-  projects.forEach(p => pSel.innerHTML += `<option value="${p}">${p}</option>`);
-  
-  tSel.innerHTML = '<option value="all">Semua Technical</option>';
+  const projects = [...new Set(db.reports.map(r => r.s1Project).filter(p => p))];
   const techs = [...new Set(db.reports.map(r => r.tech))];
-  techs.forEach(t => tSel.innerHTML += `<option value="${t}">${t}</option>`);
+  
+  projectList.innerHTML = '<option value="all">Semua Proyek</option>';
+  projects.forEach(p => projectList.innerHTML += `<option value="${p}">${p}</option>`);
+  
+  techList.innerHTML = '<option value="all">Semua Technical</option>';
+  techs.forEach(t => techList.innerHTML += `<option value="${t}">${t}</option>`);
+  
+  const today = new Date().toISOString().split('T')[0];
+  const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+  document.getElementById('filter-start').value = firstDay;
+  document.getElementById('filter-end').value = today;
 }
-
 function closePreviewModal() {
   document.getElementById('preview-modal').style.display = 'none';
 }
 
-function backToStep1() {
-  document.getElementById('modal-step-1').classList.remove('hidden');
-  document.getElementById('modal-step-2').classList.add('hidden');
-}
-
 function generateReportView() {
-  const start = document.getElementById('filter-start').value;
-  const end = document.getElementById('filter-end').value;
-  const proj = document.getElementById('filter-project').value;
-  const tech = document.getElementById('filter-tech').value;
+  const startStr = document.getElementById('filter-start').value;
+  const endStr = document.getElementById('filter-end').value;
+  const projectFilter = document.getElementById('filter-project').value;
+  const techFilter = document.getElementById('filter-tech').value;
   
-  let filtered = db.reports;
-  if (start) filtered = filtered.filter(r => r.date >= start);
-  if (end) filtered = filtered.filter(r => r.date <= end);
-  if (proj !== 'all') filtered = filtered.filter(r => r.s1Project === proj);
-  if (tech !== 'all') filtered = filtered.filter(r => r.tech === tech);
+  if (!startStr || !endStr) { showToast("Pilih rentang tanggal!"); return; }
   
-  if (filtered.length === 0) return showToast("Tidak ada data ditemukan!");
+  const startDate = new Date(startStr);
+  const endDate = new Date(endStr);
+  endDate.setHours(23, 59, 59, 999); 
   
-  const container = document.getElementById('report-paper');
-  let html = `
-    <div class="report-header">
-      <h2 style="margin:0;">LAPORAN KERJA TECHNICAL SUPPORT</h2>
-      <p style="margin:5px 0;">PT BROCO AERATED CONCRETE INDUSTRIES (LEICHTMIX)</p>
-      <p style="font-size:0.8rem; color:#666;">Periode: ${start || 'Awal'} s/d ${end || 'Sekarang'}</p>
-    </div>
-    
-    <div class="report-summary">
-      <div class="summary-item"><strong>${filtered.length}</strong><span>Total Visit</span></div>
-      <div class="summary-item"><strong>${filtered.filter(r => r.s1Project).length}</strong><span>Total Demo</span></div>
-      <div class="summary-item"><strong>${filtered.reduce((a,b) => a + (parseInt(b.dataMandor)||0), 0)}</strong><span>Mandor</span></div>
-    </div>
-    
-    <table class="report-table">
-      <thead>
-        <tr>
-          <th>Tgl / Tech</th>
-          <th>Detail Proyek / Demo</th>
-          <th>Hunting / Observasi</th>
-          <th>Tukang / Kontak</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-  
-  filtered.forEach(r => {
-    html += `
-      <tr>
-        <td style="width:15%"><b>${r.date}</b><br><small>${r.tech}</small></td>
-        <td style="width:35%">
-          <b>${r.s1Project || '-'}</b><br>
-          <small>${r.s1Addr || ''}</small><br>
-          Mandor: ${r.s1Mandor || '-'}<br>
-          Hasil: ${r.s1Result || '-'}
-        </td>
-        <td style="width:30%">
-          <b>H1:</b> ${r.h1Name || '-'}<br>
-          <b>H2:</b> ${r.h2Name || '-'}<br>
-          <b>Obs:</b> ${r.obsBrand || '-'} (${r.obsPrice || '-'})
-        </td>
-        <td style="width:20%">
-          ${r.dataWorkers ? r.dataWorkers.map(w => `• ${w.name}`).join('<br>') : '-'}
-        </td>
-      </tr>
-    `;
+  const filteredData = db.reports.filter(r => {
+    const rDate = new Date(r.date);
+    const dateMatch = rDate >= startDate && rDate <= endDate;
+    const projectMatch = projectFilter === 'all' || r.s1Project === projectFilter;
+    const techMatch = techFilter === 'all' || r.tech === techFilter;
+    return dateMatch && projectMatch && techMatch;
   });
   
-  html += `</tbody></table><div style="margin-top:20px;"><h4>DOKUMENTASI LAPANGAN</h4><div class="pdf-photos">`;
+  if (filteredData.length === 0) { showToast("Tidak ada data pada periode ini."); return; }
   
-  filtered.forEach(r => {
-    if (r.photos && r.photos.length > 0) {
-      r.photos.forEach(p => {
-        html += `<div class="pdf-photo-box"><img src="${p}"></div>`;
-      });
+  let totalDemoed = 0, totalMandor = 0, totalTukang = 0;
+  
+  filteredData.forEach(r => {
+    if (r.s1Project) {
+      totalDemoed++;
+      if (r.s1Mandor) totalMandor++;
+      if (r.dataWorkers && r.dataWorkers.length > 0) {
+        totalTukang += r.dataWorkers.length;
+      } else if (r.s1TukangEst) {
+        totalTukang += parseInt(r.s1TukangEst);
+      } else if (r.s1TukangCount) {
+        totalTukang += parseInt(r.s1TukangCount);
+      }
     }
   });
   
-  html += `</div></div>`;
-  container.innerHTML = html;
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  const rangeStr = `${startDate.toLocaleDateString('id-ID', options)} - ${endDate.toLocaleDateString('id-ID', options)}`;
   
+  let tableRows = '';
+  filteredData.forEach((r, i) => {
+    let pName = r.s1Project || r.h1Name || r.h2Name || '-';
+    let addr = r.s1Addr || '-';
+    let mName = r.s1Mandor || r.h1Mandor || r.h2Mandor || '-';
+    let jmlTukang = '-';
+    if(r.s1Project) {
+      if(r.dataWorkers && r.dataWorkers.length > 0) jmlTukang = r.dataWorkers.length + " (Orang)";
+      else if(r.s1TukangEst) jmlTukang = r.s1TukangEst;
+    }
+    let result = r.s1Result || r.h1Result || '-';
+    
+    let photoGalleryHTML = '';
+    if(r.photos && r.photos.length > 0) {
+      photoGalleryHTML = '<div class="pdf-photos">';
+      r.photos.forEach(ph => {
+        photoGalleryHTML += `<div class="pdf-photo-box"><img src="${ph}"></div>`;
+      });
+      photoGalleryHTML += '</div>';
+    }
+
+    let signatureHTML = '';
+    if(r.signature) {
+      signatureHTML = `<div style="margin-top:5px; text-align:right;"><img src="${r.signature}" style="height:40px; border-bottom:1px solid #eee;"><br><span style="font-size:8px;">Ttd Mandor</span></div>`;
+    }
+    
+  tableRows += `
+    <tr>
+      <td style="text-align:center;">${i + 1}</td>
+      <td>${r.date}</td>
+      <td><strong>${pName}</strong></td>
+      <td>${addr}</td>
+      <td>${mName}</td>
+      <td style="text-align:center;">${jmlTukang}</td>
+      <td>${result}</td>
+      <td>${getTechName(r.tech)}${signatureHTML}</td>
+    </tr>
+    ${r.s1Project && r.photos && r.photos.length > 0 ? `<tr><td colspan="8" style="padding:0;">${photoGalleryHTML}</td></tr>` : ''}
+    `;
+  });
+  
+  const reportHTML = `
+  <div class="report-header">
+    <h2>LAPORAN KEGIATAN TECHNICAL SUPPORT</h2>
+    <p>Periode: ${rangeStr}</p>
+  </div>
+  <div class="report-summary">
+    <div class="summary-item"><strong>${totalDemoed}</strong><span>Project Demo</span></div>
+    <div class="summary-item"><strong>${totalMandor}</strong><span>Total Mandor</span></div>
+    <div class="summary-item"><strong>${totalTukang}</strong><span>Total Tukang</span></div>
+  </div>
+  <h3 style="font-size:14px; border-bottom:1px solid #ccc; padding-bottom:5px; margin-top:20px;">Rincian Kunjungan</h3>
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="width:4%">No</th>
+        <th style="width:12%">Tanggal</th>
+        <th style="width:18%">Nama Proyek</th>
+        <th style="width:18%">Alamat</th>
+        <th style="width:14%">Nama Mandor</th>
+        <th style="width:10%; text-align:center;">Jml Tukang</th>
+        <th style="width:12%">Hasil</th>
+        <th style="width:12%">Technical</th>
+      </tr>
+    </thead>
+    <tbody>${tableRows}</tbody>
+  </table>
+  `;
+  
+  document.getElementById('report-paper').innerHTML = reportHTML;
   document.getElementById('modal-step-1').classList.add('hidden');
+  document.getElementById('report-paper').classList.remove('hidden');
   document.getElementById('modal-step-2').classList.remove('hidden');
 }
 
 function downloadPDF() {
-  const content = document.getElementById('report-paper').innerHTML;
-  const printArea = document.getElementById('print-area');
-  printArea.innerHTML = content;
-  window.print();
+  const element = document.getElementById('report-paper');
+  showToast("Sedang menyiapkan PDF... Harap tunggu.");
+  
+  const opt = {
+    margin: [10, 5, 10, 5], // Top, Left, Bottom, Right
+    filename: `Laporan_TS_${new Date().toISOString().slice(0,10)}.pdf`,
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { 
+      scale: 2, 
+      useCORS: true,
+      logging: false,
+      letterRendering: true,
+      windowWidth: element.scrollWidth
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+  };
+  
+  html2pdf().set(opt).from(element).save().then(() => {
+    showToast("PDF Selesai Dibuat!");
+  }).catch(err => {
+    console.error("PDF Error:", err);
+    showToast("Gagal membuat PDF. Coba kurangi rentang tanggal.");
+  });
 }
 
+// --- UTILS ---
 function addWorkerRow(name = '', phone = '') {
   const div = document.createElement('div');
   div.className = 'worker-row';
   div.innerHTML = `
-    <input type="text" class="form-control w-name" placeholder="Nama" value="${name}">
-    <input type="tel" class="form-control w-phone" placeholder="HP" value="${phone}">
-    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">X</button>
+  <input type="text" class="form-control w-name" placeholder="Nama Tukang" style="font-size:0.85rem; padding:10px;" value="${name}">
+  <input type="tel" class="form-control w-phone" placeholder="No HP" style="font-size:0.85rem; padding:10px;" value="${phone}">
+  <button type="button" class="btn-remove" onclick="this.parentElement.remove()">X</button>
   `;
   document.getElementById('worker-container').appendChild(div);
 }
@@ -1881,33 +2009,18 @@ function showToast(msg) {
 }
 
 function exportData() {
-  let csv = "Tanggal,Technical,Kendaraan,Area,Proyek Utama,Alamat,Mandor,HP Mandor,Hasil Demo,Note,Hunting 1,Hunting 2,Observasi Merk,Harga\n";
+  const rows = [["Date", "Tech", "Project", "Mandor", "HP Mandor", "Tukang", "HP Tukang", "Result"]];
   db.reports.forEach(r => {
-    csv += `"${r.date}","${r.tech}","${r.vehicle}","${r.area}","${r.s1Project}","${r.s1Addr}","${r.s1Mandor}","${r.s1Phone}","${r.s1Result}","${r.s1Notes}","${r.h1Name}","${r.h2Name}","${r.obsBrand}","${r.obsPrice}"\n`;
+    const pName = r.s1Project || r.h1Name || r.h2Name;
+    const mName = r.s1Mandor || r.h1Mandor || r.h2Mandor;
+    const mPhone = r.s1Phone || r.h1Phone || r.h2Phone;
+    rows.push([r.date, r.tech, pName, mName, mPhone, r.s1TukangName, r.s1TukangPhone, r.s1Result || r.h1Result]);
   });
+  const csv = rows.map(e => e.join(",")).join("\n");
   const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Laporan_Technical_${new Date().toISOString().split('T')[0]}.csv`;
-  a.click();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'ts_metal_report.csv'; a.click();
 }
-
-// --- INIT ---
-window.onload = () => {
-  initLogin();
-  document.getElementById('f-date').valueAsDate = new Date();
-  
-  // Secret trigger for quick dev access
-  let clickCount = 0;
-  document.getElementById('secret-trigger').onclick = () => {
-    clickCount++;
-    if(clickCount >= 5) {
-      document.getElementById('login-pass').value = '1234';
-      showToast("Dev Mode Unlocked");
-    }
-  };
-};
 </script>
 </body>
 </html>
