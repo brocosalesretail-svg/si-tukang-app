@@ -534,7 +534,7 @@ header {
       </li>
     </ul>
     <div style="margin-top: auto; font-size: 0.7rem; color: var(--text-muted); text-align: center;">
-      Credit by: Rudi Philipus<br>build 2026 — v8.0 (Save to Local)
+      Credit by: Rudi Philipus<br>build 2026 — v8.1 (Fixed All)
     </div>
   </aside>
 
@@ -1551,26 +1551,11 @@ function checkLoggedIn() {
     document.getElementById('login-view').classList.add('hidden');
     document.getElementById('app-view').classList.remove('hidden');
     document.getElementById('f-name').value = currentUser;
-    // Load data from localStorage
-    loadLocalData();
-    // Auto sync after login
-    setTimeout(() => syncFromSupabase(), 1500);
-  }
-}
-
-// Load data from localStorage
-function loadLocalData() {
-  const saved = localStorage.getItem('ts_metal_db');
-  if (saved) {
-    try {
-      const data = JSON.parse(saved);
-      if (data.reports && data.reports.length > 0) {
-        db.reports = data.reports;
-        console.log('Loaded', db.reports.length, 'reports from localStorage');
-      }
-    } catch (e) {
-      console.log('Error loading local data:', e);
-    }
+    // Load data and refresh dashboard
+    loadAllLocalData();
+    loadDashboard();
+    // Try sync but don't worry if offline
+    setTimeout(() => syncFromSupabase(), 2000);
   }
 }
 
@@ -1580,24 +1565,41 @@ document.addEventListener('DOMContentLoaded', () => {
   if (loginForm) {
     loginForm.addEventListener('submit', doLogin);
   }
+  
+  // Load all data from localStorage FIRST
+  loadAllLocalData();
+  
   // Check if already logged in
   checkLoggedIn();
 });
 
-// Initialize surveys from localStorage
-function loadSurveyData() {
-  const saved = localStorage.getItem('ts_survey_db');
+// Load ALL data from localStorage
+function loadAllLocalData() {
+  // Load reports
+  const saved = localStorage.getItem('ts_metal_db');
   if (saved) {
     try {
-      db.surveys = JSON.parse(saved);
+      const data = JSON.parse(saved);
+      if (data.reports && data.reports.length > 0) {
+        db.reports = data.reports;
+        console.log('✓ Loaded', db.reports.length, 'reports');
+      }
     } catch (e) {
-      db.surveys = [];
+      console.log('Error load reports:', e);
+    }
+  }
+  
+  // Load surveys
+  const savedSurvey = localStorage.getItem('ts_survey_db');
+  if (savedSurvey) {
+    try {
+      db.surveys = JSON.parse(savedSurvey);
+      console.log('✓ Loaded', db.surveys.length, 'surveys');
+    } catch (e) {
+      console.log('Error load surveys:', e);
     }
   }
 }
-
-// Load survey data on init
-loadSurveyData();
 function updateActivityChart() {
   const ctx = document.getElementById('activityChart').getContext('2d');
   const last7Days = [];
