@@ -418,15 +418,23 @@ header {
     <form id="login-form">
       <div class="form-group">
         <label class="form-label">Identitas Technical</label>
-        <select id="login-name" class="form-control" required>
-          <option value="" disabled selected>-- Pilih User --</option>
+        <select id="login-name" class="form-control">
+          <option value="0">Tech Alpha</option>
+          <option value="1">Tech Beta</option>
+          <option value="2">Tech Gamma</option>
         </select>
       </div>
       <div class="form-group">
         <label class="form-label">Kode Akses</label>
-        <input type="password" id="login-pass" class="form-control" placeholder="Masukkan Password" style="background: white; color: black;" oninput="console.log('Password typed:', this.value)">
+        <input type="password" id="login-pass" class="form-control" placeholder="Password" style="background: white; color: black;">
       </div>
-      <button type="submit" class="btn" onclick="handleLogin(event)">Login System</button>
+      <button type="submit" class="btn" onclick="doLogin()">Login System</button>
+      
+      <div style="text-align: center; margin-top: 15px;">
+        <button type="button" class="btn btn-sm" style="background: var(--accent); width: 100%;" onclick="quickLogin()">
+          <i class="fa-solid fa-bolt"></i> Login Cepat (Tanpa Password)
+        </button>
+      </div>
       
       <div style="text-align: center; margin-top: 20px; font-size: 0.7rem; color: var(--text-muted);">
         Credit by : Rudi Philipus@Broco-2026
@@ -526,7 +534,7 @@ header {
       </li>
     </ul>
     <div style="margin-top: auto; font-size: 0.7rem; color: var(--text-muted); text-align: center;">
-      Credit by: Rudi Philipus<br>build 2026 — v7.2 (Cache Fix)
+      Credit by: Rudi Philipus<br>build 2026 — v7.3 (Quick Login)
     </div>
   </aside>
 
@@ -1441,28 +1449,42 @@ function renderUserSelect() {
 }
 
 // --- LOGIN FUNCTION ---
-function handleLogin(e) {
+function doLogin(e) {
   if (e) e.preventDefault();
   
   const userIndex = document.getElementById('login-name').value;
   const pass = document.getElementById('login-pass').value;
   
-  if (userIndex === "" || pass === "") {
-    showToast("Pilih user dan isi password!");
+  if (!pass || pass === "") {
+    showToast("Isi password dulu!");
     return;
   }
   
   const user = usersDb[userIndex];
   if (user && user.pass === pass) {
-    currentUser = user.label;
-    document.getElementById('header-user').textContent = currentUser;
-    document.getElementById('login-view').classList.add('hidden');
-    document.getElementById('app-view').classList.remove('hidden');
-    document.getElementById('f-name').value = currentUser;
-    showToast("Selamat datang " + currentUser + "!");
+    doLoginSuccess(user.label);
   } else {
     showToast("Password salah!");
   }
+}
+
+function quickLogin() {
+  const userIdx = document.getElementById('login-name').value;
+  const user = usersDb[userIdx];
+  if (user) {
+    doLoginSuccess(user.label);
+  } else {
+    showToast("Pilih user dulu!");
+  }
+}
+
+function doLoginSuccess(name) {
+  currentUser = name;
+  document.getElementById('header-user').textContent = currentUser;
+  document.getElementById('login-view').classList.add('hidden');
+  document.getElementById('app-view').classList.remove('hidden');
+  document.getElementById('f-name').value = currentUser;
+  showToast("Selamat datang " + currentUser + "!");
 }
 
 // Add login form listener when DOM ready
