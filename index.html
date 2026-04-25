@@ -1411,371 +1411,22 @@ let map = null;
 let markersLayer = L.layerGroup();
 let isEditing = false;
 let editId = null;
-
-// --- MANAJEMEN USER DINAMIS ---
-let usersDb = JSON.parse(localStorage.getItem('ts_users_db')) || [
-  { val: "Tech A", label: "Tech Alpha", pass: "1234" },
-  { val: "Tech B", label: "Tech Beta", pass: "1234" },
-  { val: "Tech C", label: "Tech Gamma", pass: "1234" }
-];
-
-function renderUserSelect() {
-  const select = document.getElementById('login-name');
-  select.innerHTML = '<option value="" disabled selected>-- Pilih User --</option>';
-  usersDb.forEach((u, i) => {
-    select.innerHTML += `<option value="${i}">${u.label}</option>`;
-  });
-}
-
-// --- INIT ---
-window.addEventListener('DOMContentLoaded', async () => {
-  // Register Service Worker for PWA
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(() => console.log('Service Worker Registered'))
-      .catch(err => console.error('Service Worker Failed', err));
-  }
-  
-  // Populate user list immediately
-  renderUserSelect();
-  document.getElementById('f-date').valueAsDate = new Date();
-  addWorkerRow();
-  
-  // Ensure Supabase is initialized before sync
-  initSupabase();
-  
-  // Try to load from Supabase first, fallback to localStorage
-  await syncFromSupabase();
-});
-
-async function syncFromSupabase() {
-  const statusEl = document.getElementById('db-status');
-  
-  if (!initSupabase()) {
-    if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-dot"></i> OFFLINE (Lib Error)';
-    return;
-  }
-  
-  if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> SYNCING...';
-  
-  try {
-    // 1. Cek Protokol
-    if (window.location.protocol === 'file:') {
-      throw new Error("Supabase diblokir pada protocol 'file://'. Silakan upload ke Vercel/GitHub.");
-    }
-
-    // 2. Ambil Data Langsung (Hanya gunakan SDK resmi)
-    const { data, error } = await supabaseClient.from('reports').select('*').order('date', { ascending: false });
-    
-    if (error) {
-      if (error.message === 'Failed to fetch') {
-        throw new Error("Koneksi diblokir (Network Error). Coba gunakan Hotspot HP atau cek apakah domain Vercel sudah di-izinkan di Dashboard Supabase (Authentication -> URL Configuration).");
-      }
-      throw error;
-    }
-    
-    if (data) {
-      const localReports = db.reports || [];
-      const remoteReports = data;
-      const combined = [...remoteReports];
-      localReports.forEach(lr => {
-        if (!combined.find(cr => cr.id === lr.id)) combined.push(lr);
-      });
-      
-      db.reports = combined.sort((a, b) => b.id - a.id);
-      localStorage.setItem('ts_metal_db', JSON.stringify(db));
-      
-      // Push local only reports
-      for (const lr of localReports) {
-        if (!remoteReports.find(rr => rr.id === lr.id)) await saveToSupabase(lr);
-      }
-      
-      if (statusEl) {
-        statusEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--accent)"></i> ONLINE';
-        statusEl.onclick = null;
-      }
-      if (typeof loadDashboard === 'function') loadDashboard();
-    }
-  } catch (err) {
-    console.error('Supabase Sync Error:', err);
-    if (statusEl) {
-      statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444"></i> SYNC ERROR';
-      statusEl.style.cursor = "pointer";
-      statusEl.onclick = () => {
-        alert("DIAGNOSA:\n" + 
-              "----------\n" + 
-              "Pesan: " + (err.message || "Unknown Error") + "\n\n" +
-              "Klik OK untuk mencoba lagi.");
-        syncFromSupabase();
-      };
-    }
-    const stored = localStorage.getItem('ts_metal_db');
-    if (stored) db = JSON.parse(stored);
-  }
-}
-
-async function saveToSupabase(reportData) {
-  if (!initSupabase()) return false;
-  try {
-    const { error } = await supabaseClient.from('reports').upsert(reportData);
-    if (error) {
-      console.error('Supabase Upsert Error:', error);
-      throw error;
-    }
-    return true;
-  } catch (err) {
-    console.error('Supabase Save Error:', err.message);
-    showToast("Gagal simpan online. Data tetap tersimpan di HP.");
-    return false;
-  }
-}
-
-async function saveSurveyToSupabase(surveyData) {
-  if (!initSupabase()) return false;
-  try {
-    const { error } = await supabaseClient.from('surveys').upsert(surveyData);
-    if (error) {
-      console.error('Supabase Survey Upsert Error:', error);
-      throw error;
-    }
-    return true;
-  } catch (err) {
-    console.error('Supabase Survey Save Error:', err.message);
-    showToast("Gagal simpan survey online.");
-    return false;
-  }
-}
-
-function saveDB() { 
-  localStorage.setItem('ts_metal_db', JSON.stringify(db)); 
-}
-
-function getTechName(tech) {
-  if (!tech) return '-';
-  const found = usersDb.find(u => u.val === tech || u.label === tech);
-  return found ? found.label : tech;
-}
-
-// --- SIGNATURE PAD ---
-let isDrawing = false;
-const canvas = document.getElementById('signature-pad');
-const ctx = canvas.getContext('2d');
-
-function resizeCanvas() {
-  const ratio = Math.max(window.devicePixelRatio || 1, 1);
-  canvas.width = canvas.offsetWidth * ratio;
-  canvas.height = canvas.offsetHeight * ratio;
-  ctx.scale(ratio, ratio);
-  ctx.strokeStyle = "#000";
-  ctx.lineWidth = 2;
-  ctx.lineCap = "round";
-}
-window.addEventListener('resize', resizeCanvas);
-
-function startDrawing(e) {
-  isDrawing = true;
-  draw(e);
-}
-function stopDrawing() {
-  isDrawing = false;
-  ctx.beginPath();
-}
-function draw(e) {
-  if (!isDrawing) return;
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.clientX || e.touches[0].clientX) - rect.left;
-  const y = (e.clientY || e.touches[0].clientY) - rect.top;
-  ctx.lineTo(x, y);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-}
-canvas.addEventListener('mousedown', startDrawing);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mouseup', stopDrawing);
-canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); });
-canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
-canvas.addEventListener('touchend', stopDrawing);
-
-function clearSignature() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-// --- WA INTEGRATION ---
-function sendWA(id) {
-  const r = db.reports.find(item => item.id === id);
-  if (!r) return;
-  const text = `*LAPORAN TECHNICAL SUPPORT*\n\n` +
-               `Proyek: ${r.s1Project || r.h1Name}\n` +
-               `Alamat: ${r.s1Addr || '-'}\n` +
-               `Mandor: ${r.s1Mandor || '-'}\n` +
-               `Hasil: ${r.s1Result || r.h1Result}\n` +
-               `Technical: ${getTechName(r.tech)}\n` +
-               `Tanggal: ${r.date}`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
-}
-
-// --- AI SUMMARY ---
-function showAISummary() {
-  const modal = document.getElementById('ai-modal');
-  const content = document.getElementById('ai-content');
-  modal.classList.remove('hidden');
-  content.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menganalisis data laporan...';
-
-  setTimeout(() => {
-    const total = db.reports.length;
-    const projects = db.reports.filter(r => r.s1Project).length;
-    const issues = db.reports.filter(r => r.s1Notes && r.s1Notes.length > 20).length;
-    
-    content.innerHTML = `
-      <strong>Analisis Cerdas Si Tukang:</strong><br><br>
-      • Total aktivitas tercatat: ${total} laporan.<br>
-      • Fokus utama pada ${projects} proyek demo aktif.<br>
-      • Ditemukan ${issues} catatan teknis penting dari lapangan.<br><br>
-      <strong>Rekomendasi Strategis:</strong><br>
-      1. Tingkatkan penetrasi pada area dengan tingkat hunting rendah.<br>
-      2. Follow up segera pada hasil demo yang bertanda 'Tukang Tertarik'.<br>
-      3. Dokumentasikan masalah teknis berulang untuk materi training internal.
-    `;
-  }, 1500);
-}
-
-// --- MENU RAHASIA (KLIK HELM 5 KALI) ---
-let clickCount = 0;
-let clickTimer;
-document.getElementById('secret-trigger').addEventListener('click', () => {
-  clickCount++;
-  clearTimeout(clickTimer);
-  clickTimer = setTimeout(() => { clickCount = 0; }, 1500); 
-  if(clickCount >= 5) {
-    clickCount = 0;
-    openAdmin();
-  }
-});
-
-function openAdmin() {
-  document.getElementById('admin-modal').classList.remove('hidden');
-  renderAdminList();
-}
-function closeAdmin() {
-  document.getElementById('admin-modal').classList.add('hidden');
-  renderUserSelect(); 
-}
-
-function renderAdminList() {
-  const list = document.getElementById('admin-user-list');
-  list.innerHTML = '';
-  usersDb.forEach((u, i) => {
-    list.innerHTML += `
-      <div class="user-row">
-        <div>
-          <strong style="color:white; font-size:0.9rem;">${u.label} (${u.val})</strong><br>
-          <span style="font-size:0.7rem; color:var(--text-muted);">Pass: ${u.pass}</span>
-        </div>
-        <button onclick="hapusUser(${i})" style="background:#ef4444; border:none; color:white; border-radius:4px; padding:4px 8px; cursor:pointer;">Hapus</button>
-      </div>
-    `;
-  });
-}
-
-function addUser() {
-  const label = document.getElementById('admin-new-label').value;
-  const val = document.getElementById('admin-new-val').value;
-  const pass = document.getElementById('admin-new-pass').value;
-  if(!label || !val || !pass) { showToast("Isi semua form tambah user!"); return; }
-  
-  usersDb.push({ val: val, label: label, pass: pass });
-  localStorage.setItem('ts_users_db', JSON.stringify(usersDb));
-  
-  document.getElementById('admin-new-label').value = '';
-  document.getElementById('admin-new-val').value = '';
-  document.getElementById('admin-new-pass').value = '';
-  renderAdminList(); showToast("User ditambahkan!");
-}
-
-function hapusUser(index) {
-  if(confirm("Yakin hapus user ini?")) {
-    usersDb.splice(index, 1);
-    localStorage.setItem('ts_users_db', JSON.stringify(usersDb));
-    renderAdminList(); showToast("User dihapus!");
-  }
-}
-
-// --- FITUR BARU: BACKUP & DELETE DATA ---
-function backupData() {
-  const backupObj = {
-    timestamp: new Date().toISOString(),
-    users: usersDb,
-    reports: db.reports,
-    surveys: db.surveys || [],
-    logs: JSON.parse(localStorage.getItem('ts_activity_logs') || '[]')
-  };
-  
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
-  const downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute("href", dataStr);
-  downloadAnchorNode.setAttribute("download", "si_tukang_backup_" + new Date().toISOString().slice(0,10) + ".json");
-  document.body.appendChild(downloadAnchorNode); // required for firefox
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
-  
-  showToast("Backup database berhasil diunduh!");
-}
-
-function deleteAllData() {
-  if(confirm("PERINGATAN KRITIS:\n\nAnda akan menghapus SEMUA laporan dan data yang tersimpan di browser ini.\nData yang sudah di-Backup akan aman.\n\nLanjutkan hapus?")) {
-    db.reports = [];
-    saveDB();
-    loadDashboard();
-    showToast("Semua data laporan telah dihapus.");
-  }
-}
-
-// --- LOGIN LOGIC ---
-document.getElementById('login-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const userIndex = document.getElementById('login-name').value;
-  const pass = document.getElementById('login-pass').value;
-  if (!userIndex) { showToast("Pilih User dulu!"); return; }
-  
-  const selectedUser = usersDb[userIndex];
-  if (pass.trim() !== selectedUser.pass) { showToast("Password Salah!"); return; }
-  
-  currentUser = selectedUser.label; 
-  document.getElementById('login-view').classList.add('hidden');
-  document.getElementById('app-view').classList.remove('hidden');
-  document.getElementById('header-user').innerText = selectedUser.label;
-  document.getElementById('f-name').value = selectedUser.label; 
-  
-  const logEntry = {
-    user_name: selectedUser.label,
-    action: 'Login',
-    timestamp: new Date().toISOString()
-  };
-  if (supabaseClient) {
-    supabaseClient.from('activity_logs').insert([logEntry]).then();
-  }
-  const logs = JSON.parse(localStorage.getItem('ts_activity_logs') || '[]');
-  logs.push(logEntry);
-  localStorage.setItem('ts_activity_logs', JSON.stringify(logs.slice(-50)));
-  
-  showToast("Login Berhasil");
-  try {
-    initMap();
-    loadDashboard();
-  } catch (err) {
-    console.error("Gagal load peta/dashboard:", err);
-  }
-});
-
-function logout() { if(confirm('Logout?')) location.reload(); }
-
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('active');
-  document.getElementById('sidebar-overlay').classList.toggle('active');
-}
-
 let activityChart = null;
+
+// Initialize surveys from localStorage
+function loadSurveyData() {
+  const saved = localStorage.getItem('ts_survey_db');
+  if (saved) {
+    try {
+      db.surveys = JSON.parse(saved);
+    } catch (e) {
+      db.surveys = [];
+    }
+  }
+}
+
+// Load survey data on init
+loadSurveyData();
 function updateActivityChart() {
   const ctx = document.getElementById('activityChart').getContext('2d');
   const last7Days = [];
@@ -2542,24 +2193,27 @@ function closeDetailReportModal() {
 }
 
 function generateDetailReport() {
+  console.log('Reports:', db.reports);
+  console.log('Surveys:', db.surveys);
+  
   const startStr = document.getElementById('detail-filter-start').value;
   const endStr = document.getElementById('detail-filter-end').value;
   
   if (!startStr || !endStr) { showToast("Pilih rentang tanggal!"); return; }
   
-  const startDate = new Date(startStr);
-  const endDate = new Date(endStr);
-  endDate.setHours(23, 59, 59, 999);
-  
+  // Filter by exact date string match first, then by date object if needed
   const reports = db.reports.filter(r => {
-    const rDate = new Date(r.date);
-    return rDate >= startDate && rDate <= endDate && r.s1Project;
+    const rDate = r.date;
+    return rDate >= startStr && rDate <= endStr && r.s1Project;
   });
   
   const surveys = (db.surveys || []).filter(s => {
-    const sDate = new Date(s.date);
-    return sDate >= startDate && sDate <= endDate;
+    const sDate = s.date;
+    return sDate >= startStr && sDate <= endStr;
   });
+  
+  console.log('Filtered Reports:', reports);
+  console.log('Filtered Surveys:', surveys);
   
   if (reports.length === 0 && surveys.length === 0) {
     document.getElementById('detail-report-content').innerHTML = '<p style="color:var(--text-muted); text-align:center;">Tidak ada data.</p>';
@@ -2694,12 +2348,7 @@ function showToast(msg) {
 let isEditingSurvey = false;
 
 function initSurveyDB() {
-  const saved = localStorage.getItem('ts_survey_db');
-  if (saved) {
-    db.surveys = JSON.parse(saved);
-  } else {
-    db.surveys = [];
-  }
+  // Already loaded in loadSurveyData()
 }
 
 function saveSurveyDB() {
