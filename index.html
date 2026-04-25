@@ -413,9 +413,9 @@ header {
       </div>
       <div class="form-group">
         <label class="form-label">Kode Akses</label>
-        <input type="password" id="login-pass" class="form-control" placeholder="1234">
+        <input type="password" id="login-pass" class="form-control" placeholder="Masukkan Password" style="background: white; color: black;" oninput="console.log('Password typed:', this.value)">
       </div>
-      <button type="submit" class="btn">Login System</button>
+      <button type="submit" class="btn" onclick="handleLogin(event)">Login System</button>
       
       <div style="text-align: center; margin-top: 20px; font-size: 0.7rem; color: var(--text-muted);">
         Credit by : Rudi Philipus@Broco-2026
@@ -515,7 +515,7 @@ header {
       </li>
     </ul>
     <div style="margin-top: auto; font-size: 0.7rem; color: var(--text-muted); text-align: center;">
-      Credit by: Rudi Philipus<br>build 2026 — v7.0 (Fix)
+      Credit by: Rudi Philipus<br>build 2026 — v7.1 (Fix Login)
     </div>
   </aside>
 
