@@ -534,7 +534,7 @@ header {
       </li>
     </ul>
     <div style="margin-top: auto; font-size: 0.7rem; color: var(--text-muted); text-align: center;">
-      Credit by: Rudi Philipus<br>build 2026 — v7.6 (Offline Fix)
+      Credit by: Rudi Philipus<br>build 2026 — v7.7 (Auto Sync)
     </div>
   </aside>
 
@@ -1391,10 +1391,16 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let supabaseClient = null;
 
 function initSupabase() {
-  if (supabaseClient) return true;
+  if (supabaseClient) {
+    // Already connected - try to show online
+    const statusEl = document.getElementById('db-status');
+    if (statusEl) {
+      setTimeout(() => syncFromSupabase(), 2000);
+    }
+    return true;
+  }
   try {
     if (typeof supabase !== 'undefined') {
-      // Re-check URL valid format
       if (!SUPABASE_URL.startsWith('https://')) {
         console.error("URL Supabase tidak valid");
         return false;
@@ -1547,6 +1553,8 @@ function checkLoggedIn() {
     document.getElementById('login-view').classList.add('hidden');
     document.getElementById('app-view').classList.remove('hidden');
     document.getElementById('f-name').value = currentUser;
+    // Auto sync after login
+    setTimeout(() => syncFromSupabase(), 1500);
   }
 }
 
