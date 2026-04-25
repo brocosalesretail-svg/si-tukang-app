@@ -1413,6 +1413,55 @@ let isEditing = false;
 let editId = null;
 let activityChart = null;
 
+// --- USER DATABASE ---
+let usersDb = JSON.parse(localStorage.getItem('ts_users_db')) || [
+  { val: "Tech A", label: "Tech Alpha", pass: "1234" },
+  { val: "Tech B", label: "Tech Beta", pass: "1234" },
+  { val: "Tech C", label: "Tech Gamma", pass: "1234" }
+];
+
+function renderUserSelect() {
+  const select = document.getElementById('login-name');
+  if (!select) return;
+  select.innerHTML = '<option value="" disabled selected>-- Pilih User --</option>';
+  usersDb.forEach((u, i) => {
+    select.innerHTML += `<option value="${i}">${u.label}</option>`;
+  });
+}
+
+// --- LOGIN FUNCTION ---
+function handleLogin(e) {
+  if (e) e.preventDefault();
+  
+  const userIndex = document.getElementById('login-name').value;
+  const pass = document.getElementById('login-pass').value;
+  
+  if (userIndex === "" || pass === "") {
+    showToast("Pilih user dan isi password!");
+    return;
+  }
+  
+  const user = usersDb[userIndex];
+  if (user && user.pass === pass) {
+    currentUser = user.label;
+    document.getElementById('header-user').textContent = currentUser;
+    document.getElementById('login-view').classList.add('hidden');
+    document.getElementById('app-view').classList.remove('hidden');
+    document.getElementById('f-name').value = currentUser;
+    showToast("Selamat datang " + currentUser + "!");
+  } else {
+    showToast("Password salah!");
+  }
+}
+
+// Add login form listener when DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  const loginForm = document.getElementById('login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleLogin);
+  }
+});
+
 // Initialize surveys from localStorage
 function loadSurveyData() {
   const saved = localStorage.getItem('ts_survey_db');
