@@ -534,7 +534,7 @@ header {
       </li>
     </ul>
     <div style="margin-top: auto; font-size: 0.7rem; color: var(--text-muted); text-align: center;">
-      Credit by: Rudi Philipus<br>build 2026 — v7.3 (Quick Login)
+      Credit by: Rudi Philipus<br>build 2026 — v7.4 (Stay Logged In)
     </div>
   </aside>
 
@@ -1480,6 +1480,7 @@ function quickLogin() {
 
 function doLoginSuccess(name) {
   currentUser = name;
+  localStorage.setItem('ts_current_user', name);
   document.getElementById('header-user').textContent = currentUser;
   document.getElementById('login-view').classList.add('hidden');
   document.getElementById('app-view').classList.remove('hidden');
@@ -1487,12 +1488,26 @@ function doLoginSuccess(name) {
   showToast("Selamat datang " + currentUser + "!");
 }
 
+// Check if already logged in
+function checkLoggedIn() {
+  const savedUser = localStorage.getItem('ts_current_user');
+  if (savedUser) {
+    currentUser = savedUser;
+    document.getElementById('header-user').textContent = currentUser;
+    document.getElementById('login-view').classList.add('hidden');
+    document.getElementById('app-view').classList.remove('hidden');
+    document.getElementById('f-name').value = currentUser;
+  }
+}
+
 // Add login form listener when DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('login-form');
   if (loginForm) {
-    loginForm.addEventListener('submit', handleLogin);
+    loginForm.addEventListener('submit', doLogin);
   }
+  // Check if already logged in
+  checkLoggedIn();
 });
 
 // Initialize surveys from localStorage
