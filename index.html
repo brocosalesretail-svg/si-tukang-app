@@ -1012,8 +1012,16 @@ header {
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Catatan Lapangan</label>
+            <label class="form-label">Catatan Lapangan / Masalah</label>
             <textarea id="f-s1-notes" class="form-control" rows="2" placeholder="Contoh: Tukang merasa kerja lebih cepat..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Solusi yang Ditawarkan</label>
+            <textarea id="f-s1-solution" class="form-control" rows="2" placeholder="Solusi untuk mengatasi masalah di atas..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Rekomendasi Follow Up</label>
+            <textarea id="f-s1-followup" class="form-control" rows="2" placeholder="Rekomendasi untuk Sales/SPV..."></textarea>
           </div>
           <div class="form-group">
             <label class="form-label">Tanda Tangan Mandor (Bukti Demo)</label>
@@ -1344,8 +1352,11 @@ header {
       <button class="btn" style="background: var(--primary);" onclick="generateDetailReport()">Tampilkan</button>
     </div>
     <div id="detail-report-content" style="max-height: 500px; overflow-y: auto; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;"></div>
-    <div style="text-align: center; margin-top: 20px;">
-      <button class="btn" style="background: var(--accent); margin-right: 10px;" onclick="exportDetailReportCSV()">
+    <div style="text-align: center; margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+      <button class="btn" style="background: var(--primary);" onclick="exportDetailReportPDF()">
+        <i class="fa-solid fa-file-pdf"></i> Export PDF
+      </button>
+      <button class="btn" style="background: var(--accent);" onclick="exportDetailReportCSV()">
         <i class="fa-solid fa-file-excel"></i> Export Excel
       </button>
       <button class="btn" style="background: #ef4444;" onclick="closeDetailReportModal()">Tutup</button>
@@ -2091,6 +2102,8 @@ document.getElementById('ts-form').addEventListener('submit', async (e) => {
     s1Unit: document.getElementById('f-s1-unit').value,
     s1Result: document.getElementById('f-s1-result').value,
     s1Notes: document.getElementById('f-s1-notes').value,
+    s1Solution: document.getElementById('f-s1-solution').value,
+    s1Followup: document.getElementById('f-s1-followup').value,
     photos: photos.length > 0 ? photos : (isEditing ? (db.reports.find(r => r.id === editId)?.photos || []) : []),
     signature: !isCanvasEmpty ? signatureData : (isEditing ? (db.reports.find(r => r.id === editId)?.signature || null) : null),
     h1Name: document.getElementById('f-h1-name').value,
@@ -2183,6 +2196,8 @@ function editReport(id) {
   document.getElementById('f-s1-unit').value = report.s1Unit;
   document.getElementById('f-s1-result').value = report.s1Result;
   document.getElementById('f-s1-notes').value = report.s1Notes;
+  document.getElementById('f-s1-solution').value = report.s1Solution || '';
+  document.getElementById('f-s1-followup').value = report.s1Followup || '';
   
   document.getElementById('f-h1-name').value = report.h1Name || '';
   document.getElementById('f-h1-type').value = report.h1Type || 'Perumahan';
@@ -2580,6 +2595,9 @@ function generateDetailReport() {
           <span style="margin-left:8px;">Mandor: ${r.s1Mandor || '-'}</span>
         </div>
         <div style="font-size:0.8rem; margin-top:8px; color:${r.s1Result === 'Demo berjalan baik' ? 'var(--accent)' : 'var(--text-muted)'}">${r.s1Result || '-'}</div>
+        ${r.s1Notes ? `<div style="font-size:0.75rem; margin-top:8px; padding:8px; background:rgba(239,68,68,0.1); border-radius:4px; border-left:3px solid #ef4444;"><strong style="color:#ef4444;">Masalah:</strong> ${r.s1Notes}</div>` : ''}
+        ${r.s1Solution ? `<div style="font-size:0.75rem; margin-top:4px; padding:8px; background:rgba(16,185,129,0.1); border-radius:4px; border-left:3px solid var(--accent);"><strong style="color:var(--accent);">Solusi:</strong> ${r.s1Solution}</div>` : ''}
+        ${r.s1Followup ? `<div style="font-size:0.75rem; margin-top:4px; padding:8px; background:rgba(139,92,246,0.1); border-radius:4px; border-left:3px solid #8b5cf6;"><strong style="color:#8b5cf6;">Follow Up:</strong> ${r.s1Followup}</div>` : ''}
       </div>`;
     });
   }
@@ -2615,10 +2633,10 @@ function exportDetailReportCSV() {
     showToast("Tidak ada data untuk export."); return;
   }
   
-  let csv = "Type,T Tanggal,Tech,Project/Nama,Alamat/Lokasi,Mandor/Nama,HP,Jenis Pekerjaan,Hasil,Catatan\n";
+  let csv = "Type,Tanggal,Tech,Project/Nama,Alamat/Lokasi,Mandor/Nama,HP,Jenis Pekerjaan,Hasil,Masalah,Solusi,Follow Up\n";
   
   reports.forEach(r => {
-    csv += `Demo,${r.date},${r.tech},${r.s1Project},${r.s1Addr || ''},${r.s1Mandor || ''},${r.s1Phone || ''},${(r.s1Job || []).join('; ')},${r.s1Result || ''},${r.s1Notes || ''}\n`;
+    csv += `Demo,${r.date},${r.tech},${r.s1Project},${r.s1Addr || ''},${r.s1Mandor || ''},${r.s1Phone || ''},${(r.s1Job || []).join('; ')},${r.s1Result || ''},${r.s1Notes || ''},${r.s1Solution || ''},${r.s1Followup || ''}\n`;
   });
   
   surveys.forEach(s => {
@@ -2629,6 +2647,29 @@ function exportDetailReportCSV() {
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = 'laporan_lengkap.csv'; a.click();
   showToast("Export berhasil!");
+}
+
+function exportDetailReportPDF() {
+  const content = document.getElementById('detail-report-content');
+  if (!content || content.innerHTML.trim() === '') {
+    showToast("Pilih periode dan klik Tampilkan dulu!"); return;
+  }
+  
+  showToast("Sedang membuat PDF...");
+  
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: `Laporan_Lengkap_${new Date().toISOString().split('T')[0]}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(content).save().then(() => {
+    showToast("PDF Selesai!");
+  }).catch(err => {
+    showToast("Gagal buat PDF!");
+  });
 }
 
 // --- UTILS ---
