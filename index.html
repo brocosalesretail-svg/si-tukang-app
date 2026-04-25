@@ -534,7 +534,7 @@ header {
       </li>
     </ul>
     <div style="margin-top: auto; font-size: 0.7rem; color: var(--text-muted); text-align: center;">
-      Credit by: Rudi Philipus<br>build 2026 — v7.4 (Stay Logged In)
+      Credit by: Rudi Philipus<br>build 2026 — v7.5 (Sync Fix)
     </div>
   </aside>
 
@@ -1406,6 +1406,47 @@ function initSupabase() {
   } catch (e) {
     console.error("Gagal inisialisasi Supabase:", e);
     return false;
+  }
+}
+
+// Sync from Supabase
+async function syncFromSupabase() {
+  const statusEl = document.getElementById('db-status');
+  if (!statusEl) return;
+  
+  if (!initSupabase()) {
+    statusEl.innerHTML = '<i class="fa-solid fa-circle-dot" style="color:#ef4444;"></i> OFFLINE';
+    return;
+  }
+  
+  statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--primary);"></i> SYNCING...';
+  
+  try {
+    if (window.location.protocol === 'file:') {
+      statusEl.innerHTML = '<i class="fa-solid fa-circle-dot" style="color:#f59e0b;"></i> OFFLINE (File)';
+      return;
+    }
+    
+    const { data, error } = await supabaseClient.from('reports').select('*').order('date', { ascending: false });
+    
+    if (error) throw error;
+    
+    if (data && data.length > 0) {
+      const localReports = db.reports || [];
+      const remoteReports = data;
+      const combined = [...remoteReports];
+      localReports.forEach(lr => {
+        if (!combined.find(cr => cr.id === lr.id)) combined.push(lr);
+      });
+      db.reports = combined.sort((a, b) => b.id - a.id);
+      localStorage.setItem('ts_metal_db', JSON.stringify(db));
+    }
+    
+    statusEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--accent);"></i> ONLINE';
+    loadDashboard();
+  } catch (err) {
+    console.error('Sync error:', err);
+    statusEl.innerHTML = '<i class="fa-solid fa-circle-dot" style="color:#f59e0b;"></i> OFFLINE';
   }
 }
 
